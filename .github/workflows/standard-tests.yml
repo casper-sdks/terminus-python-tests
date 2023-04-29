@@ -33,7 +33,7 @@ jobs:
       - name: Preparing NCTL assets on the started NCTL docker image
         run: |
           echo "Wait for NCTL"
-          sleep 30s
+          sleep 40s
           mkdir assets
           docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/chainspec assets
           docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/users assets
