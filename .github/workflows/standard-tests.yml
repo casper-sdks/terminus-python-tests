@@ -93,4 +93,8 @@ jobs:
       - name: Copy artifacts and test with cucumber
         run: |
           ls -ltra
-
+          cd casper-python-sdk
+          sudo pip install -e .
+          cd ..
+          pip install -r requirements.txt
+          behave test/features --junit
