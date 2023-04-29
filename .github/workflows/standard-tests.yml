@@ -71,8 +71,6 @@ jobs:
       # Checkout the test platform Python code
       - name: Set Up Python 3.9
         uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
         run: |
           ls -ltra
           cd casper-python-sdk
