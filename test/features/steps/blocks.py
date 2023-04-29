@@ -1,20 +1,16 @@
 from behave import *
 
-from utils.exec import *
-from utils.node import CLIENT
-
-use_step_matcher("re")
 
 @given("that the latest block is requested via the sdk")
 def step_impl(context):
     print("that the latest block is requested via the sdk")
-    context.blockDataSdk = CLIENT().get_block()
+    context.blockDataSdk = context.sdk_client.get_block()
 
 
 @then('request the latest block via the test node')
 def step_impl(context):
     print("request the latest block via the test node")
-    context.blockDataNode = get_latest_block()
+    context.blockDataNode = context.nctl_client.get_latest_block()
 
 
 @then("the body of the returned block is equal to the body of the returned test node block")
@@ -33,11 +29,13 @@ def step_impl(context):
 
     assert context.blockDataSdk['hash'] == context.blockDataNode['hash']
 
+
 @step("the header of the returned block is equal to the header of the returned test node block")
 def step_impl(context):
     print("the header of the returned block is equal to the header of the returned test node block")
 
     assert context.blockDataSdk['header'] == context.blockDataNode['header']
+
 
 @step("the proofs of the returned block are equal to the proofs of the returned test node block")
 def step_impl(context):

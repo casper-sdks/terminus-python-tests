@@ -4,7 +4,6 @@ import pycspr
 
 
 # _PATH_TO_NCTL_ASSETS = pathlib.Path(os.getenv("NCTL")) / "assets" / "net-1"
-
 def CLIENT() -> pycspr.NodeClient:
     return pycspr.NodeClient(pycspr.NodeConnection(
         host="localhost",
