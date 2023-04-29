@@ -79,5 +79,6 @@ jobs:
       # Run the actual cucumber tests
       - name: Copy artifacts and test with cucumber
         run: |
+          ls -ltra
           pip install -r requirements.txt
           behave test/features --junit  
