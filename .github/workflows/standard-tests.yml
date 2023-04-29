@@ -57,6 +57,12 @@ jobs:
          ref: main
          path: casper-python-sdk
 
+      # Upload the NCTL assets to a project artifact
+      - name: Upload Python SDK code to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-sdk
+
 #       Build the SDK
       - name: Build SDK
         working-directory: casper-python-sdk
@@ -68,22 +74,21 @@ jobs:
         with:
           name: nctl-accounts
 
+      # Download the NCTL assets artifact
+      - name: Download python sdk artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: python-sdk
+
       # Checkout the test platform Python code
       - name: Set Up Python 3.9
         uses: actions/setup-python@v2
-        run: |
-          ls -ltra
-          cd casper-python-sdk
-          ls -ltra
-          pip install -r requirements.txt
-          behave test/features --junit  
+        with:
+          python-version: 3.9
 
       # Move the downloaded assets to their required folders
       # Run the actual cucumber tests
-#      - name: Copy artifacts and test with cucumber
-#        run: |
-#          ls -ltra
-#          cd casper-python-sdk
-#          ls -ltra
-#          pip install -r requirements.txt
-#          behave test/features --junit
+      - name: Copy artifacts and test with cucumber
+        run: |
+          ls -ltra
+
