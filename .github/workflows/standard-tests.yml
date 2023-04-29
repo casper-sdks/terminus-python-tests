@@ -94,8 +94,8 @@ jobs:
       - name: Copy artifacts and test with cucumber
         run: |
           ls -ltra
-          ls casper-python-sdk
-          ls cspr-python-standard-tests
+          ls casper-python-sdk -ltra
+          ls cspr-python-standard-tests -ltra
           cd casper-python-sdk
           sudo pip install -e .
           cd ../cspr-python-standard-tests
