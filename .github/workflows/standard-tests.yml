@@ -60,7 +60,7 @@ jobs:
 #       Build the SDK
       - name: Build SDK
         working-directory: casper-python-sdk
-        run: pip install pycspr
+        run: pip install -e .
 
       # Upload the built SDK  as a project artifact
 #       - name: Upload SDK jar to artifacts
