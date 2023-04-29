@@ -62,47 +62,27 @@ jobs:
         working-directory: casper-python-sdk
         run: sudo pip install -e .
 
-      # Upload the built SDK  as a project artifact
-#       - name: Upload SDK jar to artifacts
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: casper-java-sdk-jar
-#           path: |
-#             casper-java-sdk/build/libs/*.jar
-
-      # Checkout the test platform Python code
-#       - name: Checkout test platform code
-#         uses: actions/checkout@v2
-#       - name: Set up JDK 11
-#         uses: actions/setup-java@v2
-#         with:
-#           java-version: '11'
-#           distribution: 'adopt'
-
       # Download the NCTL assets artifact
       - name: Download NCTL assets artifact
         uses: actions/download-artifact@v3
         with:
           name: nctl-accounts
 
-      # Download the SDK Python artifact
-#       - name: Download casper-java-sdk-jar artifact
-#         uses: actions/download-artifact@v3
-#         with:
-#           name: casper-java-sdk-jar
+      # Checkout the test platform Python code
+      - name: Set Up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-      # Gradle needs execute permissions
-#      - name: Grant execute permission for gradlew
-#        run: chmod +x gradlew
 
       # Move the downloaded assets to their required folders
       # Run the actual cucumber tests
-#      - name: Copy artifacts and test with cucumber
-#        run: |
-#          mkdir -p assets/net-1
-#          mv chainspec/ assets/net-1
-#          mv user-*/ assets/net-1
-#          rm -rf libs
-#          mkdir libs
-#          mv *.jar libs
-#          ./gradlew clean cucumberCli
+      - name: Copy artifacts and test with cucumber
+        run: |
+          mkdir -p assets/net-1
+          mv chainspec/ assets/net-1
+          mv user-*/ assets/net-1
+          rm -rf libs
+          mkdir libs
+          mv *.jar libs
+          behave test/features --junit  
