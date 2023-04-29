@@ -65,6 +65,11 @@ jobs:
           path: |
             casper-python-sdk/*
 
+      # Checkout the test platform Python code
+      - name: Set Up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
       # Download the NCTL assets artifact
       - name: Download NCTL assets artifact
@@ -77,12 +82,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: python-sdk
-
-      # Checkout the test platform Python code
-      - name: Set Up Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
 
       # Move the downloaded assets to their required folders
       # Run the actual cucumber tests
