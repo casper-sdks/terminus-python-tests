@@ -69,7 +69,7 @@ jobs:
       - name: Checkout the test platform Python code
         uses: actions/checkout@v2
         with:
-          path: cspr-python-standard-test
+          path: cspr-python-standard-tests
 
       # Set up Python
       - name: Set Up Python 3.9
@@ -94,9 +94,11 @@ jobs:
       - name: Copy artifacts and test with cucumber
         run: |
           ls -ltra
+          ls casper-python-sdk
+          ls cspr-python-standard-tests
           cd casper-python-sdk
           sudo pip install -e .
-          cd ..
+          cd ../cspr-python-standard-tests
           pip install -r requirements.txt
           pip install behave
           behave test/features --junit
