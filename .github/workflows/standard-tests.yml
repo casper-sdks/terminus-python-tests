@@ -65,10 +65,6 @@ jobs:
           path: |
             casper-python-sdk/*
 
-#       Build the SDK
-      - name: Build SDK
-        working-directory: casper-python-sdk
-        run: sudo pip install -e .
 
       # Download the NCTL assets artifact
       - name: Download NCTL assets artifact
