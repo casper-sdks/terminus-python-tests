@@ -79,10 +79,4 @@ jobs:
       # Run the actual cucumber tests
       - name: Copy artifacts and test with cucumber
         run: |
-          mkdir -p assets/net-1
-          mv chainspec/ assets/net-1
-          mv user-*/ assets/net-1
-          rm -rf libs
-          mkdir libs
-          mv *.jar libs
           behave test/features --junit  
