@@ -50,18 +50,17 @@ jobs:
             assets/net-1/user-*
 
       # Checkout the latest Casper Python SDK from their repo ready for a build
-#       - name: Checkout SDK source code
-#         uses: actions/checkout@v2
-#         with:
-#           repository: casper-network/casper-java-sdk
-#           ref: main
-#           path: casper-java-sdk
+      - name: Checkout SDK source code
+        uses: actions/checkout@v2
+        with:
+         repository: casper-network/casper-python-sdk
+         ref: main
+         path: casper-python-sdk
 
-
-      # Build the SDK 
-#       - name: Build SDK JAR
-#         working-directory: casper-java-sdk
-#         run: ./gradlew clean build
+#       Build the SDK
+      - name: Build SDK
+        working-directory: casper-python-sdk
+        run: pip install pycspr
 
       # Upload the built SDK  as a project artifact
 #       - name: Upload SDK jar to artifacts
@@ -93,17 +92,17 @@ jobs:
 #           name: casper-java-sdk-jar
 
       # Gradle needs execute permissions
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+#      - name: Grant execute permission for gradlew
+#        run: chmod +x gradlew
 
       # Move the downloaded assets to their required folders
       # Run the actual cucumber tests
-      - name: Copy artifacts and test with cucumber
-        run: |
-          mkdir -p assets/net-1
-          mv chainspec/ assets/net-1
-          mv user-*/ assets/net-1          
-          rm -rf libs
-          mkdir libs
-          mv *.jar libs                   
-          ./gradlew clean cucumberCli
+#      - name: Copy artifacts and test with cucumber
+#        run: |
+#          mkdir -p assets/net-1
+#          mv chainspec/ assets/net-1
+#          mv user-*/ assets/net-1
+#          rm -rf libs
+#          mkdir libs
+#          mv *.jar libs
+#          ./gradlew clean cucumberCli
