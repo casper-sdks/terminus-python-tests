@@ -73,14 +73,19 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-
-
-      # Move the downloaded assets to their required folders
-      # Run the actual cucumber tests
-      - name: Copy artifacts and test with cucumber
         run: |
           ls -ltra
           cd casper-python-sdk
           ls -ltra
           pip install -r requirements.txt
           behave test/features --junit  
+
+      # Move the downloaded assets to their required folders
+      # Run the actual cucumber tests
+#      - name: Copy artifacts and test with cucumber
+#        run: |
+#          ls -ltra
+#          cd casper-python-sdk
+#          ls -ltra
+#          pip install -r requirements.txt
+#          behave test/features --junit
