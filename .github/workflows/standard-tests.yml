@@ -57,11 +57,13 @@ jobs:
          ref: main
          path: casper-python-sdk
 
-      # Upload the NCTL assets to a project artifact
+      # Upload the Python SDK source code artifact
       - name: Upload Python SDK code to artifacts
         uses: actions/upload-artifact@v3
         with:
           name: python-sdk
+          path: |
+            casper-python-sdk/*
 
 #       Build the SDK
       - name: Build SDK
@@ -74,7 +76,7 @@ jobs:
         with:
           name: nctl-accounts
 
-      # Download the NCTL assets artifact
+      # Download the python sdk artifact
       - name: Download python sdk artifact
         uses: actions/download-artifact@v3
         with:
