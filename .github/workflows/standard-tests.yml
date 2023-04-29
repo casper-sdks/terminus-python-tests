@@ -68,6 +68,7 @@ jobs:
       # Checkout the test platform Python code
       - name: Checkout the test platform Python code
         uses: actions/checkout@v2
+        working-directory: cspr-python-standard-tests
 
       # Set up Python
       - name: Set Up Python 3.9
