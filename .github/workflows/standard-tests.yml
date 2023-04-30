@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       storm-nctl:
-        image: makesoftware/casper-nctl:latest
+        image: stormeye2000/casper-nctl:1.4.13
         options: --name storm-nctl
         env:
           PREDEFINED_ACCOUNTS: 'true'
