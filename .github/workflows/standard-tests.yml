@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     services:
       storm-nctl:
-        image: stormeye2000/cspr-nctl:1.4.13
-        options: --name storm-nctl --platform linux/amd64
+        image: stormeye2000/cspr-nctl:linux-1.4.13
+        options: --name storm-nctl
         env:
           PREDEFINED_ACCOUNTS: 'true'
           MINIMUM_ROUND_EXPONENT: '12'
