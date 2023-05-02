@@ -42,3 +42,14 @@ def step_impl(context):
     print("the proofs of the returned block are equal to the proofs of the returned test node block")
 
     assert context.blockDataSdk['proofs'] == context.blockDataNode['proofs']
+
+
+@given("that a block is returned by hash via the sdk")
+def step_impl(context):
+    context.blockDataSdk = context.sdk_client.get_block()
+    context.blockDataSdk = context.sdk_client.get_block(context.blockDataSdk['hash'])
+
+
+@then("request a block by hash via the test node")
+def step_impl(context):
+    context.blockDataNode = context.nctl_client.get_latest_block_by_param(context.blockDataSdk['hash'])
