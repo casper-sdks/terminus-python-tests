@@ -1,23 +1,12 @@
-import os
-
 import pycspr
 
 
-# _PATH_TO_NCTL_ASSETS = pathlib.Path(os.getenv("NCTL")) / "assets" / "net-1"
-def CLIENT() -> pycspr.NodeClient:
+# Creates a Python SDK client
+
+def client(config) -> pycspr.NodeClient:
     return pycspr.NodeClient(pycspr.NodeConnection(
-        host="localhost",
-        port_rest=14101,
-        port_rpc=11101,
-        port_sse=18101
+        host=config.get_nctl_host(),
+        port_rest=config.get_nctl_port_rest(),
+        port_rpc=config.get_nctl_port_rpc(),
+        port_sse=config.get_nctl_port_sse(),
     ))
-
-def NODE_HOST() -> str:
-    return os.getenv("PYCSPR_TEST_NODE_HOST", "localhost")
-def NODE_PORT_REST() -> str:
-    return os.getenv("PYCSPR_TEST_NODE_PORT_REST", 14101)
-def NODE_PORT_RPC() -> str:
-    return os.getenv("PYCSPR_TEST_NODE_PORT_RPC", 11101)
-
-def NODE_PORT_SSE() -> str:
-    return os.getenv("PYCSPR_TEST_NODE_PORT_SSE", 18101)

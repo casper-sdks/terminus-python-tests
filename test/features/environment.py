@@ -1,21 +1,12 @@
+from steps.utils.config import CONFIG
 from steps.utils.exec import NCTLExec
-from steps.utils.node import CLIENT
+from steps.utils.node import client
+
 
 # Steps to run at specific times in the scenarios
 
 
-def before_all(context):
-    context.sdk_client = CLIENT()
-    context.nctl_client = NCTLExec()
-
-
-def before_scenario(scenario, context):
-    print('Before scenario executed')
-
-
-def after_feature(scenario, context):
-    print('After feature executed')
-
-
-def after_all(context):
-    print('After all executed')
+def before_all(ctx):
+    ctx.config = CONFIG()
+    ctx.sdk_client = client(ctx.config)
+    ctx.nctl_client = NCTLExec(ctx.config)
