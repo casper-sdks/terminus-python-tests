@@ -1,5 +1,10 @@
+import asyncio
+import codecs
+
 from behave import *
 from pycspr import *
+
+from utils.validate import *
 
 INVALID_BLOCK_HASH = "2fe9630b7790852e4409d815b04ca98f37effcdf9097d317b9b9b8ad658f47c8"
 INVALID_HEIGHT = 9999999999
@@ -93,3 +98,63 @@ def step_impl(ctx):
         ctx.blockDataSdk = ctx.sdk_client.get_block(INVALID_HEIGHT)
     except Exception as ex:
         ctx.exception = ex
+
+
+async def step_event(ctx):
+    await ctx.sdk_client.await_n_events(NodeEventChannel.main, NodeEventType.Step, 1)
+
+
+@given("that a step event is received")
+def step_impl(ctx):
+    asyncio.run(step_event(ctx))
+    ctx.nodeEraSwitchBlockData = ctx.nctl_client.get_era_switch_block()
+
+    assert ctx.nodeEraSwitchBlockData['era_summary']
+    assert ctx.nodeEraSwitchBlockData['era_summary']['block_hash']
+    assert codecs.decode(ctx.nodeEraSwitchBlockData['era_summary']['block_hash'], 'hex')
+
+    ctx.nodeEraSwitchBlock = ctx.nodeEraSwitchBlockData['era_summary']['block_hash']
+
+
+@then("request the corresponding era switch block via the sdk")
+def step_impl(ctx):
+    ctx.eraSwitchBlockData = ctx.sdk_client.get_era_info(ctx.nodeEraSwitchBlock)
+    assert ctx.eraSwitchBlockData
+
+
+@step(
+    "the switch block hashes of the returned block are equal to the switch block hashes of the returned test node block")
+def step_impl(ctx):
+    assert ctx.nodeEraSwitchBlock == ctx.eraSwitchBlockData['block_hash']
+
+
+@step("the switch block eras of the returned block are equal to the switch block eras of the returned test node block")
+def step_impl(ctx):
+    ctx.nodeEraSwitchBlockData['era_summary']['era_id'] = ctx.eraSwitchBlockData['era_id']
+
+
+@step(
+    "the switch block merkle proofs of the returned block are equal to the switch block merkle proofs of the returned "
+    "test node block")
+def step_impl(ctx):
+    validate_merkle_proofs(ctx.nodeEraSwitchBlockData['era_summary']['merkle_proof'],
+                           ctx.eraSwitchBlockData['merkle_proof'])
+
+
+@step(
+    "the switch block state root hashes of the returned block are equal to the switch block state root hashes of the "
+    "returned test node block")
+def step_impl(ctx):
+    assert ctx.nodeEraSwitchBlockData['era_summary']['state_root_hash'] == ctx.eraSwitchBlockData['state_root_hash']
+
+
+@step("the delegators data of the returned block is equal to the delegators data of the returned test node block")
+def step_impl(ctx):
+    assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
+           == ctx.eraSwitchBlockData['stored_value']['EraInfo']['seigniorage_allocations']
+
+
+@step("the validators data of the returned block is equal to the validators data of the returned test node block")
+def step_impl(ctx):
+    assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
+           == ctx.eraSwitchBlockData['stored_value']['EraInfo']['seigniorage_allocations']
