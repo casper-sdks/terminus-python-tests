@@ -4,8 +4,10 @@ import codecs
 from behave import *
 from pycspr import *
 
-# Import any validation methods needed
 from utils.validate import *
+
+# Step Definitions for Block Cucumber Tests
+
 
 INVALID_BLOCK_HASH = "2fe9630b7790852e4409d815b04ca98f37effcdf9097d317b9b9b8ad658f47c8"
 INVALID_HEIGHT = 9999999999
