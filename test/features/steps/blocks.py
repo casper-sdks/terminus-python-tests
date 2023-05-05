@@ -1,9 +1,13 @@
 import asyncio
 import codecs
+import random
 
+import pycspr
 from behave import *
 from pycspr import *
+from pycspr.types import Deploy
 
+from utils.assets import *
 from utils.validate import *
 
 # Step Definitions for Block Cucumber Tests
@@ -161,3 +165,74 @@ def step_impl(ctx):
 def step_impl(ctx):
     assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
            == ctx.eraSwitchBlockData['stored_value']['EraInfo']['seigniorage_allocations']
+
+
+@given("that chain transfer data is initialised")
+def step_impl(ctx):
+    ctx.sender_key = pycspr.parse_private_key(
+        get_user_asset_path(ctx.ASSETS_ROOT, "1", "1", "secret_key.pem"),
+        KeyAlgorithm.ED25519.name,
+    )
+    ctx.receiver_key = pycspr.parse_public_key(
+        get_user_asset_path(ctx.ASSETS_ROOT, "1", "2", "public_key_hex")
+    )
+
+    ctx.transfer_amount = 2500000000
+    ctx.gas_price = 1
+    ctx.ttl = '30m'
+
+
+@when("the deploy data is put on chain")
+def step_impl(ctx):
+    deploy: Deploy
+
+    deploy_params = pycspr.create_deploy_parameters(
+        account=ctx.sender_key,
+        chain_name='casper-net-1'
+    )
+
+    # Set deploy.
+    deploy = pycspr.create_transfer(
+        params=deploy_params,
+        amount=ctx.transfer_amount,
+        target=ctx.receiver_key.account_key,
+        correlation_id=random.randint(1, 1e6)
+    )
+
+    deploy.approve(ctx.sender_key)
+    ctx.sdk_client.send_deploy(deploy)
+
+    ctx.deploy_hash = deploy.hash.hex()
+
+
+@then("the deploy response contains a valid deploy hash")
+def step_impl(ctx):
+    """
+    :type context: behave.runner.Context
+    """
+    raise NotImplementedError(u'STEP: Then the deploy response contains a valid deploy hash')
+
+
+@then("request the block transfer")
+def step_impl(ctx):
+    """
+    :type context: behave.runner.Context
+    """
+    raise NotImplementedError(u'STEP: Then request the block transfer')
+
+
+@then("request the block transfer from the test node")
+def step_impl(ctx):
+    """
+    :type context: behave.runner.Context
+    """
+    raise NotImplementedError(u'STEP: Then request the block transfer from the test node')
+
+
+@step("the returned block contains the transfer hash returned from the test node block")
+def step_impl(ctx):
+    """
+    :type context: behave.runner.Context
+    """
+    raise NotImplementedError(
+        u'STEP: And the returned block contains the transfer hash returned from the test node block')
