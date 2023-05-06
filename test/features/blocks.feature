@@ -54,7 +54,7 @@ Feature: Blocks Integration Tests
 
     Given that chain transfer data is initialised
     When the deploy data is put on chain
-#    Then the deploy response contains a valid deploy hash
-#    Then request the block transfer
-#    Then request the block transfer from the test node
-#    And the returned block contains the transfer hash returned from the test node block
+    Then the deploy response contains a valid deploy hash
+    Then request the block transfer
+    Then request the block transfer from the test node
+    And the returned block contains the transfer hash returned from the test node block

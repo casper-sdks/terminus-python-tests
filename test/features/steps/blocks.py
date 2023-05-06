@@ -200,39 +200,40 @@ def step_impl(ctx):
     )
 
     deploy.approve(ctx.sender_key)
+
     ctx.sdk_client.send_deploy(deploy)
 
-    ctx.deploy_hash = deploy.hash.hex()
+    ctx.deploy_result = deploy
+
+    print(deploy)
 
 
 @then("the deploy response contains a valid deploy hash")
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: Then the deploy response contains a valid deploy hash')
+    assert ctx.deploy_result
+    assert ctx.deploy_result.hash.hex
+
+
+async def block_event(ctx) -> dict:
+    return await ctx.sdk_client.await_n_events(NodeEventChannel.main, NodeEventType.BlockAdded, 1)
 
 
 @then("request the block transfer")
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: Then request the block transfer')
+    while True:
+        ctx.transfer_block_sdk = asyncio.run(block_event(ctx))
+        print(ctx.transfer_block_sdk)
+        if len(ctx.transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']) > 0:
+            break
 
 
 @then("request the block transfer from the test node")
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: Then request the block transfer from the test node')
+    ctx.block_data_node = ctx.nctl_client.get_latest_block_by_param(
+        "block=" + ctx.transfer_block_sdk['BlockAdded']['block_hash'])
 
 
 @step("the returned block contains the transfer hash returned from the test node block")
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(
-        u'STEP: And the returned block contains the transfer hash returned from the test node block')
+    assert ctx.deploy_result.hash.hex() in ctx.transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']
+
