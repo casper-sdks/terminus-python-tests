@@ -14,7 +14,7 @@ async def step_event(ctx):
 
 async def block_event(ctx) -> dict:
     transfer_block_sdk = {}
-    for t in Timeout(601):
+    for t in Timeout(120):
         transfer_block_sdk = await ctx.sdk_client.await_n_events(NodeEventChannel.main, NodeEventType.BlockAdded, 1)
         print(transfer_block_sdk)
         if len(transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']) > 0:
