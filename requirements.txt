@@ -2,3 +2,4 @@ pycspr
 behave
 pytest
 pytest-bdd
+totaltimeout

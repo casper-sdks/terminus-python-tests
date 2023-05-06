@@ -1,4 +1,3 @@
-import asyncio
 import codecs
 import random
 
@@ -8,6 +7,7 @@ from pycspr import *
 from pycspr.types import Deploy
 
 from utils.assets import *
+from utils.asyncs import *
 from utils.validate import *
 
 # Step Definitions for Block Cucumber Tests
@@ -107,13 +107,10 @@ def step_impl(ctx):
         ctx.exception = ex
 
 
-async def step_event(ctx):
-    await ctx.sdk_client.await_n_events(NodeEventChannel.main, NodeEventType.Step, 1)
-
-
 @given("that a step event is received")
 def step_impl(ctx):
-    asyncio.run(step_event(ctx))
+    # asyncio.run(step_event(ctx))
+    call_async_function(ctx, step_event)
     ctx.nodeEraSwitchBlockData = ctx.nctl_client.get_era_switch_block()
 
     assert ctx.nodeEraSwitchBlockData['era_summary']
@@ -205,8 +202,6 @@ def step_impl(ctx):
 
     ctx.deploy_result = deploy
 
-    print(deploy)
-
 
 @then("the deploy response contains a valid deploy hash")
 def step_impl(ctx):
@@ -214,17 +209,9 @@ def step_impl(ctx):
     assert ctx.deploy_result.hash.hex
 
 
-async def block_event(ctx) -> dict:
-    return await ctx.sdk_client.await_n_events(NodeEventChannel.main, NodeEventType.BlockAdded, 1)
-
-
 @then("request the block transfer")
 def step_impl(ctx):
-    while True:
-        ctx.transfer_block_sdk = asyncio.run(block_event(ctx))
-        print(ctx.transfer_block_sdk)
-        if len(ctx.transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']) > 0:
-            break
+    ctx.transfer_block_sdk = call_async_function(ctx, block_event)
 
 
 @then("request the block transfer from the test node")
@@ -236,4 +223,3 @@ def step_impl(ctx):
 @step("the returned block contains the transfer hash returned from the test node block")
 def step_impl(ctx):
     assert ctx.deploy_result.hash.hex() in ctx.transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']
-
