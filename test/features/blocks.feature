@@ -51,3 +51,10 @@ Feature: Blocks Integration Tests
     And the switch block state root hashes of the returned block are equal to the switch block state root hashes of the returned test node block
     And the delegators data of the returned block is equal to the delegators data of the returned test node block
     And the validators data of the returned block is equal to the validators data of the returned test node block
+
+    Given that chain transfer data is initialised
+    When the deploy data is put on chain
+    Then the deploy response contains a valid deploy hash
+    Then request the block transfer
+    Then request the block transfer from the test node
+    And the returned block contains the transfer hash returned from the test node block
