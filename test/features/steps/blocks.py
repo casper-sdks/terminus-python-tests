@@ -247,7 +247,7 @@ def step_impl(ctx):
 @then("request the block transfer")
 def step_impl(ctx):
     print("request the block transfer")
-
+    ctx.timeout = int(300)
     ctx.transfer_block_sdk = call_async_function(ctx, block_event)
 
 
