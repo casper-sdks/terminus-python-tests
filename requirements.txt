@@ -1,5 +1,6 @@
-pycspr
-behave
+pycspr~=0.12.4
+behave~=1.2.6
 pytest
 pytest-bdd
-totaltimeout
+totaltimeout~=3.0.2
+python-dateutil~=2.8.2
