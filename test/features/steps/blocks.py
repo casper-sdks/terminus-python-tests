@@ -1,11 +1,10 @@
 import codecs
-import random
 
 import pycspr
 from behave import *
 from pycspr import *
-from pycspr.types import Deploy
 
+from test.features.steps.utils.deploy import deploy_to_chain
 from utils.assets import *
 from utils.asyncs import *
 from utils.validate import *
@@ -20,19 +19,19 @@ BLOCK_ERR_CODE = -32001
 
 
 @given("that the latest block is requested via the sdk")
-def step_impl(ctx):
+def the_latest_block_returned(ctx):
     print("that the latest block is requested via the sdk")
     ctx.blockDataSdk = ctx.sdk_client.get_block()
 
 
 @then('request the latest block via the test node')
-def step_impl(ctx):
+def request_the_latest_block(ctx):
     print("request the latest block via the test node")
     ctx.blockDataNode = ctx.nctl_client.get_latest_block()
 
 
 @then("the body of the returned block is equal to the body of the returned test node block")
-def step_impl(ctx):
+def returned_block_body_equal_to_test_node_returned_body(ctx):
     print("the body of the returned block is equal to the body of the returned test node block")
 
     assert len(ctx.blockDataSdk['body']) > 0
@@ -42,41 +41,41 @@ def step_impl(ctx):
 
 
 @step("the hash of the returned block is equal to the hash of the returned test node block")
-def step_impl(ctx):
+def returned_block_hash_equal_to_returned_test_node_hash(ctx):
     print("the hash of the returned block is equal to the hash of the returned test node block")
 
     assert ctx.blockDataSdk['hash'] == ctx.blockDataNode['hash']
 
 
 @step("the header of the returned block is equal to the header of the returned test node block")
-def step_impl(ctx):
+def returned_block_header_equal_to_returned_test_node_header(ctx):
     print("the header of the returned block is equal to the header of the returned test node block")
 
     assert ctx.blockDataSdk['header'] == ctx.blockDataNode['header']
 
 
 @step("the proofs of the returned block are equal to the proofs of the returned test node block")
-def step_impl(ctx):
+def returned_block_proofs_equal_to_returned_test_node_proofs(ctx):
     print("the proofs of the returned block are equal to the proofs of the returned test node block")
 
     assert ctx.blockDataSdk['proofs'] == ctx.blockDataNode['proofs']
 
 
 @given("that a block is returned by hash via the sdk")
-def step_impl(ctx):
+def a_block_returned_by_hash(ctx):
     ctx.blockDataSdk = ctx.sdk_client.get_block()
     ctx.blockDataSdk = ctx.sdk_client.get_block(ctx.blockDataSdk['hash'])
 
 
 @then("request a block by hash via the test node")
-def step_impl(ctx):
+def request_block_by_hash_from_test_node(ctx):
     print("request a block by hash via the test node")
 
     ctx.blockDataNode = ctx.nctl_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
 
 
 @given("that a block is returned by height {height} via the sdk")
-def step_impl(ctx, height):
+def a_block_is_returned_by_height(ctx, height):
     print("that a block is returned by height {height} via the sdk")
 
     ctx.blockDataSdk = ctx.sdk_client.get_block()
@@ -84,13 +83,13 @@ def step_impl(ctx, height):
 
 
 @then("request the returned block from the test node via its hash")
-def step_impl(ctx):
+def a_block_is_returned_by_hash_from_test_node(ctx):
     print("request the returned block from the test node via its hash")
     ctx.blockDataNode = ctx.nctl_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
 
 
 @given("that an invalid block hash is requested via the sdk")
-def step_impl(ctx):
+def an_invalid_block_is_requested(ctx):
     print("that an invalid block hash is requested via the sdk")
     try:
         ctx.blockDataSdk = ctx.sdk_client.get_block(INVALID_BLOCK_HASH)
@@ -99,7 +98,7 @@ def step_impl(ctx):
 
 
 @then("a valid error message is returned")
-def step_impl(ctx):
+def a_valid_error_message_is_returned(ctx):
     print("a valid error message is returned")
 
     assert type(ctx.exception) is NodeAPIError
@@ -108,7 +107,7 @@ def step_impl(ctx):
 
 
 @given("that an invalid block height is requested via the sdk")
-def step_impl(ctx):
+def an_invalid_block_height_is_requested(ctx):
     print("that an invalid block height is requested via the sdk")
 
     try:
@@ -118,7 +117,7 @@ def step_impl(ctx):
 
 
 @given("that a step event is received")
-def step_impl(ctx):
+def a_step_event_is_received(ctx):
     print("that a step event is received")
 
     call_async_function(ctx, step_event)
@@ -132,7 +131,7 @@ def step_impl(ctx):
 
 
 @then("request the corresponding era switch block via the sdk")
-def step_impl(ctx):
+def request_corresponding_era_switch_block(ctx):
     print("request the corresponding era switch block via the sdk")
 
     ctx.eraSwitchBlockData = ctx.sdk_client.get_era_info(ctx.nodeEraSwitchBlock)
@@ -141,7 +140,7 @@ def step_impl(ctx):
 
 @step(
     "the switch block hashes of the returned block are equal to the switch block hashes of the returned test node block")
-def step_impl(ctx):
+def switch_block_hashes_are_equal(ctx):
     print("the switch block hashes of the returned block are equal to the switch block hashes of the returned test "
           "node block")
 
@@ -149,7 +148,7 @@ def step_impl(ctx):
 
 
 @step("the switch block eras of the returned block are equal to the switch block eras of the returned test node block")
-def step_impl(ctx):
+def switch_block_eras_are_equal(ctx):
     print("the switch block eras of the returned block are equal to the switch block eras of the returned test node "
           "block")
 
@@ -159,7 +158,7 @@ def step_impl(ctx):
 @step(
     "the switch block merkle proofs of the returned block are equal to the switch block merkle proofs of the returned "
     "test node block")
-def step_impl(ctx):
+def switch_block_merkle_proofs_are_equal(ctx):
     print("the switch block merkle proofs of the returned block are equal to the switch block merkle proofs of the "
           "returned test node block")
 
@@ -170,7 +169,7 @@ def step_impl(ctx):
 @step(
     "the switch block state root hashes of the returned block are equal to the switch block state root hashes of the "
     "returned test node block")
-def step_impl(ctx):
+def switch_block_state_root_hashes_are_equal(ctx):
     print("the switch block state root hashes of the returned block are equal to the switch block state root hashes "
           "of the returned test node block")
 
@@ -178,7 +177,7 @@ def step_impl(ctx):
 
 
 @step("the delegators data of the returned block is equal to the delegators data of the returned test node block")
-def step_impl(ctx):
+def the_delegators_are_equal(ctx):
     print("the delegators data of the returned block is equal to the delegators data of the returned test node block")
 
     assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
@@ -186,7 +185,7 @@ def step_impl(ctx):
 
 
 @step("the validators data of the returned block is equal to the validators data of the returned test node block")
-def step_impl(ctx):
+def the_validators_are_equal(ctx):
     print("the validators data of the returned block is equal to the validators data of the returned test node block")
 
     assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
@@ -194,7 +193,7 @@ def step_impl(ctx):
 
 
 @given("that chain transfer data is initialised")
-def step_impl(ctx):
+def chain_transfer_data_is_initialised(ctx):
     print("that chain transfer data is initialised")
 
     ctx.sender_key = pycspr.parse_private_key(
@@ -211,33 +210,20 @@ def step_impl(ctx):
 
 
 @when("the deploy data is put on chain")
-def step_impl(ctx):
+def a_deploy_is_put_on_chain(ctx):
     print("the deploy data is put on chain")
 
-    deploy: Deploy
+    ctx.user_1 = '1'
+    ctx.user_2 = '2'
+    ctx.chain = 'casper-net-1'
 
-    deploy_params = pycspr.create_deploy_parameters(
-        account=ctx.sender_key,
-        chain_name='casper-net-1'
-    )
+    ctx.deploy_result = deploy_to_chain(ctx)
 
-    # Set deploy.
-    deploy = pycspr.create_transfer(
-        params=deploy_params,
-        amount=ctx.transfer_amount,
-        target=ctx.receiver_key.account_key,
-        correlation_id=random.randint(1, 1e6)
-    )
-
-    deploy.approve(ctx.sender_key)
-
-    ctx.sdk_client.send_deploy(deploy)
-
-    ctx.deploy_result = deploy
+    assert ctx.deploy_result
 
 
 @then("the deploy response contains a valid deploy hash")
-def step_impl(ctx):
+def the_deploy_response_has_valid_deploy_hash(ctx):
     print("the deploy response contains a valid deploy hash")
 
     assert ctx.deploy_result
@@ -245,22 +231,22 @@ def step_impl(ctx):
 
 
 @then("request the block transfer")
-def step_impl(ctx):
+def request_block_transfer(ctx):
     print("request the block transfer")
     ctx.timeout = int(300)
-    ctx.transfer_block_sdk = call_async_function(ctx, block_event)
+    ctx.last_block_added = call_async_function(ctx, block_event)
 
 
 @then("request the block transfer from the test node")
-def step_impl(ctx):
+def step_request_block_transfer_from_test_node(ctx):
     print("request the block transfer from the test node")
 
     ctx.block_data_node = ctx.nctl_client.get_latest_block_by_param(
-        "block=" + ctx.transfer_block_sdk['BlockAdded']['block_hash'])
+        "block=" + ctx.last_block_added['BlockAdded']['block_hash'])
 
 
 @step("the returned block contains the transfer hash returned from the test node block")
-def step_impl(ctx):
+def returned_block_hash_transfer_hash_from_test_node(ctx):
     print("the returned block contains the transfer hash returned from the test node block")
 
-    assert ctx.deploy_result.hash.hex() in ctx.transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']
+    assert ctx.deploy_result.hash.hex() in ctx.last_block_added['BlockAdded']['block']['body']['transfer_hashes']
