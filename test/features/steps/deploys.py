@@ -9,33 +9,33 @@ use_step_matcher("re")
 
 # Step Definitions for Deploys Cucumber Tests
 
-@given('that user-"(.*)" initiates a transfer to user-"(.*)"')
+@given('that user-(.*) initiates a transfer to user-(.*)')
 def step_impl(ctx, user_1, user_2):
-    print("that user-{} initiates a transfer to user- {}".format(user_1, user_2))
+    print("that user-{} initiates a transfer to user-{}".format(user_1, user_2))
 
     ctx.user_1 = user_1
     ctx.user_2 = user_2
 
 
-@step('the transfer amount is "(.*)"')
+@step('the transfer amount is (.*)')
 def step_impl(ctx, amount):
     print("the transfer amount is {}".format(amount))
 
     ctx.transfer_amount = int(amount)
 
 
-@step('the transfer gas price is "(.*)"')
+@step('the transfer gas price is (.*)')
 def step_impl(ctx, gas):
     print("the transfer gas price is {}".format(gas))
 
     ctx.gas_price = int(gas)
 
 
-@step('the deploy is given a ttl of "(.*)"')
+@step('the deploy is given a ttl of (.*)m')
 def step_impl(ctx, ttl):
-    print("the deploy is given a ttl of {}".format(ttl))
+    print("the deploy is given a ttl of {}".format(ttl + "m"))
 
-    ctx.ttl = ttl
+    ctx.ttl = ttl + 'm'
 
 
 @when('the deploy is put on chain "(.*)"')
@@ -47,7 +47,7 @@ def step_impl(ctx, chain):
     ctx.deploy_result = deploy_to_chain(ctx)
 
 
-@then('the deploy response contains a valid deploy hash of length "(.*)" and an API version "(.*)"')
+@then('the deploy response contains a valid deploy hash of length (.*) and an API version "(.*)"')
 def step_impl(ctx, hash_length, api):
     print(
         "the deploy response contains a valid deploy hash of length {} and an API version {}".format(hash_length, api))
@@ -58,7 +58,7 @@ def step_impl(ctx, hash_length, api):
     # TODO api version not returned in deploy response
 
 
-@then('wait for a block added event with a timeout of "(.*)" seconds')
+@then('wait for a block added event with a timeout of (.*) seconds')
 def step_impl(ctx, timeout):
     print("wait for a block added event with a timeout of {} seconds".format(timeout))
 
@@ -109,14 +109,14 @@ def step_impl(ctx, block):
     assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy['execution_results'][0]['block_hash']
 
 
-@step('the deploy execution has a cost of "(.*)" motes')
+@step('the deploy execution has a cost of (.*) motes')
 def step_impl(ctx, motes):
     print('the deploy execution has a cost of {} motes'.format(motes))
 
     assert ctx.deploy['execution_results'][0]['result']['Success']['cost'] == motes
 
 
-@step('the deploy has a payment amount of "(.*)"')
+@step('the deploy has a payment amount of (.*)')
 def step_impl(ctx, amount):
     print('the deploy has a payment amount of {}'.format(amount))
 
@@ -153,7 +153,7 @@ def step_impl(ctx, _type):
     assert type(ctx.deploy_result.session) == ctx.types_map[_type]
 
 
-@step('the deploy is approved by user-"(.*)"')
+@step('the deploy is approved by user-(.*)')
 def step_impl(ctx, user):
     print('the deploy is approved by user-{}'.format(user))
 
@@ -166,18 +166,18 @@ def step_impl(ctx, user):
     assert user_1_key == ctx.deploy_result.approvals[0].signer
 
 
-@step('the deploy has a gas price of "(.*)"')
+@step('the deploy has a gas price of (.*)')
 def step_impl(ctx, gas_price):
     print("the deploy has a gas price of {}".format(gas_price))
 
     assert ctx.deploy_result.header.gas_price == int(gas_price)
 
 
-@step('the deploy has a ttl of "(.*)"')
+@step('the deploy has a ttl of (.*)m')
 def step_impl(ctx, ttl):
-    print("the deploy has a ttl of {}".format(ttl))
+    print("the deploy has a ttl of {}".format(ttl + "m"))
 
-    assert ctx.deploy_result.header.ttl.humanized == ttl
+    assert ctx.deploy_result.header.ttl.humanized == ttl + 'm'
 
 
 @step('the deploy session has a "(.*)" argument with a numeric value of "(.*)"')
@@ -187,7 +187,7 @@ def step_impl(ctx, arg, value):
     assert ctx.deploy_result.session.args[arg].value == int(value)
 
 
-@step('the deploy session has a "(.*)" argument with the public key of user-"(.*)"')
+@step('the deploy session has a "(.*)" argument with the public key of user-(.*)')
 def step_impl(ctx, arg, user):
     print('the deploy session has a {} argument with the public key of user-{}'.format(arg, user))
 
