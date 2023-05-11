@@ -1,11 +1,11 @@
 from behave import *
 
-from utils.assets import *
 from utils.asyncs import *
 from utils.deploy import *
 from utils.validate import *
 
 use_step_matcher("re")
+
 
 # Step Definitions for Deploys Cucumber Tests
 
@@ -15,7 +15,6 @@ def step_impl(ctx, user_1, user_2):
 
     ctx.user_1 = user_1
     ctx.user_2 = user_2
-
 
 
 @step('the transfer amount is "(.*)"')
@@ -84,6 +83,7 @@ def step_impl(ctx):
 
     assert ctx.deploy_result
 
+
 @when("a deploy is requested via the info_get_deploy RCP method")
 def step_impl(ctx):
     print('a deploy is requested via the info_get_deploy RCP method')
@@ -100,17 +100,20 @@ def step_impl(ctx, api):
     print('the deploy data has an API version of '.format(api))
     assert ctx.deploy['api_version'] == api
 
+
 @step('the deploy execution result has "lastBlockAdded" block hash')
 def step_impl(ctx):
     print('the deploy execution result has "lastBlockAdded" block hash')
 
     assert ctx.transfer_block_sdk['BlockAdded']['block_hash'] == ctx.deploy['execution_results'][0]['block_hash']
 
+
 @step('the deploy execution has a cost of "(.*)" motes')
 def step_impl(ctx, motes):
     print('the deploy execution has a cost of {} motes'.format(motes))
 
     assert ctx.deploy['execution_results'][0]['result']['Success']['cost'] == motes
+
 
 @step('the deploy has a payment amount of "(.*)"')
 def step_impl(ctx, amount):
@@ -127,11 +130,10 @@ def step_impl(ctx):
     assert len(ctx.deploy_result.hash.hex()) == 64
     assert ctx.deploy_result.hash.hex() == ctx.deploy['deploy']['hash']
 
+
 @step("the deploy has a valid timestamp")
 def step_impl(ctx):
     print('the deploy has a valid timestamp')
-    print(ctx.deploy)
-    print(ctx.deploy_result)
 
     assert compare_timestamps(ctx.deploy_result.header.timestamp.value, ctx.deploy['deploy']['header']['timestamp'])
 
@@ -150,73 +152,67 @@ def step_impl(ctx):
     assert type(ctx.deploy_result.session) == pycspr.types.deploys.Transfer
 
 
-
 @step("the deploy is approved by user-1")
 def step_impl(ctx):
     print('the deploy is approved by user-1')
 
     assert len(ctx.deploy_result.approvals) == 1
-    key = get_user_asset(ctx.ASSETS_ROOT, "1", "1", "public_key.pem")
 
-    ctx.deploy_result.approvals[0].signer.account_key.hex()
+    user_1_key = pycspr.parse_public_key(
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", "1", "public_key_hex")
+    )
 
-    print(key)
-
-
+    assert user_1_key == ctx.deploy_result.approvals[0].signer
 
 
 @step("the deploy has a gas price of 1")
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And the deploy has a gas price of 1')
+    print("the deploy has a gas price of 1")
+
+    assert ctx.deploy_result.header.gas_price == 1
 
 
 @step("the deploy has a ttl of 30m")
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And the deploy has a ttl of 30m')
+    print("the deploy has a ttl of 30m")
+
+    assert ctx.deploy_result.header.ttl.humanized == '30m'
 
 
 @step('the deploy session has a "amount" argument value of type "U512"')
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And the deploy session has a "amount" argument value of type "U512"')
+    print('the deploy session has a "amount" argument value of type "U512"')
+
+    assert type(ctx.deploy_result.session.args['amount']) == pycspr.types.cl_values.CL_U512
 
 
 @step('the deploy session has a "amount" argument with a numeric value of 2500000000')
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(
-        u'STEP: And the deploy session has a "amount" argument with a numeric value of 2500000000')
+    print('the deploy session has a "amount" argument with a numeric value of 2500000000')
+
+    assert ctx.deploy_result.session.args['amount'].value == 2500000000
 
 
 @step('the deploy session has a "target" argument with the public key of user-2')
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And the deploy session has a "target" argument with the public key of user-2')
+    print('the deploy session has a "target" argument with the public key of user-2')
+
+    user_2_key = pycspr.parse_public_key(
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", "2", "public_key_hex")
+    )
+
+    assert user_2_key == ctx.deploy_result.session.args['target']
 
 
 @step('the deploy session has a "target" argument value of type "PublicKey"')
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And the deploy session has a "target" argument value of type "PublicKey"')
+    print('the deploy session has a "target" argument value of type "PublicKey"')
+
+    assert type(ctx.deploy_result.session.args['target']) == pycspr.types.cl_values.CL_PublicKey
 
 
 @step('the deploy session has a "id" argument value of type "Option"')
 def step_impl(ctx):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And the deploy session has a "id" argument value of type "Option"')
+    print('the deploy session has a "id" argument value of type "Option"')
+
+    assert type(ctx.deploy_result.session.args["id"]) == pycspr.types.cl_values.CL_Option

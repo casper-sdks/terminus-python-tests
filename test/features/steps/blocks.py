@@ -1,11 +1,10 @@
 import codecs
-import random
 
 import pycspr
 from behave import *
 from pycspr import *
-from pycspr.types import Deploy
 
+from test.features.steps.utils.deploy import deploy_to_chain
 from utils.assets import *
 from utils.asyncs import *
 from utils.validate import *
@@ -214,26 +213,13 @@ def step_impl(ctx):
 def step_impl(ctx):
     print("the deploy data is put on chain")
 
-    deploy: Deploy
+    ctx.user_1 = '1'
+    ctx.user_2 = '2'
+    ctx.chain = 'casper-net-1'
 
-    deploy_params = pycspr.create_deploy_parameters(
-        account=ctx.sender_key,
-        chain_name='casper-net-1'
-    )
+    ctx.deploy_result = deploy_to_chain(ctx)
 
-    # Set deploy.
-    deploy = pycspr.create_transfer(
-        params=deploy_params,
-        amount=ctx.transfer_amount,
-        target=ctx.receiver_key.account_key,
-        correlation_id=random.randint(1, 1e6)
-    )
-
-    deploy.approve(ctx.sender_key)
-
-    ctx.sdk_client.send_deploy(deploy)
-
-    ctx.deploy_result = deploy
+    assert ctx.deploy_result
 
 
 @then("the deploy response contains a valid deploy hash")
