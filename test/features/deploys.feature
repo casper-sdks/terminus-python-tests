@@ -20,12 +20,12 @@ Feature: Deploys
     And the deploy has a valid timestamp
     And the deploy has a valid body hash
     And the deploy has a session type of "Transfer"
-    And the deploy is approved by user-1
-    And the deploy has a gas price of 1
-    And the deploy has a ttl of 30m
+    And the deploy is approved by user-"1"
+    And the deploy has a gas price of "1"
+    And the deploy has a ttl of "30m"
     And the deploy session has a "amount" argument value of type "U512"
-    And the deploy session has a "amount" argument with a numeric value of 2500000000
+    And the deploy session has a "amount" argument with a numeric value of "2500000000"
     And the deploy session has a "target" argument value of type "PublicKey"
-    And the deploy session has a "target" argument with the public key of user-2
+    And the deploy session has a "target" argument with the public key of user-"2"
     And the deploy session has a "id" argument value of type "Option"
 

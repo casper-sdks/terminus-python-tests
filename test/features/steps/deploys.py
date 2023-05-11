@@ -63,9 +63,9 @@ def step_impl(ctx, timeout):
     print("wait for a block added event with a timeout of {} seconds".format(timeout))
 
     ctx.timeout = float(timeout)
-    ctx.transfer_block_sdk = call_async_function(ctx, block_event)
-
-    assert ctx.deploy_result.hash.hex() in ctx.transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']
+    ctx.last_block_added = call_async_function(ctx, block_event)
+    ctx.param_map['last_block_added'] = ctx.last_block_added
+    assert ctx.deploy_result.hash.hex() in ctx.last_block_added['BlockAdded']['block']['body']['transfer_hashes']
 
 
 @given("that a Transfer has been successfully deployed")
@@ -89,7 +89,8 @@ def step_impl(ctx):
     print('a deploy is requested via the info_get_deploy RCP method')
 
     ctx.timeout = 300
-    ctx.transfer_block_sdk = call_async_function(ctx, block_event)
+    ctx.last_block_added = call_async_function(ctx, block_event)
+    ctx.param_map['last_block_added'] = ctx.last_block_added
 
     ctx.deploy = ctx.sdk_client.get_deploy(ctx.deploy_result.hash.hex())
     assert ctx.deploy
@@ -101,11 +102,11 @@ def step_impl(ctx, api):
     assert ctx.deploy['api_version'] == api
 
 
-@step('the deploy execution result has "lastBlockAdded" block hash')
-def step_impl(ctx):
-    print('the deploy execution result has "lastBlockAdded" block hash')
+@step('the deploy execution result has "(.*)" block hash')
+def step_impl(ctx, block):
+    print('the deploy execution result has {} block hash'.format(block))
 
-    assert ctx.transfer_block_sdk['BlockAdded']['block_hash'] == ctx.deploy['execution_results'][0]['block_hash']
+    assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy['execution_results'][0]['block_hash']
 
 
 @step('the deploy execution has a cost of "(.*)" motes')
@@ -145,74 +146,60 @@ def step_impl(ctx):
     assert ctx.deploy_result.header.body_hash.hex() == ctx.deploy['deploy']['header']['body_hash']
 
 
-@step('the deploy has a session type of "Transfer"')
-def step_impl(ctx):
-    print('the deploy has a session type of Transfer')
+@step('the deploy has a session type of "(.*)"')
+def step_impl(ctx, _type):
+    print('the deploy has a session type of {}'.format(_type))
 
-    assert type(ctx.deploy_result.session) == pycspr.types.deploys.Transfer
+    assert type(ctx.deploy_result.session) == ctx.types_map[_type]
 
 
-@step("the deploy is approved by user-1")
-def step_impl(ctx):
-    print('the deploy is approved by user-1')
+@step('the deploy is approved by user-"(.*)"')
+def step_impl(ctx, user):
+    print('the deploy is approved by user-{}'.format(user))
 
     assert len(ctx.deploy_result.approvals) == 1
 
     user_1_key = pycspr.parse_public_key(
-        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", "1", "public_key_hex")
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", user, "public_key_hex")
     )
 
     assert user_1_key == ctx.deploy_result.approvals[0].signer
 
 
-@step("the deploy has a gas price of 1")
-def step_impl(ctx):
-    print("the deploy has a gas price of 1")
+@step('the deploy has a gas price of "(.*)"')
+def step_impl(ctx, gas_price):
+    print("the deploy has a gas price of {}".format(gas_price))
 
-    assert ctx.deploy_result.header.gas_price == 1
-
-
-@step("the deploy has a ttl of 30m")
-def step_impl(ctx):
-    print("the deploy has a ttl of 30m")
-
-    assert ctx.deploy_result.header.ttl.humanized == '30m'
+    assert ctx.deploy_result.header.gas_price == int(gas_price)
 
 
-@step('the deploy session has a "amount" argument value of type "U512"')
-def step_impl(ctx):
-    print('the deploy session has a "amount" argument value of type "U512"')
+@step('the deploy has a ttl of "(.*)"')
+def step_impl(ctx, ttl):
+    print("the deploy has a ttl of {}".format(ttl))
 
-    assert type(ctx.deploy_result.session.args['amount']) == pycspr.types.cl_values.CL_U512
-
-
-@step('the deploy session has a "amount" argument with a numeric value of 2500000000')
-def step_impl(ctx):
-    print('the deploy session has a "amount" argument with a numeric value of 2500000000')
-
-    assert ctx.deploy_result.session.args['amount'].value == 2500000000
+    assert ctx.deploy_result.header.ttl.humanized == ttl
 
 
-@step('the deploy session has a "target" argument with the public key of user-2')
-def step_impl(ctx):
-    print('the deploy session has a "target" argument with the public key of user-2')
+@step('the deploy session has a "(.*)" argument with a numeric value of "(.*)"')
+def step_impl(ctx, arg, value):
+    print('the deploy session has a {} argument with a numeric value of {}'.format(arg, value))
 
-    user_2_key = pycspr.parse_public_key(
-        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", "2", "public_key_hex")
+    assert ctx.deploy_result.session.args[arg].value == int(value)
+
+
+@step('the deploy session has a "(.*)" argument with the public key of user-"(.*)"')
+def step_impl(ctx, arg, user):
+    print('the deploy session has a {} argument with the public key of user-{}'.format(arg, user))
+
+    user_key = pycspr.parse_public_key(
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", user, "public_key_hex")
     )
 
-    assert user_2_key == ctx.deploy_result.session.args['target']
+    assert user_key == ctx.deploy_result.session.args[arg]
 
 
-@step('the deploy session has a "target" argument value of type "PublicKey"')
-def step_impl(ctx):
-    print('the deploy session has a "target" argument value of type "PublicKey"')
+@step('the deploy session has a "(.*)" argument value of type "(.*)"')
+def step_impl(ctx, arg, _type):
+    print('the deploy session has a {} argument value of type {}'.format(arg, _type))
 
-    assert type(ctx.deploy_result.session.args['target']) == pycspr.types.cl_values.CL_PublicKey
-
-
-@step('the deploy session has a "id" argument value of type "Option"')
-def step_impl(ctx):
-    print('the deploy session has a "id" argument value of type "Option"')
-
-    assert type(ctx.deploy_result.session.args["id"]) == pycspr.types.cl_values.CL_Option
+    assert type(ctx.deploy_result.session.args[arg]) == ctx.types_map[_type]

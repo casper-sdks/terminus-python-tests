@@ -234,7 +234,7 @@ def step_impl(ctx):
 def step_impl(ctx):
     print("request the block transfer")
     ctx.timeout = int(300)
-    ctx.transfer_block_sdk = call_async_function(ctx, block_event)
+    ctx.last_block_added = call_async_function(ctx, block_event)
 
 
 @then("request the block transfer from the test node")
@@ -242,11 +242,11 @@ def step_impl(ctx):
     print("request the block transfer from the test node")
 
     ctx.block_data_node = ctx.nctl_client.get_latest_block_by_param(
-        "block=" + ctx.transfer_block_sdk['BlockAdded']['block_hash'])
+        "block=" + ctx.last_block_added['BlockAdded']['block_hash'])
 
 
 @step("the returned block contains the transfer hash returned from the test node block")
 def step_impl(ctx):
     print("the returned block contains the transfer hash returned from the test node block")
 
-    assert ctx.deploy_result.hash.hex() in ctx.transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']
+    assert ctx.deploy_result.hash.hex() in ctx.last_block_added['BlockAdded']['block']['body']['transfer_hashes']
