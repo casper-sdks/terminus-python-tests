@@ -33,7 +33,7 @@ class NCTLExec:
         res = os.popen(self._get_pre_script() + "view_node_status.sh node=" + str(node) + "'").read()
         return json.loads(self._clean_input.sub('', res[res.find('{'):len(res)]))
 
-    # view_chain_state_root_hash returns non json ouput
+    # view_chain_state_root_hash returns non json output
     # the method returns the whole line for comparison
     def get_state_root_hash(self, node):
         res = subprocess.check_output(["docker", "exec", "-t", self.config.get_docker_name(), '/bin/bash', "-c",
