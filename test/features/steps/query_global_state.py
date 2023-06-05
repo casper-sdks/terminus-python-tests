@@ -5,7 +5,7 @@ use_step_matcher("re")
 
 @given("that a valid block hash is known")
 def a_valid_block_hash_is_known(ctx):
-    raise NotImplementedError('Feature not implemented')
+    raise NotImplementedError('query_global_state not implemented')
 
 
 @when("the query_global_state RCP method is invoked with the block hash as the query identifier")
