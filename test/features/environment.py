@@ -35,3 +35,5 @@ def before_all(ctx):
     ctx.param_map = {}
     ctx.param_keys = param_keys
     ctx.types_map = types
+    ctx.user_1 = '1'
+    ctx.user_2 = '2'

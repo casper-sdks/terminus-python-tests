@@ -1,6 +1,5 @@
 import codecs
 
-import pycspr
 from behave import *
 from pycspr import *
 
@@ -213,8 +212,6 @@ def chain_transfer_data_is_initialised(ctx):
 def a_deploy_is_put_on_chain(ctx):
     print("the deploy data is put on chain")
 
-    ctx.user_1 = '1'
-    ctx.user_2 = '2'
     ctx.chain = 'casper-net-1'
 
     ctx.deploy_result = deploy_to_chain(ctx)

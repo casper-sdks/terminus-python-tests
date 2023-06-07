@@ -7,6 +7,9 @@ from behave import *
 
 use_step_matcher("re")
 
+
+# Step definitions for read deploy cucumber tests
+
 _PATH_TO_JSON = pathlib.Path(os.path.dirname(__file__)) / "json"
 
 
@@ -59,7 +62,7 @@ def the_body_hash_is(ctx, body_hash):
     print('the body hash is {}'.format(body_hash))
 
 
-@step('the chain name is  "(.*)"')
+@step('the chain name is "(.*)"')
 def the_chain_name_is(ctx, chain_name):
     print('the chain name is {}'.format(chain_name))
 
