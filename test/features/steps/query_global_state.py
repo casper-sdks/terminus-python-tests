@@ -57,16 +57,6 @@ def the_rcp_method_invoked_with_invalid_key(ctx):
           'invalid key')
 
 
-@then("an error code of (.*) is returned")
-def error_code_is_returned(ctx, error_code):
-    print('an error code of {} is returned'.format(error_code))
-
-
-@step('an error message of "(.*)" is returned')
-def error_message_is_returned(ctx, error_msg):
-    print('an error message of "{}" is returned'.format(error_msg))
-
-
 @given("the query_global_state RCP method is invoked with an invalid block hash as the query identifier")
 def rcp_invoked_with_invalid_block_hash(ctx):
     print('the query_global_state RCP method is invoked with an invalid block hash as the query identifier')
