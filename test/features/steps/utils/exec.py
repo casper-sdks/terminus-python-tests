@@ -23,6 +23,10 @@ class NCTLExec:
         return json.loads(
             self._clean_input.sub('', os.popen(self._get_pre_script() + "view_chain_block.sh " + params + "'").read()))
 
+    def get_user_account(self, params):
+        res = os.popen(self._get_pre_script() + "view_user_account.sh " + params + "'").read()
+        return json.loads(self._clean_input.sub('', res[res.find('{'):len(res)]))
+
     def get_era_switch_block(self):
         return json.loads(
             self._clean_input.sub('', os.popen(self._get_pre_script() + "view_chain_era_info.sh'").read()))

@@ -2,6 +2,8 @@ from behave import *
 
 use_step_matcher("re")
 
+# Step definitions for query_global_state cucumber tests
+
 
 @given("that a valid block hash is known")
 def a_valid_block_hash_is_known(ctx):
