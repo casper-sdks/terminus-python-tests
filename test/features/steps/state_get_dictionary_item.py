@@ -20,7 +20,7 @@ def state_get_dictionary_item_invoked(ctx):
 
     ctx.dictionary_item = ctx.sdk_client.get_dictionary_item(dictionary_id)
 
-    print('The get_dictionary_item fails. Code needs implementing in the DictionaryId')
+    print('BUG:The get_dictionary_item fails. Code needs implementing in the DictionaryId')
 
 
 @then("a valid state_get_dictionary_item_result is returned")
