@@ -9,10 +9,10 @@ use_step_matcher("re")
 def state_get_balance_invoked(ctx):
     print('that the state_get_balance RPC method is invoked against nclt user-1 purse')
 
-    state_root_balance = ctx.nctl_client.get_state_root_hash(1)
+    state_root_hash = ctx.nctl_client.get_state_root_hash(1)
     ctx.account_main_purse = ctx.nctl_client.get_account_main_purse('user=1')
 
-    ctx.state_get_balance_result = ctx.sdk_client.get_account_balance(ctx.account_main_purse, state_root_balance)
+    ctx.state_get_balance_result = ctx.sdk_client.get_account_balance(ctx.account_main_purse, state_root_hash)
 
 
 @then("a valid state_get_balance_result is returned")
