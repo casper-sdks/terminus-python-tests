@@ -43,7 +43,9 @@ def the_deploy_is_put_on_chain(ctx, chain):
     print("the deploy is put on chain {}".format(chain))
 
     ctx.chain = chain
+    ctx.payment_amount = 10000
 
+    deploy_set_signatures(ctx)
     ctx.deploy_result = deploy_to_chain(ctx)
 
 
@@ -78,7 +80,9 @@ def a_transfer_is_successful(ctx):
     ctx.gas_price = 1
     ctx.ttl = '30m'
     ctx.chain = 'casper-net-1'
+    ctx.payment_amount = 10000
 
+    deploy_set_signatures(ctx)
     ctx.deploy_result = deploy_to_chain(ctx)
 
     assert ctx.deploy_result

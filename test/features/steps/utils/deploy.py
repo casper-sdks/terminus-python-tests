@@ -8,7 +8,7 @@ from pycspr.types import Deploy
 def deploy_to_chain(ctx) -> Deploy:
     deploy: Deploy
 
-    _get_counter_parties(ctx)
+    # deploy_get_signatures(ctx)
 
     deploy_params = pycspr.create_deploy_parameters(
         account=ctx.sender_key,
@@ -20,9 +20,10 @@ def deploy_to_chain(ctx) -> Deploy:
     # Set deploy.
     deploy = pycspr.create_transfer(
         params=deploy_params,
-        amount=ctx.transfer_amount,
+        amount=int(ctx.transfer_amount),
         target=ctx.receiver_key.account_key,
-        correlation_id=random.randint(1, 1e6)
+        correlation_id=random.randint(1, 1e6),
+        payment=int(ctx.payment_amount)
     )
 
     deploy.approve(ctx.sender_key)
@@ -32,11 +33,18 @@ def deploy_to_chain(ctx) -> Deploy:
     return deploy
 
 
-def _get_counter_parties(ctx):
+def deploy_set_signatures(ctx):
     ctx.sender_key = pycspr.parse_private_key(
-        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", ctx.user_1, "secret_key.pem"),
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", 'user-{}'.format(ctx.user_1), "secret_key.pem"),
         KeyAlgorithm.ED25519.name,
     )
     ctx.receiver_key = pycspr.parse_public_key(
-        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", ctx.user_2, "public_key_hex")
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", 'user-{}'.format(ctx.user_2), "public_key_hex")
+    )
+
+
+def deploy_set_faucet_key(ctx):
+    ctx.sender_key = pycspr.parse_private_key(
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", 'faucet', "secret_key.pem"),
+        KeyAlgorithm.ED25519.name,
     )
