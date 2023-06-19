@@ -48,6 +48,7 @@ def the_result_contains_the_uref(ctx):
 @given("that the state root hash is known")
 def the_state_root_hash_is_known(ctx):
     print('that the state root hash is known')
+    raise NotImplementedError('query_global_state not implemented')
 
 
 @when(
@@ -60,3 +61,5 @@ def the_rcp_method_invoked_with_invalid_key(ctx):
 @given("the query_global_state RCP method is invoked with an invalid block hash as the query identifier")
 def rcp_invoked_with_invalid_block_hash(ctx):
     print('the query_global_state RCP method is invoked with an invalid block hash as the query identifier')
+
+    raise NotImplementedError('query_global_state not implemented')

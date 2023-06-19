@@ -1,11 +1,10 @@
 # This workflow will:
 #   - download and start a NCTL docker image
 #   - upload the nctl assets as a project artifact
-#   - download the latest casper-java-sdk and build the jar
-#   - upload the sdk jar as a project artifact
+#   - download the latest casper-python-sdk
 #   - download the test platform
 #   - download the project artifacts and move to the required directories
-#   - run the cucumber tests via gradle
+#   - run the cucumber tests via behave
 
 
 name: CSPR Python SDK Standard Tests
@@ -60,14 +59,6 @@ jobs:
          ref: main
          path: casper-python-sdk
 
-#      # Upload the Python SDK source code artifact
-#      - name: Upload Python SDK code to artifacts
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: python-sdk
-#          path: |
-#            casper-python-sdk/*
-
       # Checkout the test platform Python code
       - name: Checkout the test platform Python code
         uses: actions/checkout@v2
@@ -86,23 +77,12 @@ jobs:
         with:
           name: nctl-assets
 
-#      # Download the python sdk artifact
-#      - name: Download python sdk artifact
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: python-sdk
 
       # Move the downloaded assets to their required folders
       # Run the actual cucumber tests
       - name: Copy artifacts and test with cucumber
         run: |
-          ls -ltra
-          ls assets -ltra
-          ls assets/net-1 -ltra
-          ls assets/net-1/user-1 -ltra
           mv assets/ cspr-standard-tests-python
-          ls casper-python-sdk -ltra
-          ls cspr-standard-tests-python -ltra
           cd casper-python-sdk
           sudo pip install -e .
           cd ../cspr-standard-tests-python
