@@ -37,17 +37,20 @@ jobs:
           mkdir assets
           docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/chainspec assets
           docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/users assets
+          docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/faucet assets
           mv assets/users assets/net-1
+          mv assets/faucet assets/net-1
           mv assets/chainspec assets/net-1/chainspec          
 
       # Upload the NCTL assets to a project artifact
       - name: Upload NCTL assets to artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: nctl-accounts
+          name: nctl-assets
           path: |
             assets/net-1/chainspec/accounts.toml
             assets/net-1/user-*
+            assets/net-1/faucet
 
       # Checkout the latest Casper Python SDK from their repo ready for a build
       - name: Checkout SDK source code
@@ -81,7 +84,7 @@ jobs:
       - name: Download NCTL assets artifact
         uses: actions/download-artifact@v3
         with:
-          name: nctl-accounts
+          name: nctl-assets
 
 #      # Download the python sdk artifact
 #      - name: Download python sdk artifact
