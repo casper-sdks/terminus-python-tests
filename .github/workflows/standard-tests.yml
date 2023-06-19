@@ -97,6 +97,7 @@ jobs:
       - name: Copy artifacts and test with cucumber
         run: |
           ls -ltra
+          ls assets -ltra
           ls casper-python-sdk -ltra
           ls cspr-standard-tests-python -ltra
           cd casper-python-sdk
