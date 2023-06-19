@@ -72,7 +72,7 @@ jobs:
       - name: Checkout the test platform Python code
         uses: actions/checkout@v2
         with:
-          path: cspr-python-standard-tests
+          path: cspr-standard-tests-python
 
       # Set up Python
       - name: Set Up Python 3.9
