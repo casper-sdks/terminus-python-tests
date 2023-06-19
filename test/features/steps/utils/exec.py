@@ -1,13 +1,64 @@
 import json
 import os
 import re
+import subprocess
 
+
+# Queries the NCTL node
 
 class NCTLExec:
-    clean_input = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    _clean_input = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    _source: str = 'source casper-node/utils/nctl/sh/views/'
+
+    def __init__(self, config):
+        self.config = config
+
+    def _get_pre_script(self):
+        return "docker exec -t " + self.config.get_docker_name() + " /bin/bash -c '" + self._source
 
     def get_latest_block(self):
-        return json.loads(self.clean_input.sub('',
-                                               os.popen(
-                                                   "docker exec -t storm-nctl /bin/bash -c 'source "
-                                                   "casper-node/utils/nctl/sh/views/view_chain_block.sh'").read()))
+        return json.loads(self._clean_input.sub('', os.popen(self._get_pre_script() + "view_chain_block.sh'").read()))
+
+    def get_latest_block_by_param(self, params):
+        return json.loads(
+            self._clean_input.sub('', os.popen(self._get_pre_script() + "view_chain_block.sh " + params + "'").read()))
+
+    def get_user_account(self, params):
+        res = os.popen(self._get_pre_script() + "view_user_account.sh " + params + "'").read()
+        return json.loads(self._clean_input.sub('', res[res.find('{'):len(res)]))
+
+    def get_era_switch_block(self):
+        return json.loads(
+            self._clean_input.sub('', os.popen(self._get_pre_script() + "view_chain_era_info.sh'").read()))
+
+    # view_node_status returns a console line followed by json
+    # the method will return just the json
+    def get_node_status(self, node):
+        res = os.popen(self._get_pre_script() + "view_node_status.sh node=" + str(node) + "'").read()
+        return json.loads(self._clean_input.sub('', res[res.find('{'):len(res)]))
+
+    # view_chain_state_root_hash returns non json output
+    # the method returns the whole line for comparison
+    def get_state_root_hash(self, node):
+        res = subprocess.check_output(["docker", "exec", "-t", self.config.get_docker_name(), '/bin/bash', "-c",
+                                       self._source + "view_chain_state_root_hash.sh node="
+                                       + str(node)]).decode('utf-8')
+
+        return res.split("=")[1].split()[0]
+
+    def get_account_main_purse(self, params):
+        res = os.popen(self._get_pre_script() + "view_user_account.sh " + params + "'").read()
+        return json.loads(self._clean_input.sub('', res[res.find('{'):len(res)]))['stored_value']['Account']['main_purse']
+
+    def get_account_balance(self, params):
+        res = subprocess.check_output(["docker", "exec", "-t", self.config.get_docker_name(), '/bin/bash', "-c",
+                                       self._source + "view_chain_balance.sh "
+                                       + str(params)]).decode('utf-8')
+
+        return int(res.split("=")[1].split()[0])
+
+
+
+
+
+
