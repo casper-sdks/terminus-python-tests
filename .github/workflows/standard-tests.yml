@@ -99,6 +99,8 @@ jobs:
           ls -ltra
           ls assets -ltra
           ls assets/net-1 -ltra
+          ls assets/net-1/user-1 -ltra
+          mv assets/ cspr-standard-tests-python
           ls casper-python-sdk -ltra
           ls cspr-standard-tests-python -ltra
           cd casper-python-sdk
