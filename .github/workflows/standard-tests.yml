@@ -57,7 +57,13 @@ jobs:
         run: |
           ls -ltra
           ls cspr-standard-tests-python -ltra
-          cd sh && chmod +x docker-copy-assets.sh && ./docker-copy-assets.sh && cd ..  
+          
+          cd cspr-standard-tests-python/sh && 
+          chmod +x docker-copy-assets.sh && 
+          ./docker-copy-assets.sh && cd ../..  
+          
+          ls cspr-standard-tests-python -ltra
+          
           cd casper-python-sdk
           sudo pip install -e .
           cd ../cspr-standard-tests-python
