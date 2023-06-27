@@ -27,7 +27,7 @@ jobs:
           - 25101:25101
     steps:
        # Start the NCTL docker image
-      - name: Preparing NCTL assets on the started NCTL docker image
+      - name: Starting the NCTL docker image
         run: |
           echo "Wait for NCTL"
           sleep 30s        
@@ -52,11 +52,11 @@ jobs:
         with:
           python-version: 3.9
 
-
-      # Move the downloaded assets to their required folders
       # Run the actual cucumber tests
-      - name: Copy artifacts and test with cucumber
+      - name: Test with cucumber
         run: |
+          ls -ltra
+          ls cspr-standard-tests-python -ltra
           cd sh && chmod +x docker-copy-assets.sh && ./docker-copy-assets.sh && cd ..  
           cd casper-python-sdk
           sudo pip install -e .
