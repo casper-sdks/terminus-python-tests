@@ -1,11 +1,8 @@
 # This workflow will:
 #   - download and start a NCTL docker image
-#   - upload the nctl assets as a project artifact
 #   - download the latest casper-python-sdk
 #   - download the test platform
-#   - download the project artifacts and move to the required directories
 #   - run the cucumber tests via behave
-
 
 name: CSPR Python SDK Standard Tests
 on:
@@ -15,9 +12,9 @@ jobs:
     name: Setting Up NCTL
     runs-on: ubuntu-latest
     services:
-      storm-nctl:
-        image: makesoftware/casper-nctl:v1413
-        options: --name storm-nctl
+      nctl:
+        image: stormeye2000/cspr-nctl:1.5
+        options: --name cspr-nctl
         env:
           PREDEFINED_ACCOUNTS: 'true'
           MINIMUM_ROUND_EXPONENT: '12'
@@ -27,29 +24,13 @@ jobs:
           - 11101:11101
           - 14101:14101
           - 18101:18101
+          - 25101:25101
     steps:
-      # Build the assets folder from the started NCTL docker image
+       # Start the NCTL docker image
       - name: Preparing NCTL assets on the started NCTL docker image
         run: |
           echo "Wait for NCTL"
-          sleep 40s
-          mkdir assets
-          docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/chainspec assets
-          docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/users assets
-          docker cp storm-nctl:/home/casper/casper-node/utils/nctl/assets/net-1/faucet assets
-          mv assets/users assets/net-1
-          mv assets/faucet assets/net-1
-          mv assets/chainspec assets/net-1/chainspec          
-
-      # Upload the NCTL assets to a project artifact
-      - name: Upload NCTL assets to artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: nctl-assets
-          path: |
-            assets/net-1/chainspec/accounts.toml
-            assets/net-1/user-*
-            assets/net-1/faucet
+          sleep 30s        
 
       # Checkout the latest Casper Python SDK from their repo ready for a build
       - name: Checkout SDK source code
@@ -71,18 +52,12 @@ jobs:
         with:
           python-version: 3.9
 
-      # Download the NCTL assets artifact
-      - name: Download NCTL assets artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: nctl-assets
-
 
       # Move the downloaded assets to their required folders
       # Run the actual cucumber tests
       - name: Copy artifacts and test with cucumber
         run: |
-          mv assets/ cspr-standard-tests-python
+          cd sh && chmod +x docker-copy-assets.sh && ./docker-copy-assets.sh && cd ..  
           cd casper-python-sdk
           sudo pip install -e .
           cd ../cspr-standard-tests-python
