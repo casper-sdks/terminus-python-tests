@@ -55,17 +55,14 @@ jobs:
       # Run the actual cucumber tests
       - name: Test with cucumber
         run: |
-          ls -ltra
-          ls cspr-standard-tests-python -ltra
-          
+
           cd cspr-standard-tests-python/sh && 
           chmod +x docker-copy-assets.sh && 
           ./docker-copy-assets.sh && cd ../..  
           
-          ls cspr-standard-tests-python -ltra
-          
           cd casper-python-sdk
           sudo pip install -e .
+
           cd ../cspr-standard-tests-python
           pip install -r requirements.txt
           pip install behave
