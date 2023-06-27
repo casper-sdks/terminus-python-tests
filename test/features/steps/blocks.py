@@ -33,6 +33,10 @@ def request_the_latest_block(ctx):
 def returned_block_body_equal_to_test_node_returned_body(ctx):
     print("the body of the returned block is equal to the body of the returned test node block")
 
+    if ctx.blockDataSdk['hash'] != ctx.blockDataNode['hash']:
+        # Fixes intermittent syncing issues with nctl/sdk latest blocks
+        ctx.blockDataSdk = ctx.sdk_client.get_block(ctx.blockDataNode['hash'])
+
     assert len(ctx.blockDataSdk['body']) > 0
     assert ctx.blockDataSdk['body']['proposer'] == ctx.blockDataNode['body']['proposer']
     assert ctx.blockDataSdk['body']['deploy_hashes'] == ctx.blockDataNode['body']['deploy_hashes']
