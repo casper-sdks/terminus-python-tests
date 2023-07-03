@@ -80,7 +80,7 @@ def a_transfer_is_successful(ctx):
     ctx.gas_price = 1
     ctx.ttl = '30m'
     ctx.chain = 'casper-net-1'
-    ctx.payment_amount = 10000
+    ctx.payment_amount = 100000000
 
     deploy_set_signatures(ctx)
     ctx.deploy_result = deploy_to_chain(ctx)
@@ -164,7 +164,7 @@ def the_deploy_is_approved(ctx, user):
     assert len(ctx.deploy_result.approvals) == 1
 
     user_1_key = pycspr.parse_public_key(
-        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", user, "public_key_hex")
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", 'user-{}'.format(user), "public_key_hex")
     )
 
     assert user_1_key == ctx.deploy_result.approvals[0].signer
@@ -196,7 +196,7 @@ def the_deploy_session_argument_has_public_key_of_a_use(ctx, arg, user):
     print('the deploy session has a {} argument with the public key of user-{}'.format(arg, user))
 
     user_key = pycspr.parse_public_key(
-        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", user, "public_key_hex")
+        ctx.get_user_asset_path(ctx.ASSETS_ROOT, "1", 'user-{}'.format(user), "public_key_hex")
     )
 
     assert user_key == ctx.deploy_result.session.args[arg]
