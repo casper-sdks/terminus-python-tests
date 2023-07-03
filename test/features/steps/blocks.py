@@ -13,7 +13,7 @@ from utils.validate import *
 
 INVALID_BLOCK_HASH = "2fe9630b7790852e4409d815b04ca98f37effcdf9097d317b9b9b8ad658f47c8"
 INVALID_HEIGHT = 9999999999
-BLOCK_ERR_MSG = "block not known"
+BLOCK_ERR_MSG = "No such block"
 BLOCK_ERR_CODE = -32001
 
 
