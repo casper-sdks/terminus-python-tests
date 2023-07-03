@@ -3,7 +3,7 @@ import codecs
 from behave import *
 from pycspr import *
 
-from test.features.steps.utils.deploy import deploy_to_chain
+from test.features.steps.utils.deploy import deploy_to_chain, deploy_set_signatures
 from utils.assets import *
 from utils.asyncs import *
 from utils.validate import *
@@ -196,14 +196,15 @@ def chain_transfer_data_is_initialised(ctx):
     print("that chain transfer data is initialised")
 
     ctx.sender_key = pycspr.parse_private_key(
-        get_user_asset_path(ctx.ASSETS_ROOT, "1", "1", "secret_key.pem"),
+        get_user_asset_path(ctx.ASSETS_ROOT, "1", "user-1", "secret_key.pem"),
         KeyAlgorithm.ED25519.name,
     )
     ctx.receiver_key = pycspr.parse_public_key(
-        get_user_asset_path(ctx.ASSETS_ROOT, "1", "2", "public_key_hex")
+        get_user_asset_path(ctx.ASSETS_ROOT, "1", "user-2", "public_key_hex")
     )
 
     ctx.transfer_amount = 2500000000
+    ctx.payment_amount = 10000
     ctx.gas_price = 1
     ctx.ttl = '30m'
 
@@ -214,6 +215,7 @@ def a_deploy_is_put_on_chain(ctx):
 
     ctx.chain = 'casper-net-1'
 
+    deploy_set_signatures(ctx)
     ctx.deploy_result = deploy_to_chain(ctx)
 
     assert ctx.deploy_result

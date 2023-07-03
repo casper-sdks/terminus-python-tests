@@ -4,7 +4,7 @@ from pycspr import KeyAlgorithm
 
 
 def get_user_asset_path(path, network, user, file):
-    return path + "/net-" + network + "/" + "user-" + user + "/" + file
+    return path + "/net-" + network + "/" + user + "/" + file
 
 
 def get_user_asset(path, network, user, file):
