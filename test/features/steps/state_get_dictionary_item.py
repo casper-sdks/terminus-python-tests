@@ -12,7 +12,7 @@ use_step_matcher("re")
 def state_get_dictionary_item_invoked(ctx):
     print('that the state_get_dictionary_item RCP method is invoked')
 
-    get_faucet_hex_public_key(ctx)
+    get_faucet_private_key(ctx)
 
     dictionary_id = DictionaryID_UniqueKey(
         key='account-hash-' + ctx.sender_key.account_hash.hex()
