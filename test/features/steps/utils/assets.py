@@ -19,7 +19,7 @@ def get_user_hex_public_key(ctx, network, usr):
     )
 
 
-def get_faucet_hex_public_key(ctx):
+def get_faucet_private_key(ctx):
     ctx.sender_key = pycspr.parse_private_key(
         ctx.ASSETS_ROOT + '/net-1/faucet/secret_key.pem',
         KeyAlgorithm.ED25519.name,
