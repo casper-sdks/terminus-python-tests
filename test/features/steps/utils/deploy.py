@@ -2,7 +2,7 @@ import random
 
 import pycspr
 from pycspr import KeyAlgorithm
-from pycspr.types import Deploy
+from pycspr.types import Deploy, DeployParameters
 
 
 def deploy_to_chain(ctx) -> Deploy:
@@ -31,6 +31,32 @@ def deploy_to_chain(ctx) -> Deploy:
     ctx.sdk_client.send_deploy(deploy)
 
     return deploy
+
+def create_deploy(ctx):
+
+    params: DeployParameters = \
+        pycspr.create_deploy_parameters(
+            account=ctx.sender_key,
+            chain_name=ctx.chain
+            )
+
+    # Set payment logic.
+    # payment: ModuleBytes = \
+    #     pycspr.create_standard_payment(ctx.payment_amount)
+    #
+    # # Set session logic.
+    # session: ModuleBytes = ModuleBytes(
+    #     module_bytes=pycspr.read_wasm(args.path_to_wasm),
+    #     args={
+    #         "token_decimals": CL_U8(args.token_decimals),
+    #         "token_name": CL_String(args.token_name),
+    #         "token_symbol": CL_String(args.token_symbol),
+    #         "token_total_supply": CL_U256(args.token_total_supply),
+    #     }
+    # )
+    #
+    # return pycspr.create_deploy(params, payment, session)
+
 
 
 def deploy_set_signatures(ctx):
