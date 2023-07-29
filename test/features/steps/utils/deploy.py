@@ -1,8 +1,9 @@
 import random
 
 import pycspr
-from pycspr import KeyAlgorithm
-from pycspr.types import Deploy, DeployParameters
+import pycspr.types
+from pycspr import KeyAlgorithm, types
+from pycspr.types import Deploy, DeployParameters, ModuleBytes
 
 
 def deploy_to_chain(ctx) -> Deploy:
@@ -26,6 +27,7 @@ def deploy_to_chain(ctx) -> Deploy:
         payment=int(ctx.payment_amount)
     )
 
+
     deploy.approve(ctx.sender_key)
 
     ctx.sdk_client.send_deploy(deploy)
@@ -34,30 +36,44 @@ def deploy_to_chain(ctx) -> Deploy:
 
 def create_deploy(ctx):
 
+    deploy: Deploy
+
     params: DeployParameters = \
         pycspr.create_deploy_parameters(
             account=ctx.sender_key,
             chain_name=ctx.chain
             )
 
-    # Set payment logic.
-    # payment: ModuleBytes = \
-    #     pycspr.create_standard_payment(ctx.payment_amount)
-    #
-    # # Set session logic.
-    # session: ModuleBytes = ModuleBytes(
-    #     module_bytes=pycspr.read_wasm(args.path_to_wasm),
-    #     args={
-    #         "token_decimals": CL_U8(args.token_decimals),
-    #         "token_name": CL_String(args.token_name),
-    #         "token_symbol": CL_String(args.token_symbol),
-    #         "token_total_supply": CL_U256(args.token_total_supply),
-    #     }
-    # )
-    #
-    # return pycspr.create_deploy(params, payment, session)
+    # arg = DeployArgument("an-argument", cl_value)
+
+    payment: ModuleBytes = \
+        pycspr.create_standard_payment(ctx.payment_amount)
+
+    args: dict = {}
+    for arg in ctx.deploy_args:
+        for key, value in arg.items():
+            args.update({key: value})
 
 
+
+    session: ModuleBytes = ModuleBytes(
+        module_bytes=pycspr.read_wasm(ctx.wasm_path),
+        args={
+                "amount": types.CL_U512(2500000000),
+                "target": types.CL_PublicKey(KeyAlgorithm.ED25519, ctx.receiver_key.account_hash),
+                "id": pycspr.types.CL_Option(pycspr.types.CL_U64(200), pycspr.types.CL_U64).value,
+                "option": types.CL_Option(types.CL_Bool(True), types.CL_Bool).value,
+                "tuple1": types.CL_Tuple1(types.CL_String('ACME')),
+                "tuple2": types.CL_Tuple2(types.CL_String('ACME'), types.CL_U32(10000)),
+                "tuple3": types.CL_Tuple3(types.CL_String('ACME'), types.CL_U32(10000), types.CL_Bool(False)),
+                "list": types.CL_List([types.CL_String('Alpha'), types.CL_String('Beta'),  types.CL_String('Delta'),
+                                       types.CL_String('Gamma'),  types.CL_String('Epsilon'), ])
+            }
+    )
+
+    deploy = pycspr.create_deploy(params, payment, session)
+
+    return deploy
 
 def deploy_set_signatures(ctx):
     ctx.sender_key = pycspr.parse_private_key(

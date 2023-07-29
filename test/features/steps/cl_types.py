@@ -1,12 +1,15 @@
+import os
+import pathlib
+import typing
+
 import pycspr.serialisation.utils
 import pycspr.types
 from behave import *
 from pycspr import serialisation, types
 
-from test.features.steps.utils.deploy import deploy_set_signatures, deploy_to_chain
+from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy
 
 use_step_matcher("re")
-
 
 @given('that a CL value of type "(.*)" has a value of "(.*)"')
 def that_a_cl_value_of_type_hash_vale(ctx, _type, value):
@@ -17,6 +20,7 @@ def that_a_cl_value_of_type_hash_vale(ctx, _type, value):
     ctx.cl_types.append(_cltypes)
 
 
+
 @then('it\'s bytes will be "(.*)"')
 def bytes_will_be(ctx, hex_bytes):
     print(f'it\'s bytes will be "{hex_bytes}"')
@@ -25,13 +29,13 @@ def bytes_will_be(ctx, hex_bytes):
 
         _type = ctx.types_map[ctx.cl_types[-1]['key']]
         val = get_type(ctx.cl_types[-1]['key'], ctx.cl_types[-1]['value'])
-        decoded = get_converted_simple(ctx.cl_types[-1]['key'], _type, val)
+        decoded = get_converted_simple(ctx.cl_types[-1]['key'], _type, val, ctx)
 
         assert decoded == hex_bytes
 
     else:
 
-        _type_complex = ctx.types_map[ctx.cl_types[-1]['key']]
+        _type = ctx.types_map[ctx.cl_types[-1]['key']]
 
         _types_simple: list = []
         for i in ctx.cl_types[-1]['key_simple']:
@@ -42,10 +46,9 @@ def bytes_will_be(ctx, hex_bytes):
         for i in range(len(ctx.cl_types[-1]['value'])):
             val.append(get_type(ctx.cl_types[-1]['key_simple'][i], ctx.cl_types[-1]['value'][i]))
 
-        decoded = get_converted_complex(ctx.cl_types[-1]['key'], _type_complex, _types_simple, val)
+        decoded = get_converted_complex(ctx.cl_types[-1]['key'], _type, _types_simple, val, ctx)
 
         assert decoded == hex_bytes
-
 
 @given('that the CL complex value of type "(.*)" with an internal types of "(.*)" values of "(.*)"')
 def the_complex_type_with_internal_type_has_value(ctx, type_complex, type_internal, value):
@@ -68,10 +71,10 @@ def the_values_are_added_as_arguments_to_a_deploy(ctx):
     ctx.chain = 'casper-net-1'
     ctx.payment_amount = 100000000
 
+    ctx.wasm_path = pathlib.Path(os.path.dirname(__file__)) / 'contracts' / 'erc20.wasm'
+
     deploy_set_signatures(ctx)
-    ctx.deploy_result = deploy_to_chain(ctx)
-
-
+    ctx.deploy_result = create_deploy(ctx)
 
 
 @step("the deploy is put on chain")
@@ -109,24 +112,41 @@ def get_type(_type, _value):
     else:
         return _value
 
-def get_converted_simple(key, _type, _value):
+def get_converted_simple(key, _type, _value, ctx):
+
+    cl_type: types.CL_Value
+    args: typing.Dict[str, types.CL_Value]
 
     if key in ['ByteArray']:
-        return serialisation.to_bytes(_type(_value))
+        cl_type = _type(_value)
+        args = {key: cl_type}
+        ctx.deploy_args.append(args)
+        return serialisation.to_bytes(cl_type)
     elif key in ['Key']:
-        return _type(_value, types.PublicKey).identifier
+        cl_type = _type(_value, types.PublicKey)
+        args = {key: cl_type}
+        ctx.deploy_args.append(args)
+        return cl_type.identifier
     elif key in ['PublicKey']:
-        return types.CL_PublicKey(pycspr.KeyAlgorithm.ED25519, _value).pbk
-    elif key in ['URef']:
-
-        # str(types.CL_URef(pycspr.types.CL_URefAccessRights.READ_ADD_WRITE, _value).address) + '0' + str(
-        #     types.CL_URef(pycspr.types.CL_URefAccessRights.READ_ADD_WRITE, _value).access_rights.value)
-
-        return types.CL_URef(pycspr.types.CL_URefAccessRights.READ_ADD_WRITE, _value)
+        cl_type = types.CL_PublicKey(pycspr.KeyAlgorithm.ED25519, _value).pbk
+        args = {key: cl_type}
+        ctx.deploy_args.append(args)
+        return cl_type
+    # elif key in ['URef']:
+    #
+    #     # str(types.CL_URef(pycspr.types.CL_URefAccessRights.READ_ADD_WRITE, _value).address) + '0' + str(
+    #     #     types.CL_URef(pycspr.types.CL_URefAccessRights.READ_ADD_WRITE, _value).access_rights.value)
+    #
+    #     return types.CL_URef(pycspr.types.CL_URefAccessRights.READ_ADD_WRITE, _value)
     else:
-        return serialisation.to_bytes(_type(_value)).hex()
 
-def get_converted_complex(key, _type_complex, _type_simples, _values):
+        cl_type = _type(_value)
+        args = {key: cl_type}
+        ctx.deploy_args.append(args)
+
+        return serialisation.to_bytes(cl_type).hex()
+
+def get_converted_complex(key, _type_complex, _type_simples, _values, ctx):
 
     if key in ['Option']:
         return serialisation.to_bytes(_type_complex(_type_simples[0](_values[0]), _type_simples[0])).hex()

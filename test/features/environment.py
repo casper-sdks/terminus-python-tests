@@ -41,7 +41,7 @@ param_keys: dict = {
 }
 
 cl_types: list = []
-
+# deploy_args: list = []
 
 def before_all(ctx):
     ctx.config = CONFIG()
@@ -54,5 +54,6 @@ def before_all(ctx):
     ctx.param_keys = param_keys
     ctx.types_map = types
     ctx.cl_types = cl_types
+    ctx.deploy_args = []
     ctx.user_1 = '1'
     ctx.user_2 = '2'
