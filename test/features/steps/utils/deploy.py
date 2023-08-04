@@ -48,14 +48,13 @@ def create_deploy(ctx):
     payment: ModuleBytes = \
         pycspr.create_standard_payment(ctx.payment_amount)
 
-    # Build up the transfer arguments from the context deploy args
-    args: dict = {}
-    for arg in ctx.deploy_args:
-        for key, value in arg.items():
-            args.update({key: value})
+    transfer: Transfer = pycspr.factory.create_transfer_session(
+        amount=2500000000,
+        target=ctx.receiver_key.account_key,
+        correlation_id=200)
 
-    transfer: Transfer = pycspr.factory.create_transfer_session(2500000000, ctx.receiver_key.account_key, 200)
-    transfer.args.update(args)
+    # Copy the dictionary list to a single argument dictionary
+    transfer.args.update({k:v for x in ctx.cl_values for k,v in x.items()})
 
     deploy: Deploy = pycspr.create_deploy(params, payment, transfer)
 

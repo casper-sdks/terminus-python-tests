@@ -1,4 +1,4 @@
-from pycspr import types
+from pycspr import types, serialisation
 
 
 # Helper file to hold CL Type short name and class name lookups
@@ -49,3 +49,26 @@ class CLTypesUtils:
         'List': types.CL_List,
         'Map': types.CL_Map
     }
+
+    @staticmethod
+    def get_type(_type, _value):
+        if _type in ['U8', 'U32', 'U64', 'U256', 'I32', 'I64']:
+            return int(_value)
+        elif _type == 'Bool':
+            return True if _value == 'true' else False
+        else:
+            return _value
+
+    def to_hex_bytes(self, cl_type: dict):
+
+        _type = list(cl_type.items())[0][0]
+        _cl_type = list(cl_type.items())[0][1]
+
+        if _type in ['Key']:
+            return _cl_type.identifier.hex()
+        elif _type in ['PublicKey']:
+            return _cl_type.account_key.hex()
+        elif _type in ['URef']:
+          return serialisation.to_bytes(_cl_type).hex()
+        else:
+          return serialisation.to_bytes(_cl_type).hex()

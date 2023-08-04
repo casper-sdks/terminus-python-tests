@@ -2,6 +2,7 @@ from behave import *
 
 from test.features.steps.utils.asyncs import deploy_event, call_async_function
 from test.features.steps.utils.cl_types_factory import CLTypesFactory
+from test.features.steps.utils.cl_utils import CLTypesUtils
 from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy
 
 use_step_matcher("re")
@@ -9,20 +10,21 @@ use_step_matcher("re")
 # Step Definitions for CL Types Cucumber Tests
 
 _factory = CLTypesFactory()
+_utils = CLTypesUtils()
 
 
 @given('that a CL value of type "(.*)" has a value of "(.*)"')
-def that_a_cl_value_of_type_hash_vale(ctx, _type, _value):
+def that_a_cl_value_of_type_hash_value(ctx, _type, _value):
     print(f'that a CL value of type "{_type}" has a value of "{_value}"')
 
-    ctx.cl_values.append({'hex_bytes': _factory.create_value(_type, _value, ctx)})
+    ctx.cl_values.append({_type: _factory.create_value(_type, _value)})
 
 
 @then('it\'s bytes will be "(.*)"')
 def bytes_will_be(ctx, hex_bytes):
     print(f'it\'s bytes will be "{hex_bytes}"')
 
-    assert ctx.cl_values[-1]['hex_bytes'] == hex_bytes
+    assert _utils.to_hex_bytes(ctx.cl_values[-1]) == hex_bytes
 
 
 @given('that the CL complex value of type "(.*)" with an internal types of "(.*)" values of "(.*)"')
@@ -30,7 +32,7 @@ def the_complex_type_with_internal_type_has_value(ctx, type_complex, type_intern
     print(
         f'that the CL complex value of type "{type_complex}" with an internal types of "{type_internal}" values of "{_value}"')
 
-    ctx.cl_values.append({'hex_bytes': _factory.create_complex_value(type_complex, type_internal.split(','), _value.split(','), ctx)})
+    ctx.cl_values.append({type_complex: _factory.create_complex_value(type_complex, type_internal.split(','), _value.split(','))})
 
 
 @when("the values are added as arguments to a deploy")
