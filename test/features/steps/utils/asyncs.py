@@ -1,6 +1,7 @@
 import asyncio
 
 from pycspr import NodeEventChannel, NodeEventType
+from pycspr.types import Deploy
 from totaltimeout import Timeout
 
 
@@ -31,3 +32,23 @@ async def block_event(ctx) -> dict:
         raise TimeoutError("Failed to find the required block")
 
     return transfer_block_sdk
+
+
+async def deploy_event(ctx) -> Deploy:
+
+    deploy: Deploy = {}
+    timeout = Timeout(ctx.timeout)
+    deployed = False
+
+    for t in timeout:
+        deploy = ctx.sdk_client.get_deploy(ctx.deploy.hash)
+        # print('Seconds remaining: ' + str(int(timeout.time_left())))
+        if len(deploy['execution_results']) > 0:
+            deployed = True
+            break
+    if not deployed:
+        raise TimeoutError("Deploy timed out")
+
+    return deploy['execution_results']
+
+

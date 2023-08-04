@@ -1,6 +1,6 @@
 import os
 
-import pycspr.types
+from pycspr import types
 
 from steps.utils.assets import get_user_asset_path
 from steps.utils.config import CONFIG
@@ -12,11 +12,11 @@ from steps.utils.requests import NCTLRequests
 # Sets the required context parameters
 
 # CASPER types used for equals comparisons
-types: dict = {
-    'Transfer': pycspr.types.Transfer,
-    'U512': pycspr.types.cl_values.CL_U512,
-    'Option': pycspr.types.cl_values.CL_Option,
-    'PublicKey': pycspr.types.cl_values.CL_PublicKey
+_cl_values: dict = {
+    'Transfer': types.Transfer,
+    'U512': types.cl_values.CL_U512,
+    'Option': types.cl_values.CL_Option,
+    'PublicKey': types.cl_values.CL_PublicKey
 }
 
 # Lookups
@@ -34,6 +34,8 @@ def before_all(ctx):
     ctx.get_user_asset_path = get_user_asset_path
     ctx.param_map = {}
     ctx.param_keys = param_keys
-    ctx.types_map = types
+    ctx.values_map = _cl_values
+    ctx.cl_values = []
+    ctx.deploy_args = []
     ctx.user_1 = '1'
     ctx.user_2 = '2'

@@ -48,6 +48,8 @@ def the_deploy_is_put_on_chain(ctx, chain):
     deploy_set_signatures(ctx)
     ctx.deploy_result = deploy_to_chain(ctx)
 
+    print(ctx.deploy_result)
+
 
 @then('the deploy response contains a valid deploy hash of length (.*) and an API version "(.*)"')
 def the_deploy_response_contains_a_valid_hash_and_a_valid_api_version(ctx, hash_length, api):
@@ -154,7 +156,7 @@ def the_deploy_has_a_valid_body_hash(ctx):
 def the_deploy_(ctx, _type):
     print('the deploy has a session type of {}'.format(_type))
 
-    assert type(ctx.deploy_result.session) == ctx.types_map[_type]
+    assert type(ctx.deploy_result.session) == ctx.values_map[_type]
 
 
 @step('the deploy is approved by user-(.*)')
@@ -206,4 +208,4 @@ def the_deploy_session_argument_has_public_key_of_a_use(ctx, arg, user):
 def teh_deploy_session_argument_has_a_type_of(ctx, arg, _type):
     print('the deploy session has a {} argument value of type {}'.format(arg, _type))
 
-    assert type(ctx.deploy_result.session.args[arg]) == ctx.types_map[_type]
+    assert type(ctx.deploy_result.session.args[arg]) == ctx.values_map[_type]
