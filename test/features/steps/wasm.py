@@ -1,15 +1,15 @@
 import io
 import os
 import pathlib
-import time
 import typing
-from datetime import time
 
+import pycspr.api.connection
 from behave import *
 from pycspr import parse_public_key_bytes
 from pycspr.crypto import get_key_pair
 from pycspr.types import *
 from pycspr.types import PublicKey, PrivateKey
+from totaltimeout import Timeout
 
 from test.features.steps.utils.assets import *
 
@@ -156,25 +156,6 @@ def the_contract_invocation_deploy_is_successful(ctx):
     assert deploy['execution_results'][0]['result']['Success']
 
 
-def wait_for_deploy(ctx) -> dict:
-    deploy: dict = None
-
-    timeout = time.time() + 300
-
-    while deploy is None or len(deploy["execution_results"]) == 0:
-
-        now = time.time()
-
-        deploy = ctx.sdk_client.get_deploy(ctx.deploy_hash)
-
-        if now >= timeout:
-            raise ('Timeout')
-
-        time.sleep(1)
-
-    return deploy
-
-
 @when('the the contract is invoked by name "(.*)" and a transfer amount of "(.*)"')
 def the_contract_is_invoked_by_name(ctx, name, amount):
     print(f'the the contract is invoked by name "{name}" and a transfer amount of "{amount}"')
@@ -215,7 +196,6 @@ def the_contract_is_invoked_by_name(ctx, name, amount):
     ctx.deploy_hash = ctx.sdk_client.send_deploy(deploy)
 
     assert ctx.deploy_hash
-
 
 
 @when('the the contract is invoked by hash and version with a transfer amount of "(.*)"')
@@ -310,3 +290,20 @@ def convert_value(type_name, value):
     else:
         return value
 
+
+def wait_for_deploy(ctx) -> dict:
+    deploy: dict = None
+
+    timeout = Timeout(300)
+
+    deployed = False
+
+    for t in timeout:
+        deploy = ctx.sdk_client.get_deploy(ctx.deploy_hash)
+        if deploy is not None and len(deploy["execution_results"]) > 0:
+            deployed = True
+            break
+
+    assert deployed
+
+    return deploy
