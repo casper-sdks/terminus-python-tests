@@ -48,8 +48,8 @@ class NCTLExec:
 
     def get_account_main_purse(self, params):
         res = os.popen(self._get_pre_script() + "view_user_account.sh " + params + "'").read()
-        return json.loads(self._clean_input.sub('', res[res.find('{'):len(res)]))['stored_value']['Account'][
-            'main_purse']
+        return json.loads(self._clean_input.sub('',
+                                                res[res.find('{'):len(res)]))['stored_value']['Account']['main_purse']
 
     def get_account_balance(self, params):
         res = subprocess.check_output(["docker", "exec", "-t", self.config.get_docker_name(), '/bin/bash', "-c",
