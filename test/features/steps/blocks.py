@@ -239,17 +239,19 @@ def request_block_transfer(ctx):
     ctx.timeout = int(300)
     ctx.last_block_added = call_async_function(ctx, block_event)
 
+    ctx.transfer_block_sdk = ctx.sdk_client.get_block_transfers()
+
 
 @then("request the block transfer from the test node")
 def step_request_block_transfer_from_test_node(ctx):
     print("request the block transfer from the test node")
 
     ctx.block_data_node = ctx.nctl_client.get_latest_block_by_param(
-        "block=" + ctx.last_block_added['BlockAdded']['block_hash'])
+        "block=" + ctx.transfer_block_sdk[0])
 
 
 @step("the returned block contains the transfer hash returned from the test node block")
 def returned_block_hash_transfer_hash_from_test_node(ctx):
     print("the returned block contains the transfer hash returned from the test node block")
 
-    assert ctx.deploy_result.hash.hex() in ctx.last_block_added['BlockAdded']['block']['body']['transfer_hashes']
+    assert ctx.deploy_result.hash.hex() in ctx.block_data_node['body']['transfer_hashes']
