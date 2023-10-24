@@ -5,7 +5,7 @@ from pycspr import types
 from steps.utils.assets import get_user_asset_path
 from steps.utils.config import CONFIG
 from steps.utils.exec import NCTLExec
-from steps.utils.node import client
+from steps.utils.node import *
 from steps.utils.requests import NCTLRequests
 
 # Steps to run at specific times in the scenarios
@@ -28,6 +28,7 @@ param_keys: dict = {
 def before_all(ctx):
     ctx.config = CONFIG()
     ctx.sdk_client = client(ctx.config)
+    ctx.sdk_client_spec = client_spec(ctx.config)
     ctx.nctl_client = NCTLExec(ctx.config)
     ctx.nctl_requests = NCTLRequests(ctx.config)
     ctx.ASSETS_ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), '../../assets/'))
