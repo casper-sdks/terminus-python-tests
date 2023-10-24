@@ -21,3 +21,7 @@ class CONFIG:
 
     def get_nctl_port_sse(self):
         return self.config.get("test.properties", "nctl_port_sse")
+
+    def get_nctl_port_spec(self):
+        return self.config.get("test.properties", "nctl_port_spec")
+
