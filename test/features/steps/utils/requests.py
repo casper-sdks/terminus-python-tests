@@ -14,6 +14,9 @@ class NCTLRequests:
     def get_info_get_validator_changes(self):
         return json.loads(self._request('info_get_validator_changes', '[]'))
 
+    def get_chain_spec(self):
+        return json.loads(self._request('info_get_chainspec', '[]'))
+
     def get_state_get_auction_info(self, hash):
         return json.loads(self._request('state_get_auction_info', '[{\"Hash\":  \"' + hash + '\"}]'))
 
