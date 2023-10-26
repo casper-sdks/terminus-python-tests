@@ -12,13 +12,13 @@ use_step_matcher("re")
 def state_get_balance_invoked(ctx):
     print('that the state_get_balance RPC method is invoked against nclt user-1 purse')
 
-    state_root_hash = ctx.nctl_client.get_state_root_hash(1)
+    ctx.state_root_hash = ctx.nctl_client.get_state_root_hash(1)
     ctx.account_main_purse = ctx.nctl_client.get_account_main_purse('user=1')
 
     ctx.state_get_balance_result = ctx.sdk_client.get_account_balance(
         types.CL_URef(types.CL_URefAccessRights.READ_ADD_WRITE,
                       bytes.fromhex(ctx.account_main_purse[5:-4])),
-        state_root_hash)
+        ctx.state_root_hash)
 
 
 @then("a valid state_get_balance_result is returned")
@@ -32,9 +32,10 @@ def valid_result_returned(ctx):
 def contains_purse_amount(ctx):
     print('the state_get_balance_result contains the purse amount')
 
-    balance = ctx.nctl_client.get_account_balance('purse-uref=' + ctx.account_main_purse)
+    json = ctx.nctl_requests.get_state_get_balance(ctx.state_root_hash, ctx.account_main_purse)
+    balance = json["result"]["balance_value"]
 
-    assert ctx.state_get_balance_result == balance
+    assert ctx.state_get_balance_result == int(balance)
 
 
 @step('the state_get_balance_result contains api version "(.*)"')
