@@ -17,6 +17,9 @@ class NCTLRequests:
     def get_state_get_auction_info(self, hash):
         return json.loads(self._request('state_get_auction_info', '[{\"Hash\":  \"' + hash + '\"}]'))
 
+    def get_state_get_balance(self, state_root_hash, purse_uref):
+        return json.loads(self._request('state_get_balance', '{\"state_root_hash\":\"' + state_root_hash + '\",\"purse_uref\":\"' + purse_uref + '\"}'))
+
     def _request(self, method, params) -> str:
 
         url: str = 'http://' + self.config.get_nctl_host() + ':' + self.config.get_nctl_port_rpc() + "/rpc"
