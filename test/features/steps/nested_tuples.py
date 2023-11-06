@@ -1,6 +1,9 @@
 from behave import *
 from pycspr import types, serialisation
 
+from test.features.steps.utils.asyncs import call_async_function, deploy_event
+from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy
+
 use_step_matcher("re")
 
 
@@ -8,7 +11,7 @@ use_step_matcher("re")
 def nested_tuple1(ctx, value):
     print(f'that a nested Tuple1 is defined as \(\({value}\) using U32 numeric values')
 
-    ctx.tuple_root_1 = types.CL_Tuple1(types.CL_Tuple1(types.CL_U32(value)))
+    ctx.tuple_root_1 = types.CL_Tuple1(types.CL_Tuple1(types.CL_U32(int(value.replace("(", "").replace(")", "")))))
 
 
 @given("that a nested Tuple2 is defined as \((.*), \((.*), \((.*), (.*)\)\)\) using U32 numeric values")
@@ -33,12 +36,23 @@ def nested_tuple2(ctx, arg0, arg1, arg2, arg3):
 def element_is_equal(ctx, index, _tuple, expected):
     print(f'the "{index}" element of the Tuple{_tuple} is {expected}')
 
-    expected_list = expected.replace('"', '').replace("(", "").replace(")", "").split(",")
-    _expected = [int(i.strip()) for i in expected_list]
+    ctx.tuple = get_tuple(int(_tuple), ctx)
 
-    cl_type = get_tuple_value(int(_tuple), index, ctx)
+    _expected_list = expected.replace('"', '').replace("(", "").replace(")", "").split(",")
+    _expected = [int(i.strip()) for i in _expected_list]
 
-    assert cl_type == _expected
+    if not hasattr(ctx.tuple, '__iter__'):
+
+        _values = get_tuple_element_values(ctx.tuple, index)
+
+        assert _values == _expected
+
+    else:
+
+        _values = get_tuple_element_values_deployed(ctx.tuple, index)
+
+        assert _expected
+
 
 
 @step('the Tuple(.*) bytes are "(.*)"')
@@ -57,9 +71,11 @@ def tuple_bytes(ctx, _tuple, _bytes):
     assert serialisation.to_bytes(_bytes_tuple).hex() == _bytes
 
 
-@given("that a nested Tuple3 is defined as \((.*), (.*), \((.*), (.*), \((.*), (.*), (.*)\)\)\) using U32 numeric values")
+@given(
+    "that a nested Tuple3 is defined as \((.*), (.*), \((.*), (.*), \((.*), (.*), (.*)\)\)\) using U32 numeric values")
 def nested_tuple3(ctx, arg0, arg1, arg2, arg3, arg4, arg5, arg6):
-    print(f'that a nested Tuple3 is defined as \({arg0}, {arg1}, \({arg2}, {arg3}, \({arg4}, {arg5}, {arg6}\)\)\) using U32 numeric values')
+    print(
+        f'that a nested Tuple3 is defined as \({arg0}, {arg1}, \({arg2}, {arg3}, \({arg4}, {arg5}, {arg6}\)\)\) using U32 numeric values')
 
     ctx.tuple_root_3 = types.CL_Tuple3(
         types.CL_U32(int(arg0)),
@@ -78,15 +94,66 @@ def nested_tuple3(ctx, arg0, arg1, arg2, arg3, arg4, arg5, arg6):
     assert ctx.tuple_root_3
 
 
-
 @given("that the nested tuples are deployed in a transfer")
 def deployed(ctx):
     print(f'that the nested tuples are deployed in a transfer')
+
+    ctx.user_1 = '1'
+    ctx.user_2 = '2'
+    ctx.transfer_amount = 2500000000
+    ctx.gas_price = 1
+    ctx.ttl = '30m'
+    ctx.chain = 'casper-net-1'
+    ctx.payment_amount = 100000000
+
+    ctx.cl_values = []
+    # ctx.cl_values.append({'TUPLE_1': ctx.tuple_root_1})
+    ctx.cl_values.append({'TUPLE_2': ctx.tuple_root_2})
+    ctx.cl_values.append({'TUPLE_3': ctx.tuple_root_3})
+
+    ctx.tuple_root_1 = ""
+    ctx.tuple_root_2 = ""
+    ctx.tuple_root_3 = ""
+
+    deploy_set_signatures(ctx)
+
+    ctx.deploy = create_deploy(ctx)
+
+    ctx.sdk_client.send_deploy(ctx.deploy)
+    ctx.deploy_result = ctx.deploy
+
+    assert ctx.deploy_result.hash.hex()
 
 
 @step("the transfer is successful")
 def deploy_successful(ctx):
     print(f'the transfer is successful')
+    ctx.timeout = 300
+    ctx.execution_result = call_async_function(ctx, deploy_event)
+    assert ctx.execution_result[0]['result']['Success']
+
+    ctx.deploy = ctx.sdk_client.get_deploy(ctx.deploy_result.hash)
+    assert ctx.deploy
+
+    args = ctx.deploy['deploy']['session']['Transfer']['args']
+    assert args
+
+    for arg in range(len(args)):
+        if args[arg][0] == 'TUPLE_1':
+            ctx.tuple_root_1 = args[arg][1]
+        if args[arg][0] == 'TUPLE_2':
+            # ctx.tuple_root_2 = args[arg][1]['cl_type']
+            ctx.tuple_root_2 = args[arg][1]
+        if args[arg][0] == 'TUPLE_3':
+            ctx.tuple_root_3 = args[arg][1]
+
+    # assert ctx.tuple_root_1
+
+    # ctx.tuple_root_2 = types.CL_Tuple2(ctx.tuple_root_2['Tuple2'][0], ctx.tuple_root_2['Tuple2'][1])
+    # tuple_root_2 = types.CL_Tuple2(ctx.tuple_root_2['Tuple2'][0], ctx.tuple_root_2['Tuple2'][1])
+
+    assert ctx.tuple_root_2
+    assert ctx.tuple_root_3
 
 
 @when("the tuples deploy is obtained from the node")
@@ -94,45 +161,106 @@ def tuples_obtained(ctx):
     print(f'the tuples deploy is obtained from the node')
 
 
-def get_tuple_value(_tuple, index, ctx):
-
+def get_tuple(_tuple, ctx):
     if _tuple == 1:
-        return ctx.tuple_root_1.v0
+        return ctx.tuple_root_1
     if _tuple == 2:
-        return get_tuple_tree_value(_tuple, ctx.tuple_root_2, index)
+        return ctx.tuple_root_2
     if _tuple == 3:
-        return get_tuple_tree_value(_tuple, ctx.tuple_root_3, index)
+        return ctx.tuple_root_3
 
 
-def get_tuple_tree_value(_tuple, cltype, index):
+def get_tuple_values(_tuple, index, ctx):
+    if _tuple == 1:
+        return get_tuple_element_values(ctx.tuple_root_1, index)
+    if _tuple == 2:
+        return get_tuple_element_values(ctx.tuple_root_2, index)
+    if _tuple == 3:
+        return get_tuple_element_values(ctx.tuple_root_3, index)
 
-    ret = []
 
-    _methods = [attr for attr in dir(cltype) if attr.startswith('v')]
+def get_tuple_element_values(cltype, index) -> list:
+    _values: list = []
 
-    if index == 'first':
-        ret.append(cltype.v0.value)
-        return ret
-    else:
-        if index == 'second':
-            func = cltype.v1
+    func = get_tuple_start_element(cltype, index)
+    _methods = ['func.' + attr for attr in dir(func) if attr.startswith('v')]
+
+    for _method in _methods:
+        if 'value' in _method:
+            _values.append(eval(_method))
         else:
-            func = cltype.v2
-        _methods = ['func.' + attr for attr in dir(func) if attr.startswith('v')]
-        for _method in _methods:
-            if 'value' in _method:
-                ret.append(eval(_method))
-            else:
-                ret = (iterate_type(eval(_method), ret))
-        return ret
+            _values = iterate_elements(eval(_method), _values)
+
+    return _values
 
 
-def iterate_type(func, ret) -> list:
+def get_tuple_element_values_deployed(cltype, index) -> list:
+
+    indx = get_numeric(index)
+    _values = []
+
+    if isinstance(cltype['parsed'][indx], list):
+        for item in range(len(cltype['parsed'][indx])):
+            _values.append(iterate_elements_deployed(cltype['parsed'][indx][item], 0, []))
+    else:
+        _values.append(iterate_elements_deployed(cltype['parsed'][indx], 0, []))
+
+    return flatten_extend(_values)
+
+
+def flatten_extend(matrix):
+    flat_list = []
+    for sublist in matrix:
+        if isinstance(sublist, list):
+            for item in sublist:
+                flat_list.append(item)
+        else:
+            flat_list.append(sublist)
+
+    return flat_list
+
+
+def iterate_elements_deployed(cltype,  start, _values):
+
+    if hasattr(cltype, '__iter__'):
+        for item in range(len(cltype)):
+            start += 1
+            _values.append(iterate_elements_deployed(cltype[item], start, []))
+    else:
+        return cltype
+
+    return _values
+
+
+def iterate_elements(func, _values) -> list:
     if hasattr(func, 'value'):
-        ret.append(func.value)
+        _values.append(func.value)
     else:
         _methods = ['func.' + attr for attr in dir(func) if attr.startswith('v')]
         for _method in _methods:
-            iterate_type(eval(_method), ret)
+            iterate_elements(eval(_method), _values)
 
-    return ret
+    return _values
+
+
+def get_tuple_start_element(cltype, index):
+    if index == 'first':
+        func = cltype.v0
+    elif index == 'second':
+        func = cltype.v1
+    elif index == 'third':
+        func = cltype.v2
+    else:
+        raise ValueError(f'Unknown tuple element: {index}')
+
+    return func
+
+def get_numeric(index):
+    if index == 'first':
+        return 0
+    elif index == 'second':
+        return 1
+    elif index == 'third':
+        return 2
+    else:
+        raise ValueError(f'Unknown tuple element: {index}')
