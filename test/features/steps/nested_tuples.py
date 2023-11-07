@@ -7,6 +7,9 @@ from test.features.steps.utils.deploy import deploy_set_signatures, create_deplo
 use_step_matcher("re")
 
 
+# Step Definitions for Nested Tuple CL Types Cucumber Tests
+
+
 @given("that a nested Tuple1 is defined as \((.*)\) using U32 numeric values")
 def nested_tuple1(ctx, value):
     print(f'that a nested Tuple1 is defined as \(\({value}\) using U32 numeric values')
@@ -41,18 +44,19 @@ def element_is_equal(ctx, index, _tuple, expected):
     _expected_list = expected.replace('"', '').replace("(", "").replace(")", "").split(",")
     _expected = [int(i.strip()) for i in _expected_list]
 
+    # Pre deploy
     if not hasattr(ctx.tuple, '__iter__'):
 
-        _values = get_tuple_element_values(ctx.tuple, index)
+        _values = pre_deploy_tuple_values(ctx.tuple, index)
 
         assert _values == _expected
 
+    # Post deploy
     else:
 
-        _values = get_tuple_element_values_deployed(ctx.tuple, index)
+        _values = post_deploy_get_tuple_values(ctx.tuple, index)
 
-        assert _expected
-
+        assert _expected == _values
 
 
 @step('the Tuple(.*) bytes are "(.*)"')
@@ -68,7 +72,12 @@ def tuple_bytes(ctx, _tuple, _bytes):
     if _tuple == '3':
         _bytes_tuple = ctx.tuple_root_3
 
-    assert serialisation.to_bytes(_bytes_tuple).hex() == _bytes
+    if hasattr(_bytes_tuple, 'v0'):
+        # pre deploy
+        assert serialisation.to_bytes(_bytes_tuple).hex() == _bytes
+    else:
+        # post deploy
+        assert _bytes_tuple['bytes'] == _bytes
 
 
 @given(
@@ -107,7 +116,7 @@ def deployed(ctx):
     ctx.payment_amount = 100000000
 
     ctx.cl_values = []
-    # ctx.cl_values.append({'TUPLE_1': ctx.tuple_root_1})
+    ctx.cl_values.append({'TUPLE_1': ctx.tuple_root_1})
     ctx.cl_values.append({'TUPLE_2': ctx.tuple_root_2})
     ctx.cl_values.append({'TUPLE_3': ctx.tuple_root_3})
 
@@ -142,16 +151,11 @@ def deploy_successful(ctx):
         if args[arg][0] == 'TUPLE_1':
             ctx.tuple_root_1 = args[arg][1]
         if args[arg][0] == 'TUPLE_2':
-            # ctx.tuple_root_2 = args[arg][1]['cl_type']
             ctx.tuple_root_2 = args[arg][1]
         if args[arg][0] == 'TUPLE_3':
             ctx.tuple_root_3 = args[arg][1]
 
-    # assert ctx.tuple_root_1
-
-    # ctx.tuple_root_2 = types.CL_Tuple2(ctx.tuple_root_2['Tuple2'][0], ctx.tuple_root_2['Tuple2'][1])
-    # tuple_root_2 = types.CL_Tuple2(ctx.tuple_root_2['Tuple2'][0], ctx.tuple_root_2['Tuple2'][1])
-
+    assert ctx.tuple_root_1
     assert ctx.tuple_root_2
     assert ctx.tuple_root_3
 
@@ -159,6 +163,7 @@ def deploy_successful(ctx):
 @when("the tuples deploy is obtained from the node")
 def tuples_obtained(ctx):
     print(f'the tuples deploy is obtained from the node')
+    assert ctx.deploy
 
 
 def get_tuple(_tuple, ctx):
@@ -170,16 +175,7 @@ def get_tuple(_tuple, ctx):
         return ctx.tuple_root_3
 
 
-def get_tuple_values(_tuple, index, ctx):
-    if _tuple == 1:
-        return get_tuple_element_values(ctx.tuple_root_1, index)
-    if _tuple == 2:
-        return get_tuple_element_values(ctx.tuple_root_2, index)
-    if _tuple == 3:
-        return get_tuple_element_values(ctx.tuple_root_3, index)
-
-
-def get_tuple_element_values(cltype, index) -> list:
+def pre_deploy_tuple_values(cltype, index) -> list:
     _values: list = []
 
     func = get_tuple_start_element(cltype, index)
@@ -189,56 +185,42 @@ def get_tuple_element_values(cltype, index) -> list:
         if 'value' in _method:
             _values.append(eval(_method))
         else:
-            _values = iterate_elements(eval(_method), _values)
+            _values = pre_deploy_iterate_tuple(eval(_method), _values)
 
     return _values
 
 
-def get_tuple_element_values_deployed(cltype, index) -> list:
-
+def post_deploy_get_tuple_values(cltype, index) -> list:
     indx = get_numeric(index)
     _values = []
 
     if isinstance(cltype['parsed'][indx], list):
         for item in range(len(cltype['parsed'][indx])):
-            _values.append(iterate_elements_deployed(cltype['parsed'][indx][item], 0, []))
+            _values.append(post_deploy_iterate_tuple(cltype['parsed'][indx][item], 0, []))
     else:
-        _values.append(iterate_elements_deployed(cltype['parsed'][indx], 0, []))
+        _values.append(post_deploy_iterate_tuple(cltype['parsed'][indx], 0, []))
 
-    return flatten_extend(_values)
-
-
-def flatten_extend(matrix):
-    flat_list = []
-    for sublist in matrix:
-        if isinstance(sublist, list):
-            for item in sublist:
-                flat_list.append(item)
-        else:
-            flat_list.append(sublist)
-
-    return flat_list
+    return flatten_list(_values)
 
 
-def iterate_elements_deployed(cltype,  start, _values):
-
+def post_deploy_iterate_tuple(cltype, start, _values):
     if hasattr(cltype, '__iter__'):
         for item in range(len(cltype)):
             start += 1
-            _values.append(iterate_elements_deployed(cltype[item], start, []))
+            _values.append(post_deploy_iterate_tuple(cltype[item], start, []))
     else:
         return cltype
 
     return _values
 
 
-def iterate_elements(func, _values) -> list:
+def pre_deploy_iterate_tuple(func, _values) -> list:
     if hasattr(func, 'value'):
         _values.append(func.value)
     else:
         _methods = ['func.' + attr for attr in dir(func) if attr.startswith('v')]
         for _method in _methods:
-            iterate_elements(eval(_method), _values)
+            pre_deploy_iterate_tuple(eval(_method), _values)
 
     return _values
 
@@ -255,6 +237,7 @@ def get_tuple_start_element(cltype, index):
 
     return func
 
+
 def get_numeric(index):
     if index == 'first':
         return 0
@@ -264,3 +247,15 @@ def get_numeric(index):
         return 2
     else:
         raise ValueError(f'Unknown tuple element: {index}')
+
+
+def flatten_list(_list):
+    flat_list = []
+    for sublist in _list:
+        if isinstance(sublist, list):
+            for item in sublist:
+                flat_list.append(item)
+        else:
+            flat_list.append(sublist)
+
+    return flat_list
