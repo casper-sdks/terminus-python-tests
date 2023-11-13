@@ -4,7 +4,6 @@ from pycspr import types, serialisation
 # Helper file to hold CL Type short name and class name lookups
 
 class CLTypesUtils:
-
     cl_types_map: dict = {
         'CL_U512': types.CL_Type_U512,
         'CL_Option': types.CL_Type_Option,
@@ -59,7 +58,8 @@ class CLTypesUtils:
         else:
             return _value
 
-    def to_hex_bytes(self, cl_type: dict):
+    @staticmethod
+    def to_hex_bytes(cl_type: dict):
 
         _type = list(cl_type.items())[0][0]
         _cl_type = list(cl_type.items())[0][1]
@@ -69,6 +69,6 @@ class CLTypesUtils:
         elif _type in ['PublicKey']:
             return _cl_type.account_key.hex()
         elif _type in ['URef']:
-          return serialisation.to_bytes(_cl_type).hex()
+            return serialisation.to_bytes(_cl_type).hex()
         else:
-          return serialisation.to_bytes(_cl_type).hex()
+            return serialisation.to_bytes(_cl_type).hex()
