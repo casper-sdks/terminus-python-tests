@@ -79,7 +79,6 @@ Feature: Nested CL List Values
     And the list's "1st" item is a CLValue with U8 value of 4
     And the list's "2nd" item is a CLValue with U8 value of 5
     And the list's "3rd" item is a CLValue with U8 value of 6
-    Given that the list is deployed in a transfer
 
   Scenario: U32 Lists
     Given a list is created with U32 values of (700, 800, 900)
@@ -96,7 +95,6 @@ Feature: Nested CL List Values
     And the list's "1st" item is a CLValue with U32 value of 700
     And the list's "2nd" item is a CLValue with U32 value of 800
     And the list's "3rd" item is a CLValue with U32 value of 900
-    Given that the list is deployed in a transfer
 
   Scenario: U64 Lists
     Given a list is created with U64 values of (170000000, 180000000, 190000000)
@@ -113,7 +111,6 @@ Feature: Nested CL List Values
     And the list's "1st" item is a CLValue with U64 value of 170000000
     And the list's "2nd" item is a CLValue with U64 value of 180000000
     And the list's "3rd" item is a CLValue with U64 value of 190000000
-    Given that the list is deployed in a transfer
 
   Scenario: U128 Lists
     Given a list is created with U128 values of (770000000, 880000000, 990000000)
@@ -130,7 +127,6 @@ Feature: Nested CL List Values
     And the list's "1st" item is a CLValue with U128 value of 770000000
     And the list's "2nd" item is a CLValue with U128 value of 880000000
     And the list's "3rd" item is a CLValue with U128 value of 990000000
-    Given that the list is deployed in a transfer
 
   Scenario: U256 Lists
     Given a list is created with U256 values of (1, 2, 3)

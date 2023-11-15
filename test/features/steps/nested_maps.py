@@ -138,6 +138,10 @@ def the_maps_bytes_are(ctx, hex_bytes):
 def a_nested_map_is_created(ctx, key1, key11, key111, value111, key12, key121, value121, key2, key21, key211, value211, key22, key221, value221):
     print(f'a nested map is created  {key1}: {key11}: {key111}: "{value111}", {key12}: {key121}: "{value121}", {key2}: {key21}: {key211}: "{value211}", {key22}: {key221}: "{value221}"')
 
+    # TODO
+    # The below fails to give the expected bytes
+    # Need to ascertain that the bytes expected are actually correct
+
     _list111 = []
     _tuple: typing.Tuple = (types.CL_U256(int(key111)), types.CL_String(value111))
     _list111.append(_tuple)
