@@ -29,6 +29,7 @@ class CLTypesUtils:
     cl_values_map: dict = {
         'Transfer': types.Transfer,
         'U512': types.CL_U512,
+        'U128': types.CL_U128,
         'Option': types.CL_Option,
         'PublicKey': types.CL_PublicKey,
         'String': types.CL_String,
