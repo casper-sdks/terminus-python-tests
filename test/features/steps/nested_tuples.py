@@ -44,19 +44,14 @@ def element_is_equal(ctx, index, _tuple, expected):
     _expected_list = expected.replace('"', '').replace("(", "").replace(")", "").split(",")
     _expected = [int(i.strip()) for i in _expected_list]
 
-    # Pre deploy
-    if not hasattr(ctx.tuple, '__iter__'):
+    _values = get_tuple_values(ctx.tuple, index)
 
-        _values = pre_deploy_tuple_values(ctx.tuple, index)
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
 
-        assert _values == _expected
-
-    # Post deploy
-    else:
-
-        _values = post_deploy_get_tuple_values(ctx.tuple, index)
-
-        assert _expected == _values
+    assert _values == _expected
 
 
 @step('the Tuple(.*) bytes are "(.*)"')
@@ -72,12 +67,12 @@ def tuple_bytes(ctx, _tuple, _bytes):
     if _tuple == '3':
         _bytes_tuple = ctx.tuple_root_3
 
-    if hasattr(_bytes_tuple, 'v0'):
-        # pre deploy
-        assert serialisation.to_bytes(_bytes_tuple).hex() == _bytes
-    else:
-        # post deploy
-        assert _bytes_tuple['bytes'] == _bytes
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert serialisation.to_bytes(_bytes_tuple).hex() == _bytes
 
 
 @given(
@@ -175,7 +170,7 @@ def get_tuple(_tuple, ctx):
         return ctx.tuple_root_3
 
 
-def pre_deploy_tuple_values(cltype, index) -> list:
+def get_tuple_values(cltype, index) -> list:
     _values: list = []
 
     func = get_tuple_start_element(cltype, index)
@@ -185,42 +180,18 @@ def pre_deploy_tuple_values(cltype, index) -> list:
         if 'value' in _method:
             _values.append(eval(_method))
         else:
-            _values = pre_deploy_iterate_tuple(eval(_method), _values)
+            _values = iterate_tuple(eval(_method), _values)
 
     return _values
 
 
-def post_deploy_get_tuple_values(cltype, index) -> list:
-    indx = get_numeric(index)
-    _values = []
-
-    if isinstance(cltype['parsed'][indx], list):
-        for item in range(len(cltype['parsed'][indx])):
-            _values.append(post_deploy_iterate_tuple(cltype['parsed'][indx][item], 0, []))
-    else:
-        _values.append(post_deploy_iterate_tuple(cltype['parsed'][indx], 0, []))
-
-    return flatten_list(_values)
-
-
-def post_deploy_iterate_tuple(cltype, start, _values):
-    if hasattr(cltype, '__iter__'):
-        for item in range(len(cltype)):
-            start += 1
-            _values.append(post_deploy_iterate_tuple(cltype[item], start, []))
-    else:
-        return cltype
-
-    return _values
-
-
-def pre_deploy_iterate_tuple(func, _values) -> list:
+def iterate_tuple(func, _values) -> list:
     if hasattr(func, 'value'):
         _values.append(func.value)
     else:
         _methods = ['func.' + attr for attr in dir(func) if attr.startswith('v')]
         for _method in _methods:
-            pre_deploy_iterate_tuple(eval(_method), _values)
+            iterate_tuple(eval(_method), _values)
 
     return _values
 
@@ -248,14 +219,3 @@ def get_numeric(index):
     else:
         raise ValueError(f'Unknown tuple element: {index}')
 
-
-def flatten_list(_list):
-    flat_list = []
-    for sublist in _list:
-        if isinstance(sublist, list):
-            for item in sublist:
-                flat_list.append(item)
-        else:
-            flat_list.append(sublist)
-
-    return flat_list
