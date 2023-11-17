@@ -30,26 +30,24 @@ def a_map_is_created(ctx, key, value):
 def map_has_value(ctx, key1, key2):
     print(f'the map\'s key type is "{key1}" and the maps value type is "{key2}"')
 
-    if isinstance(ctx.cl_map, dict):
-        _map = types.CL_Map(ctx.cl_map['cl_type']['Map'])
-        assert _map.value['key'] == key1
-        if key2 == 'Map':
-            assert _map.value['value'][key2]
-        else:
-            assert _map.value['value'] == key2
-    else:
-        assert isinstance(ctx.cl_map.value[0][0], _utils.cl_values_map[key1])
-        assert isinstance(ctx.cl_map.value[0][1], _utils.cl_values_map[key2])
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert isinstance(ctx.cl_map.value[0][0], _utils.cl_values_map[key1])
+    assert isinstance(ctx.cl_map.value[0][1], _utils.cl_values_map[key2])
 
 
 @then('the map\'s bytes are "(.*)"')
 def map_has_bytes(ctx, hex_bytes):
     print(f'the map\'s bytes are "{hex_bytes}"')
 
-    if isinstance(ctx.cl_map, dict):
-        assert ctx.cl_map['bytes'] == hex_bytes
-    else:
-        assert serialisation.to_bytes(ctx.cl_map).hex() == hex_bytes
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+    assert serialisation.to_bytes(ctx.cl_map).hex() == hex_bytes
 
 
 @given("that the nested map is deployed in a transfer")
@@ -89,8 +87,13 @@ def map_is_read_from_the_deploy(ctx):
 def map_has_kay_and_value(ctx, key, value):
     print(f'the map\'s key is "{key}" and value is "{value}"')
 
-    assert ctx.cl_map['parsed'][0]['key'] == key
-    assert ctx.cl_map['parsed'][0]['value'] == int(value)
+    """
+    The SDK doesn't decode the deploys CL_Type
+    We can not retrieve it's values here
+    (The node will return 'parsed' values for simple CL_Types only)
+    """
+
+    assert False
 
 
 @given('a nested map is created \{"(.*)": \{"(.*)": (.*)\}, "(.*)": \{"(.*)", (.*)\}\}')
@@ -117,13 +120,17 @@ def nested_map_is_created(ctx, key0, key1, value1, key2, key3, value2):
     assert ctx.cl_map
 
 
-
 @step('the 1st nested map\'s key is "(.*)" and value is "(.*)"')
 def the_nth_key_and_value_are(ctx, key, value):
     print(f'the 1st nested map\'s key is "{key}" and value is "{value}"')
 
-    assert ctx.cl_map['parsed'][0]['value'][0]['key'] == key
-    assert ctx.cl_map['parsed'][0]['value'][0]['value'] == int(value)
+    """
+    The SDK doesn't decode the deploys CL_Type
+    We can not retrieve it's values here
+    (The node will return 'parsed' values for simple CL_Types only)
+    """
+
+    assert False
 
 
 @step('the map\'s bytes are "(.*)"')
