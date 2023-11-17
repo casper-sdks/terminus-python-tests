@@ -131,39 +131,55 @@ def named_argument_has_values(ctx, _complex, internal, _value, _bytes):
 
 
 def assert_map(_values, args, _bytes):
-    assert args['bytes'] == _bytes
-    for i in range(len(_values)):
-        assert _values[i] == args['parsed'][i]['value']
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert False
 
 
 def assert_option(_internals, args, _bytes):
-    assert args['cl_type']['Option'] == _internals[0]
-    assert args['bytes'] == _bytes
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert False
 
 
 def assert_list(_internals, args, _bytes, _values):
-    assert args['bytes'] == _bytes
-    assert args['parsed'] == _values
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert False
 
 
 def assert_tuple(_internals, _complex, args, arg, _bytes, _values):
-    assert args[arg][1]['bytes'] == _bytes
-    for i in range(len(_values)):
-        assert args[arg][1]['cl_type'][_complex][i] == _internals[i]
-        assert str(args[arg][1]['parsed'][i]).lower() == _values[i].lower()
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert False
 
 
 def assert_value(arg, _value):
-    if arg['cl_type'] == 'Key':
-        return True
-    elif arg['cl_type'] == 'URef':
-        assert arg['parsed'][5:-4] == _value
-    else:
-        assert str(arg['parsed']).lower() == str(_value).lower()
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert False
 
 
 def assert_bytes(arg, value):
-    if arg['cl_type'] == 'Key':
-        assert str(arg['bytes'])[2:] == str(value)
-    else:
-        assert str(arg['bytes']) == str(value)
+
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert False
