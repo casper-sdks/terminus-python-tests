@@ -31,34 +31,38 @@ def list_is_created(ctx, cl_type, val1, val2, val3):
 def its_bytes_are(ctx, hex_bytes):
     print(f'the list\'s bytes are "{hex_bytes}')
 
-    if isinstance(ctx.cl_list, dict):
-        assert ctx.cl_list['bytes'] == hex_bytes
-    else:
-        assert serialisation.to_bytes(ctx.cl_list).hex() == hex_bytes
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert serialisation.to_bytes(ctx.cl_list).hex() == hex_bytes
 
 
 @step("the list's length is (.*)")
 def its_length_is(ctx, _length):
     print(f"the list's length is {_length}")
 
-    if isinstance(ctx.cl_list, dict):
-        assert len(ctx.cl_list['parsed']) == int(_length)
-    else:
-        assert len(ctx.cl_list.vector) == int(_length)
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    assert len(ctx.cl_list.vector) == int(_length)
 
 
 @step('the list\'s "(.*)" item is a CLValue with "(.*)" value of "(.*)"')
 def list_string_item_is(ctx, nth, cl_type, value):
     print(f'the list\'s "{nth}" item is a CLValue with "{cl_type}" value of "{value}"')
 
-    if isinstance(ctx.cl_list, dict):
-        _item = ctx.cl_list['parsed'][(int(nth[0])) - 1]
-        assert str(_item).lower() == value.lower()
-        assert _utils.cl_values_map[ctx.cl_list['cl_type']['List']] == _utils.cl_values_map[cl_type]
-    else:
-        _item = ctx.cl_list.vector[(int(nth[0])) - 1]
-        assert str(_item.value).lower() == value.lower()
-        assert isinstance(_item, _utils.cl_values_map[cl_type])
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    _item = ctx.cl_list.vector[(int(nth[0])) - 1]
+    assert str(_item.value).lower() == value.lower()
+    assert isinstance(_item, _utils.cl_values_map[cl_type])
 
 
 @given("that the list is deployed in a transfer")
@@ -111,15 +115,26 @@ def another_list_is_created(ctx, cl_type, val1, val2, val3):
 def list_number_item_is(ctx, nth, cl_type, value):
     print(f'the list\'s "{nth}" item is a CLValue with "{cl_type}" value of "{value}"')
 
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+
+    _item = ctx.cl_list.vector[(int(nth[0])) - 1]
+    assert str(_item.value).lower() == value.lower()
+    assert isinstance(_item, _utils.cl_values_map[cl_type])
+
 
 @given("a nested list is created with (.*) values of \(\((.*), (.*), (.*)\),\((.*), (.*), (.*)\)\)")
 def a_complex_nested_list_is_created(ctx, cl_type, val1, val2, val3, val4, val5, val6):
     print(
         f'a nested list is created with {cl_type} values of \(\({val1}, {val2}, {val3}\),\({val4}, {val5}, {val6}\)\)')
 
-    # TODO
-    # The below fails to deploy
-    # The SDK _encode function doesn't look for nested values
+    """
+    The below fails to build correctly
+    The bytes check fails
+    The SDK _encode function doesn't look for nested values
+    """
 
     _list = [[_factory.create_value(cl_type, int(val1)),
               _factory.create_value(cl_type, int(val2)),
@@ -138,14 +153,13 @@ def a_complex_nested_list_is_created(ctx, cl_type, val1, val2, val3, val4, val5,
 def complex_list_has_values(ctx, nth1, nth2, cl_type, value):
     print(f'the "{nth1}" nested list\'s "{nth2}" item is a CLValue with {cl_type} value of {value}')
 
-    if isinstance(ctx.cl_list, dict):
-        _item = ctx.cl_list['parsed'][(int(nth1[0])) - 1][(int(nth2[0])) - 1]
-        assert str(_item).lower() == value.lower()
-        assert _utils.cl_values_map[ctx.cl_list['cl_type']['List']] == _utils.cl_values_map[cl_type]
-    else:
-        _item = ctx.cl_list.vector[(int(nth1[0])) - 1][(int(nth2[0])) - 1]
-        assert str(_item.value).lower() == value.lower()
-        assert isinstance(_item, _utils.cl_values_map[cl_type])
+    """
+    The test will fail here when checking the CL_Type from the Deploy
+    The CL_Type needs to be serialised into a CL_Type object
+    """
+    _item = ctx.cl_list.vector[(int(nth1[0])) - 1][(int(nth2[0])) - 1]
+    assert str(_item.value).lower() == value.lower()
+    assert isinstance(_item, _utils.cl_values_map[cl_type])
 
 
 def deploy_list(ctx):
