@@ -12,6 +12,7 @@ class CLTypesUtils:
         'CL_U8': types.CL_Type_U8,
         'CL_U32': types.CL_Type_U32,
         'CL_U64': types.CL_Type_U64,
+        'CL_U128': types.CL_Type_U128,
         'CL_U256': types.CL_Type_U256,
         'CL_I32': types.CL_Type_I32,
         'CL_I64': types.CL_Type_I64,
@@ -23,7 +24,8 @@ class CLTypesUtils:
         'CL_Tuple2': types.CL_Type_Tuple2,
         'CL_Tuple3': types.CL_Type_Tuple3,
         'CL_List': types.CL_Type_List,
-        'CL_Map': types.CL_Type_Map
+        'CL_Map': types.CL_Type_Map,
+        'CL_Any': types.CL_Type_Any
     }
 
     cl_values_map: dict = {
@@ -47,12 +49,13 @@ class CLTypesUtils:
         'Tuple2': types.CL_Tuple2,
         'Tuple3': types.CL_Tuple3,
         'List': types.CL_List,
-        'Map': types.CL_Map
+        'Map': types.CL_Map,
+        'Any': types.CL_Any
     }
 
     @staticmethod
     def get_type(_type, _value):
-        if _type in ['U8', 'U32', 'U64', 'U256', 'I32', 'I64']:
+        if _type in ['U8', 'U32', 'U64', 'U128', 'U256', 'U512', 'I32', 'I64']:
             return int(_value)
         elif _type == 'Bool':
             return True if _value == 'true' else False
