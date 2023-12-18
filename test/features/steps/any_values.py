@@ -1,11 +1,19 @@
 from behave import *
+from pycspr import types
+
+from test.features.steps.utils.cl_types_factory import CLTypesFactory
+from test.features.steps.utils.cl_utils import CLTypesUtils
 
 use_step_matcher("re")
 
+_factory = CLTypesFactory()
+_utils = CLTypesUtils()
 
 @given('an Any value contains a "(.*)" value of "(.*)"')
 def contains_type_and_value(ctx, cltype, val):
     print(f'an Any value contains a {cltype} value of {val}')
+
+    _factory.create_value(types.CL_Any, val)
 
 
 @then('the any value\'s bytes are "(.*)"')
@@ -28,6 +36,42 @@ def read_from_the_deploy(ctx):
     print(f'the any is read from the deploy')
 
 
-@step('the type of the any is "Bool" with a value of "true"')
-def bool_type_is_true(ctx):
-    print(f'the type of the any is "Bool" with a value of "true"')
+@given('that the map of public keys to any types is read from resource "(.*)"')
+def resource_is_read(ctx, resource):
+    print(f'that the map of public keys to any types is read from resource "{resource}"')
+
+
+@then("the loaded CLMap will contain 1 elements")
+def loaded_map_is(ctx):
+    print(f'the loaded CLMap will contain 1 elements')
+
+
+@step('the nested map key type will be "(.*)"')
+def nested_map_key_is(ctx, cltype):
+    print(f'the nested map key type will be "{cltype}"')
+
+
+@step('the nested map value type will be "(.*)"')
+def nested_map_value_is(ctx, cltype):
+    print(f'the nested map value type will be "{cltype}"')
+
+
+@step(
+    'the maps bytes will be "(.*)"')
+def the_map_bytes_are(ctx, hex_bytes):
+    print(f'the nested map value type will be "{hex_bytes}"')
+
+
+@step('the nested map keys value will be "(.*)"')
+def the_nested_map_keys_value_is(ctx, val):
+    print(f'the nested map keys value will be "{val}"')
+
+
+@step("the nested map any values bytes length will by (.*)")
+def the_nested_map_any_bytes_length_is(ctx, len):
+    print(f'the nested map any values bytes length will by {len}')
+
+
+@step('the nested map any values bytes will by "(.*)"')
+def the_nested_map_value_bytes_are(ctx, hex_bytes):
+    print(f'the nested map any values bytes will by {hex_bytes}')

@@ -29,6 +29,9 @@ class CLTypesFactory:
         elif key in ['URef']:
             return types.CL_URef(types.CL_URefAccessRights.READ_ADD_WRITE, bytes.fromhex(_value))
 
+        elif key in ['Any']:
+            return _type(bytes.fromhex(_value))
+
         else:
             return _type(_value)
 
