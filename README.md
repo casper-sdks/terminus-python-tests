@@ -1,12 +1,40 @@
-## CSPR SDK Standard Tests: Python
+## Terminus Python
 
 This repo holds a set of tests to be run against the Casper Python SDK.
 
 Points to note are:
 
-- The tests are run via a GitHub action, standard-tests.yml
-- The action is well documented with the steps clearly labelled
-- A dockerised image of NCTL with it's generated assets is used to run the tests against
-- Tests will run automatically on a push to main within the SDK repo
-- Tests can be run manually within this repos action tab
+- The tests can be run manually via the Terminus project [here](https://github.com/casper-sdks/terminus) 
 - The tests are built using Cucumber features
+
+### How to run locally
+
+- Install python
+
+- Clone repo and start NCTL (please note the NCTL Casper node version in the script 'docker-run')
+
+  ```bash
+  git clone git@github.com:casper-sdks/terminus-python-tests.git
+  cd terminus-python-tests/script
+  ./docker-run
+  ./docker-copy-assets
+  cd ..
+  ```
+
+- Edit and install the requirements file to use the desired SDK repo
+
+  ```bash
+  awk '{sub(/@dev/,"@$[required-branch]1' requirements.txt > temp.txt && mv temp.txt requirements.txt 
+            
+  pip install -r requirements.txt
+  pip install behave
+  ```
+
+- Run the tests
+
+  ```bash
+  behave test/features --junit
+  ```
+
+  
+
