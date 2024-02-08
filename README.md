@@ -16,8 +16,8 @@ Points to note are:
   ```bash
   git clone git@github.com:casper-sdks/terminus-python-tests.git
   cd terminus-python-tests/script
-  ./docker-run
-  ./docker-copy-assets
+  chmod +x docker-run && ./docker-run
+  chmod +x docker-copy-assets && /docker-copy-assets 
   cd ..
   ```
 
@@ -36,5 +36,13 @@ Points to note are:
   behave test/features --junit
   ```
 
-  
+- TODO script the above
+
+- JUnit test results will be output to /reports
+
+### How to run locally IDE
+
+Alternatively the tests can be run using an IDE
+
+They are developed using JetBrains PyCharm
 
