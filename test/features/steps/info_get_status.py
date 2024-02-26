@@ -8,7 +8,7 @@ use_step_matcher("re")
 def info_get_status_invoked(ctx):
     print('that the info_get_status is invoked against nctl')
 
-    ctx.expected_status_data = ctx.nctl_client.get_node_status(1)
+    ctx.expected_status_data = ctx.node_client.get_node_status(1)
     assert ctx.expected_status_data
 
     ctx.status_data = ctx.sdk_client.get_node_status()

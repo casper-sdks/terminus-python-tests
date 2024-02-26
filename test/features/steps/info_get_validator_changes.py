@@ -11,7 +11,7 @@ def info_get_validator_changes_is_invoked(ctx):
 
     ctx.validators_changes = ctx.sdk_client.get_validator_changes()
 
-    ctx.expected_validator_changes = ctx.nctl_requests.get_info_get_validator_changes()
+    ctx.expected_validator_changes = ctx.node_requests.get_info_get_validator_changes()
     assert ctx.expected_validator_changes
 
 

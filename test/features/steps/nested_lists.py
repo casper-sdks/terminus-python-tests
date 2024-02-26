@@ -168,7 +168,7 @@ def deploy_list(ctx):
     ctx.transfer_amount = 2500000000
     ctx.gas_price = 1
     ctx.ttl = '30m'
-    ctx.chain = 'casper-net-1'
+    ctx.chain = 'cspr-dev-cctl'
     ctx.payment_amount = 100000000
 
     ctx.cl_values = []

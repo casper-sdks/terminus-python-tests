@@ -5,7 +5,7 @@ Feature: Deploys
     And the transfer amount is 2500000000
     And the transfer gas price is 1
     And the deploy is given a ttl of 30m
-    When the deploy is put on chain "casper-net-1"
+    When the deploy is put on chain "cspr-dev-cctl"
     Then the deploy response contains a valid deploy hash of length 64 and an API version "1.0.0"
     Then wait for a block added event with a timeout of 300 seconds
 

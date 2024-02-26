@@ -60,7 +60,7 @@ def step_impl(ctx, transfer_amount, payment_amount):
     ctx.transfer_amount = transfer_amount
     ctx.gas_price = 1
     ctx.ttl = '30m'
-    ctx.chain = 'casper-net-1'
+    ctx.chain = 'cspr-dev-cctl'
     ctx.payment_amount = payment_amount
 
     deploy_set_faucet_key(ctx)

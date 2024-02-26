@@ -9,7 +9,7 @@ use_step_matcher("re")
 def the_info_get_chainspec_is_invoked_rpc(ctx):
     print('that the info_get_chainspec is invoked using a simple RPC json request')
 
-    ctx.chain_spec_rpc = ctx.nctl_requests.get_chain_spec()
+    ctx.chain_spec_rpc = ctx.node_requests.get_chain_spec()
     assert ctx.chain_spec_rpc
 
 

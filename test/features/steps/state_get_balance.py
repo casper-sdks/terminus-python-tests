@@ -12,8 +12,8 @@ use_step_matcher("re")
 def state_get_balance_invoked(ctx):
     print('that the state_get_balance RPC method is invoked against nclt user-1 purse')
 
-    ctx.state_root_hash = ctx.nctl_client.get_state_root_hash(1)
-    ctx.account_main_purse = ctx.nctl_client.get_account_main_purse('user=1')
+    ctx.state_root_hash = ctx.node_client.get_state_root_hash(1)
+    ctx.account_main_purse = ctx.node_client.get_account_main_purse('user=1')
 
     ctx.state_get_balance_result = ctx.sdk_client.get_account_balance(
         types.CL_URef(types.CL_URefAccessRights.READ_ADD_WRITE,
@@ -32,7 +32,7 @@ def valid_result_returned(ctx):
 def contains_purse_amount(ctx):
     print('the state_get_balance_result contains the purse amount')
 
-    json = ctx.nctl_requests.get_state_get_balance(ctx.state_root_hash, ctx.account_main_purse)
+    json = ctx.node_requests.get_state_get_balance(ctx.state_root_hash, ctx.account_main_purse)
     balance = json["result"]["balance_value"]
 
     assert ctx.state_get_balance_result == int(balance)
