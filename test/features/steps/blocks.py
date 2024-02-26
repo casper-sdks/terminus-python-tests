@@ -217,8 +217,6 @@ def chain_transfer_data_is_initialised(ctx):
 def a_deploy_is_put_on_chain(ctx):
     print("the deploy data is put on chain")
 
-    ctx.chain = 'cspr-dev-cctl'
-
     deploy_set_signatures(ctx)
     ctx.deploy_result = deploy_to_chain(ctx)
 

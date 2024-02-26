@@ -25,3 +25,6 @@ class CONFIG:
     def get_node_port_spec(self):
         return self.config.get("test.properties", "node_port_spec")
 
+    def get_node_chain_name(self):
+        return self.config.get("test.properties", "chain_name")
+

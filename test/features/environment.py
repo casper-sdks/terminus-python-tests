@@ -29,6 +29,7 @@ def before_all(ctx):
     ctx.config = CONFIG()
     ctx.sdk_client = client(ctx.config)
     ctx.sdk_client_spec = client_spec(ctx.config)
+    ctx.chain_name = CONFIG().get_node_chain_name()
     ctx.node_client = NodeExec(ctx.config)
     ctx.node_requests = NodeRequests(ctx.config)
     ctx.ASSETS_ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), '../../assets/'))

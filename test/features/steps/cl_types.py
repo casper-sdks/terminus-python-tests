@@ -44,7 +44,6 @@ def the_values_are_added_as_arguments_to_a_deploy(ctx):
     ctx.transfer_amount = 2500000000
     ctx.gas_price = 1
     ctx.ttl = '30m'
-    ctx.chain = 'cspr-dev-cctl'
     ctx.payment_amount = 100000000
 
     deploy_set_signatures(ctx)

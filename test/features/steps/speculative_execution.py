@@ -22,7 +22,7 @@ def that_the_account_transfers_to_user(ctx, account, transfer_amount, user, paym
 
     deploy_params = pycspr.create_deploy_parameters(
         account=ctx.sender_key,
-        chain_name='cspr-dev-cctl',
+        chain_name=ctx.chain_name,
         ttl='30m',
         gas_price=1,
     )
