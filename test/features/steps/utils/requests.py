@@ -4,9 +4,9 @@ from time import time
 import requests
 
 
-# NCTL RPC request methods
+# Node RPC request methods
 
-class NCTLRequests:
+class NodeRequests:
 
     def __init__(self, config):
         self.config = config
@@ -21,11 +21,11 @@ class NCTLRequests:
         return json.loads(self._request('state_get_auction_info', '[{\"Hash\":  \"' + hash + '\"}]'))
 
     def get_state_get_balance(self, state_root_hash, purse_uref):
-        return json.loads(self._request('state_get_balance', '{\"state_root_hash\":\"' + state_root_hash + '\",\"purse_uref\":\"' + purse_uref + '\"}'))
+        return json.loads(self._request('state_get_balance',
+                                        '{\"state_root_hash\":\"' + state_root_hash + '\",\"purse_uref\":\"' + purse_uref + '\"}'))
 
     def _request(self, method, params) -> str:
-
-        url: str = 'http://' + self.config.get_nctl_host() + ':' + self.config.get_nctl_port_rpc() + "/rpc"
+        url: str = 'http://' + self.config.get_node_host() + ':' + self.config.get_node_port_rpc() + "/rpc"
         payload: str = '{"id":"' + str(int(time() * 1000)) + '","jsonrpc":"2.0","method":"' + method + '","params":' \
                        + params + '}'
         headers: dict = {'content-type': 'application/json', 'content-length': str(len(payload))}

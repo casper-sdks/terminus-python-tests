@@ -26,7 +26,7 @@ def the_latest_block_returned(ctx):
 @then('request the latest block via the test node')
 def request_the_latest_block(ctx):
     print("request the latest block via the test node")
-    ctx.blockDataNode = ctx.nctl_client.get_latest_block()
+    ctx.blockDataNode = ctx.node_client.get_latest_block()
 
 
 @then("the body of the returned block is equal to the body of the returned test node block")
@@ -34,7 +34,7 @@ def returned_block_body_equal_to_test_node_returned_body(ctx):
     print("the body of the returned block is equal to the body of the returned test node block")
 
     if ctx.blockDataSdk['hash'] != ctx.blockDataNode['hash']:
-        # Fixes intermittent syncing issues with nctl/sdk latest blocks
+        # Fixes intermittent syncing issues with node/sdk latest blocks
         ctx.blockDataSdk = ctx.sdk_client.get_block(ctx.blockDataNode['hash'])
 
     assert len(ctx.blockDataSdk['body']) > 0
@@ -74,7 +74,7 @@ def a_block_returned_by_hash(ctx):
 def request_block_by_hash_from_test_node(ctx):
     print("request a block by hash via the test node")
 
-    ctx.blockDataNode = ctx.nctl_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
+    ctx.blockDataNode = ctx.node_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
 
 
 @given("that a block is returned by height {height} via the sdk")
@@ -88,7 +88,7 @@ def a_block_is_returned_by_height(ctx, height):
 @then("request the returned block from the test node via its hash")
 def a_block_is_returned_by_hash_from_test_node(ctx):
     print("request the returned block from the test node via its hash")
-    ctx.blockDataNode = ctx.nctl_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
+    ctx.blockDataNode = ctx.node_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
 
 
 @given("that an invalid block hash is requested via the sdk")
@@ -124,7 +124,7 @@ def a_step_event_is_received(ctx):
     print("that a step event is received")
 
     call_async_function(ctx, step_event)
-    ctx.nodeEraSwitchBlockData = ctx.nctl_client.get_era_switch_block()
+    ctx.nodeEraSwitchBlockData = ctx.node_client.get_era_switch_block()
 
     assert ctx.nodeEraSwitchBlockData['era_summary']
     assert ctx.nodeEraSwitchBlockData['era_summary']['block_hash']
@@ -217,8 +217,6 @@ def chain_transfer_data_is_initialised(ctx):
 def a_deploy_is_put_on_chain(ctx):
     print("the deploy data is put on chain")
 
-    ctx.chain = 'casper-net-1'
-
     deploy_set_signatures(ctx)
     ctx.deploy_result = deploy_to_chain(ctx)
 
@@ -246,7 +244,7 @@ def request_block_transfer(ctx):
 def step_request_block_transfer_from_test_node(ctx):
     print("request the block transfer from the test node")
 
-    ctx.block_data_node = ctx.nctl_client.get_latest_block_by_param(
+    ctx.block_data_node = ctx.node_client.get_latest_block_by_param(
         "block=" + ctx.transfer_block_sdk[0])
 
 

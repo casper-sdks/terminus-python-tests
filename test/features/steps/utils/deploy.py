@@ -13,7 +13,7 @@ def deploy_to_chain(ctx) -> Deploy:
 
     deploy_params = pycspr.create_deploy_parameters(
         account=ctx.sender_key,
-        chain_name=ctx.chain,
+        chain_name=ctx.chain_name,
         ttl=ctx.ttl,
         gas_price=ctx.gas_price,
     )
@@ -40,7 +40,7 @@ def create_deploy(ctx):
     params: DeployParameters = \
         pycspr.create_deploy_parameters(
             account=ctx.sender_key,
-            chain_name=ctx.chain,
+            chain_name=ctx.chain_name,
             ttl=ctx.ttl,
             gas_price=ctx.gas_price,
         )

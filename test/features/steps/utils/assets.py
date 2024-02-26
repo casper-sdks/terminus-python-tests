@@ -1,4 +1,4 @@
-# NCTL asset functions
+# Node asset functions
 import pycspr
 from pycspr import KeyAlgorithm
 

@@ -11,7 +11,7 @@ def state_get_auction_info_invoked(ctx):
 
     ctx.parent_hash = ctx.sdk_client.get_block()['header']['parent_hash']
 
-    ctx.state_auction_info_json = ctx.nctl_requests.get_state_get_auction_info(ctx.parent_hash)['result']
+    ctx.state_auction_info_json = ctx.node_requests.get_state_get_auction_info(ctx.parent_hash)['result']
     assert ctx.state_auction_info_json
 
     ctx.state_get_auction_info_result = ctx.sdk_client.get_auction_info(ctx.parent_hash)
@@ -70,7 +70,7 @@ def invoked_by_height(ctx):
     ctx.parent_hash = ctx.sdk_client.get_block()['header']['parent_hash']
     ctx.block = ctx.sdk_client.get_block(ctx.parent_hash)
 
-    ctx.state_auction_info_json = ctx.nctl_requests.get_state_get_auction_info(ctx.parent_hash)['result']
+    ctx.state_auction_info_json = ctx.node_requests.get_state_get_auction_info(ctx.parent_hash)['result']
     assert ctx.state_auction_info_json
 
     ctx.state_get_auction_info_result = ctx.sdk_client.get_auction_info(ctx.block['header']['height'])

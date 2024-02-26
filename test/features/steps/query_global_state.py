@@ -17,7 +17,7 @@ def a_valid_block_hash_is_known(ctx):
 
     ctx.transfer_amount = 2500000000
     ctx.payment_amount = 10000000
-    ctx.chain = 'casper-net-1'
+
     ctx.ttl = '30m'
     ctx.gas_price = 1
 

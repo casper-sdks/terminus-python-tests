@@ -40,7 +40,7 @@ def the_contract_is_loaded(ctx):
     params: DeployParameters = \
         pycspr.create_deploy_parameters(
             account=ctx.sender_key,
-            chain_name='casper-net-1'
+            chain_name=ctx.chain_name
         )
 
     payment: ModuleBytes = \
@@ -121,7 +121,7 @@ def the_contract_entry_point_is_invoked_with_a_transfer_amount_of(ctx, amount):
     params: DeployParameters = \
         pycspr.create_deploy_parameters(
             account=ctx.sender_key,
-            chain_name='casper-net-1'
+            chain_name=ctx.chain_name
         )
 
     # Set payment logic.
@@ -171,7 +171,7 @@ def the_contract_is_invoked_by_name(ctx, name, amount):
     params: DeployParameters = \
         pycspr.create_deploy_parameters(
             account=ctx.sender_key,
-            chain_name='casper-net-1'
+            chain_name=ctx.chain_name
         )
 
     # Set payment logic.
@@ -213,7 +213,7 @@ def the_contract_is_invoked_by_hash(ctx, amount):
     params: DeployParameters = \
         pycspr.create_deploy_parameters(
             account=ctx.sender_key,
-            chain_name='casper-net-1'
+            chain_name=ctx.chain_name
         )
 
     # Set payment logic.
@@ -256,7 +256,7 @@ def the_contract_is_invoked_by_name_and_version(ctx, name, amount):
     params: DeployParameters = \
         pycspr.create_deploy_parameters(
             account=ctx.sender_key,
-            chain_name='casper-net-1'
+            chain_name=ctx.chain_name
         )
 
     # Set payment logic.
