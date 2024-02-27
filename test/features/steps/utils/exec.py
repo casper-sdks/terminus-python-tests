@@ -26,7 +26,7 @@ class NodeExec:
         res = os.popen(self._get_pre_script() + "cctl-chain-view-account-of-user " + params + "'").read()
         return json.loads(self._clean_input.sub('', res[res.find('{'):len(res)]))
 
-    def get_era_switch_block(self):
+    def get_era_summary(self):
         return json.loads(
             self._clean_input.sub('', os.popen(self._get_pre_script() + "cctl-chain-view-era-summary'").read()))
 

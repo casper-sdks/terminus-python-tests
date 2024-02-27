@@ -124,7 +124,7 @@ def a_step_event_is_received(ctx):
     print("that a step event is received")
 
     call_async_function(ctx, step_event)
-    ctx.nodeEraSwitchBlockData = ctx.node_client.get_era_switch_block()
+    ctx.nodeEraSwitchBlockData = ctx.node_client.get_era_summary()
 
     assert ctx.nodeEraSwitchBlockData['era_summary']
     assert ctx.nodeEraSwitchBlockData['era_summary']['block_hash']
