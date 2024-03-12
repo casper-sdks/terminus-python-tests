@@ -16,7 +16,7 @@ Points to note are:
   ```bash
   git clone git@github.com:casper-sdks/terminus-python-tests.git
   cd terminus-python-tests/script
-  chmod +x docker-run && ./docker-run
+  chmod +x test-node && ./test-node
   chmod +x docker-copy-assets && /docker-copy-assets 
   cd ..
   ```

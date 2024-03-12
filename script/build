@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+BRANCH='main'
+
+if ! [ -x "$(command -v pip)" ]; then
+  echo 'Error: pip is not installed.' >&2
+  exit 1
+fi
+
+if [ -n "$1" ]; then
+  BRANCH=$1
+  echo "Using Python SDK branch $BRANCH"
+else
+  echo "No Python SDK branch provided, defaulting to $BRANCH"
+fi
+
+cd ..
+echo "Removing pycspr requirement..."
+awk '!/pycspr/' requirements.txt > temp && mv temp requirements.txt
+
+echo "pycspr @ git+https://github.com/casper-network/casper-python-sdk@$BRANCH" >> requirements.txt
+
+pip install -r requirements.txt
+pip install behave
