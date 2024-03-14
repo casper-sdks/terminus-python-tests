@@ -12,8 +12,8 @@ def state_get_account_invoked(ctx):
     print('that the state_get_account_info RCP method is invoked against nctl')
 
     get_user_hex_public_key(ctx, '1', 'user-1')
-    ctx.state_account_info = ctx.sdk_client.get_account_info(ctx.sender_key.account_key.hex(),
-                                                             ctx.sdk_client.get_block())
+    ctx.state_account_info = ctx.sdk_client_rpc.get_account_info(ctx.sender_key.account_key.hex(),
+                                                                 ctx.sdk_client_rpc.get_block())
 
 
 @then("a valid state_get_account_info_result is returned")

@@ -12,7 +12,7 @@ def call_async_function(ctx, function):
 
 
 async def step_event(ctx):
-    await ctx.sdk_client.await_n_events(NodeEventChannel.main, NodeEventType.Step, 1)
+    await ctx.sdk_client_sse.await_n_events(NodeEventChannel.main, NodeEventType.Step, 1)
 
 
 async def block_event(ctx) -> dict:
@@ -22,7 +22,7 @@ async def block_event(ctx) -> dict:
     block_found = False
 
     for t in timeout:
-        transfer_block_sdk = await ctx.sdk_client.await_n_events(NodeEventChannel.main, NodeEventType.BlockAdded, 1)
+        transfer_block_sdk = await ctx.sdk_client_rpc.await_n_events(NodeEventChannel.main, NodeEventType.BlockAdded, 1)
         print('Seconds remaining: ' + str(int(timeout.time_left())), transfer_block_sdk)
         if ctx.deploy_result.hash.hex() in transfer_block_sdk['BlockAdded']['block']['body']['transfer_hashes']:
             block_found = True
@@ -41,7 +41,7 @@ async def deploy_event(ctx) -> Deploy:
     deployed = False
 
     for t in timeout:
-        deploy = ctx.sdk_client.get_deploy(ctx.deploy.hash)
+        deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy.hash)
         # print('Seconds remaining: ' + str(int(timeout.time_left())))
         if len(deploy['execution_results']) > 0:
             deployed = True

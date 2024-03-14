@@ -27,7 +27,8 @@ param_keys: dict = {
 
 def before_all(ctx):
     ctx.config = CONFIG()
-    ctx.sdk_client = client(ctx.config)
+    ctx.sdk_client_rpc = client_rpc(ctx.config)
+    ctx.sdk_client_sse = client_sse(ctx.config)
     ctx.sdk_client_spec = client_spec(ctx.config)
     ctx.chain_name = CONFIG().get_node_chain_name()
     ctx.node_client = NodeExec(ctx.config)

@@ -9,7 +9,7 @@ use_step_matcher("re")
 def the_chain_state_root_hash_is_invoked_against_nctl(ctx):
     print('that the chain_get_state_root_hash RCP method is invoked against nctl')
 
-    ctx.state_root_hash = ctx.sdk_client.get_state_root_hash()
+    ctx.state_root_hash = ctx.sdk_client_rpc.get_state_root_hash()
     assert ctx.state_root_hash
 
 

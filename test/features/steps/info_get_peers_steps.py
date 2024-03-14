@@ -8,7 +8,7 @@ use_step_matcher("re")
 @given("that the info_get_peers RPC method is invoked against a node")
 def info_get_peers_invoked(ctx):
     print('that the info_get_peers RPC method is invoked against a node')
-    ctx.peer_data = ctx.sdk_client.get_node_peers()
+    ctx.peer_data = ctx.sdk_client_rpc.get_node_peers()
 
 
 @then("the node returns an info_get_peers_result")

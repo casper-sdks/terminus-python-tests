@@ -11,7 +11,7 @@ def info_get_status_invoked(ctx):
     ctx.expected_status_data = ctx.node_client.get_node_status(1)
     assert ctx.expected_status_data
 
-    ctx.status_data = ctx.sdk_client.get_node_status()
+    ctx.status_data = ctx.sdk_client_rpc.get_node_status()
 
 
 @then("an info_get_status_result is returned")

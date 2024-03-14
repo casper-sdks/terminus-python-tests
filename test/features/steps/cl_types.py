@@ -55,7 +55,7 @@ def the_values_are_added_as_arguments_to_a_deploy(ctx):
 def the_deploy_is_put_on_chain(ctx):
     print(f'the deploy is put on chain')
 
-    ctx.sdk_client.send_deploy(ctx.deploy)
+    ctx.sdk_client_rpc.send_deploy(ctx.deploy)
     ctx.deploy_result = ctx.deploy
 
     assert ctx.deploy_result.hash.hex()
@@ -75,7 +75,7 @@ def the_deploy_has_successfully_executed(ctx):
 def the_deploy_obtained_from_the_node(ctx):
     print(f'the deploy is obtained from the node')
 
-    ctx.deploy = ctx.sdk_client.get_deploy(ctx.deploy_result.hash)
+    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash)
     assert ctx.deploy
 
 

@@ -7,6 +7,11 @@ if ! [ -x "$(command -v pip)" ]; then
   exit 1
 fi
 
+echo "Installing rust for toml files ..."
+curl -f -L https://static.rust-lang.org/rustup.sh -O
+     && sh rustup.sh -y
+PATH="$PATH:/root/.cargo/env"
+
 if [ -n "$1" ]; then
   BRANCH=$1
   echo "Using Python SDK branch $BRANCH"
@@ -15,7 +20,7 @@ else
 fi
 
 cd ..
-echo "Removing pycspr requirement..."
+echo "Removing pycspr requirement ..."
 awk '!/pycspr/' requirements.txt > temp && mv temp requirements.txt
 
 echo "pycspr @ git+https://github.com/casper-network/casper-python-sdk@$BRANCH" >> requirements.txt

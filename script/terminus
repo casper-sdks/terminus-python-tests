@@ -1,0 +1,91 @@
+NODE="stormeye2000/cspr-cctl:release-1.5.6"
+DOCKER_NAME="cspr-cctl"
+BASEDIR=$(builtin cd ..; pwd)
+CCTL_ASSETS=/home/cctl/cctl/assets
+BRANCH='main'
+
+if ! [ -x "$(command -v docker)" ]; then
+  echo 'Error: docker is not installed.' >&2
+  exit 1
+fi
+
+function _init() {
+  echo $BRANCH
+  echo $NODE
+
+  echo "Stopping and removing any running image..."
+  docker ps -q --filter "name=$DOCKER_NAME" | grep -q . && docker stop $DOCKER_NAME && docker rm -fv $DOCKER_NAME > /dev/null 2>&1
+
+  echo "Starting image..."
+  docker run --rm -it --name $DOCKER_NAME -d -p 25101:25101 -p 11101:11101 -p 14101:14101 -p 18101:18101 $NODE
+
+  echo "Waiting for node to start...."
+  sleep 10
+
+  echo "Copying node assets locally...."
+
+  # clear the assets folder
+  rm -rf  ${BASEDIR}/assets
+  mkdir ${BASEDIR}/assets
+  mkdir ${BASEDIR}/assets/net-1
+  mkdir ${BASEDIR}/assets/chainspec
+  mkdir ${BASEDIR}/assets/faucet
+  # copy net-1 users
+  docker cp cspr-cctl:$CCTL_ASSETS/users/. ${BASEDIR}/assets/net-1
+  # copy net-1 chainspec
+  docker cp cspr-cctl:$CCTL_ASSETS/genesis ${BASEDIR}/assets/net-1/chainspec
+  # copy faucet keys
+  docker cp cspr-cctl:$CCTL_ASSETS/faucet/ ${BASEDIR}/assets/net-1/faucet
+
+
+  if ! [ -x "$(command -v pip)" ]; then
+    echo 'Error: pip is not installed.' >&2
+    exit 1
+  fi
+
+  echo "Installing rust for toml files ..."
+  curl -f -L https://static.rust-lang.org/rustup.sh -O && sh rustup.sh -y
+  PATH="$PATH:/root/.cargo/env"
+
+  cd ..
+  echo "Removing pycspr requirement ..."
+  awk '!/pycspr/' requirements.txt > temp && mv temp requirements.txt
+
+  echo "pycspr @ git+https://github.com/casper-network/casper-python-sdk@$BRANCH" >> requirements.txt
+
+  python3 -m pip install -r requirements.txt
+  python3 -m pip install behave
+
+}
+
+
+function _test() {
+    behave test/features --junit
+}
+
+
+
+case "$1" in
+  'test')
+    _test;;
+  'init')
+    shift
+    while getopts "b:n:" option; do
+       case $option in
+          b)
+            BRANCH=$OPTARG;;
+          n)
+            NODE=$OPTARG;;
+         \?)
+             echo "Error: Invalid option"
+             exit;;
+       esac
+    done
+    _init;;
+  *)
+    echo 'Please use init or test command';;
+esac
+
+
+
+

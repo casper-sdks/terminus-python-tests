@@ -9,12 +9,12 @@ use_step_matcher("re")
 def state_get_auction_info_invoked(ctx):
     print('that the state_get_auction_info RPC method is invoked by hash block identifier')
 
-    ctx.parent_hash = ctx.sdk_client.get_block()['header']['parent_hash']
+    ctx.parent_hash = ctx.sdk_client_rpc.get_block()['header']['parent_hash']
 
     ctx.state_auction_info_json = ctx.node_requests.get_state_get_auction_info(ctx.parent_hash)['result']
     assert ctx.state_auction_info_json
 
-    ctx.state_get_auction_info_result = ctx.sdk_client.get_auction_info(ctx.parent_hash)
+    ctx.state_get_auction_info_result = ctx.sdk_client_rpc.get_auction_info(ctx.parent_hash)
 
 
 @then("a valid state_get_auction_info_result is returned")
@@ -67,13 +67,13 @@ def has_valid_validators(ctx):
 def invoked_by_height(ctx):
     print('that the state_get_auction_info RPC method is invoked by height block identifier')
 
-    ctx.parent_hash = ctx.sdk_client.get_block()['header']['parent_hash']
-    ctx.block = ctx.sdk_client.get_block(ctx.parent_hash)
+    ctx.parent_hash = ctx.sdk_client_rpc.get_block()['header']['parent_hash']
+    ctx.block = ctx.sdk_client_rpc.get_block(ctx.parent_hash)
 
     ctx.state_auction_info_json = ctx.node_requests.get_state_get_auction_info(ctx.parent_hash)['result']
     assert ctx.state_auction_info_json
 
-    ctx.state_get_auction_info_result = ctx.sdk_client.get_auction_info(ctx.block['header']['height'])
+    ctx.state_get_auction_info_result = ctx.sdk_client_rpc.get_auction_info(ctx.block['header']['height'])
 
 
 @given("that the state_get_auction_info RPC method is invoked by an invalid block hash identifier")
@@ -81,7 +81,7 @@ def invoked_by_invalid_hash(ctx):
     print('that the state_get_auction_info RPC method is invoked by an invalid block hash identifier')
 
     try:
-        ctx.sdk_client.get_auction_info('9608b4b7029a18ae35373eab879f523850a1b1fd43a3e6da774826a343af4ad2')
+        ctx.sdk_client_rpc.get_auction_info('9608b4b7029a18ae35373eab879f523850a1b1fd43a3e6da774826a343af4ad2')
     except Exception as ex:
         ctx.exception = ex
 

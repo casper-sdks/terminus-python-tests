@@ -9,11 +9,11 @@ use_step_matcher("re")
 def that_era_summary_requested(ctx):
     print('that the era summary is requested via the sdk')
 
-    block = ctx.sdk_client.get_block()
+    block = ctx.sdk_client_rpc.get_block()
     assert block
     ctx.block_hash = block['hash']
 
-    ctx.sdk_err_summary = ctx.sdk_client.get_era_summary(ctx.block_hash)
+    ctx.sdk_err_summary = ctx.sdk_client_rpc.get_era_summary(ctx.block_hash)
     assert ctx.sdk_err_summary
 
 @then("request the era summary via the node")

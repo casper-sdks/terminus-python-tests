@@ -29,7 +29,7 @@ def deploy_to_chain(ctx) -> Deploy:
 
     deploy.approve(ctx.sender_key)
 
-    ctx.sdk_client.send_deploy(deploy)
+    ctx.sdk_client_rpc.send_deploy(deploy)
 
     return deploy
 

@@ -70,7 +70,7 @@ def map_is_deployed_successfully(ctx):
 def map_is_read_from_the_deploy(ctx):
     print(f'the map is read from the deploy')
 
-    ctx.deploy = ctx.sdk_client.get_deploy(ctx.deploy_result.hash)
+    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash)
     assert ctx.deploy
 
     args = ctx.deploy['deploy']['session']['Transfer']['args']
@@ -212,7 +212,7 @@ def deploy_map(ctx):
 
     ctx.deploy = create_deploy(ctx)
 
-    ctx.sdk_client.send_deploy(ctx.deploy)
+    ctx.sdk_client_rpc.send_deploy(ctx.deploy)
     ctx.deploy_result = ctx.deploy
 
     assert ctx.deploy_result.hash.hex()
