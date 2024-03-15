@@ -1,0 +1,42 @@
+function _init() {
+
+  shift
+  while getopts "b:n:" option; do
+     case $option in
+        b)
+          BRANCH=$OPTARG;;
+        n)
+          NODE=$OPTARG;;
+       \?)
+           echo "Error: Invalid option"
+           exit;;
+     esac
+  done
+
+  if ! [ -x "$(command -v pip)" ]; then
+    echo 'Error: pip is not installed.' >&2
+    exit 1
+  fi
+
+  if ! [ -x "$(command -v python3)" ]; then
+    echo 'Error: python3 is not installed.' >&2
+    exit 1
+  fi
+
+  echo "Installing rust for toml files ..."
+  curl -f -L https://static.rust-lang.org/rustup.sh -O && sh rustup.sh -y
+  rm rustup.sh
+  PATH="$PATH:/root/.cargo/env"
+
+  cd $BASEDIR
+  echo "Removing pycspr requirement ..."
+  awk '!/pycspr/' requirements.txt > temp && mv temp requirements.txt
+
+  echo "pycspr @ git+https://github.com/casper-network/casper-python-sdk@$BRANCH" >> requirements.txt
+
+  python3 -m pip install -r requirements.txt
+  python3 -m pip install behave
+
+  exit 0
+
+}

@@ -148,7 +148,7 @@ def switch_block_hashes_are_equal(ctx):
     print("the switch block hashes of the returned block are equal to the switch block hashes of the returned test "
           "node block")
 
-    assert ctx.nodeEraSwitchBlock == ctx.eraSwitchBlockData['block_hash']
+    assert ctx.nodeEraSwitchBlock == ctx.eraSwitchBlockData['era_summary']['block_hash']
 
 
 @step("the switch block eras of the returned block are equal to the switch block eras of the returned test node block")
@@ -156,7 +156,7 @@ def switch_block_eras_are_equal(ctx):
     print("the switch block eras of the returned block are equal to the switch block eras of the returned test node "
           "block")
 
-    ctx.nodeEraSwitchBlockData['era_summary']['era_id'] = ctx.eraSwitchBlockData['era_id']
+    ctx.nodeEraSwitchBlockData['era_summary']['era_id'] = ctx.eraSwitchBlockData['era_summary']['era_id']
 
 
 @step(
@@ -167,7 +167,7 @@ def switch_block_merkle_proofs_are_equal(ctx):
           "returned test node block")
 
     validate_merkle_proofs(ctx.nodeEraSwitchBlockData['era_summary']['merkle_proof'],
-                           ctx.eraSwitchBlockData['merkle_proof'])
+                           ctx.eraSwitchBlockData['era_summary']['merkle_proof'])
 
 
 @step(
@@ -177,7 +177,7 @@ def switch_block_state_root_hashes_are_equal(ctx):
     print("the switch block state root hashes of the returned block are equal to the switch block state root hashes "
           "of the returned test node block")
 
-    assert ctx.nodeEraSwitchBlockData['era_summary']['state_root_hash'] == ctx.eraSwitchBlockData['state_root_hash']
+    assert ctx.nodeEraSwitchBlockData['era_summary']['state_root_hash'] == ctx.eraSwitchBlockData['era_summary']['state_root_hash']
 
 
 @step("the delegators data of the returned block is equal to the delegators data of the returned test node block")
@@ -185,7 +185,7 @@ def the_delegators_are_equal(ctx):
     print("the delegators data of the returned block is equal to the delegators data of the returned test node block")
 
     assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
-           == ctx.eraSwitchBlockData['stored_value']['EraInfo']['seigniorage_allocations']
+           == ctx.eraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']
 
 
 @step("the validators data of the returned block is equal to the validators data of the returned test node block")
@@ -193,7 +193,7 @@ def the_validators_are_equal(ctx):
     print("the validators data of the returned block is equal to the validators data of the returned test node block")
 
     assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
-           == ctx.eraSwitchBlockData['stored_value']['EraInfo']['seigniorage_allocations']
+           == ctx.eraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']
 
 
 @given("that chain transfer data is initialised")
@@ -246,7 +246,7 @@ def step_request_block_transfer_from_test_node(ctx):
     print("request the block transfer from the test node")
 
     ctx.block_data_node = ctx.node_client.get_latest_block_by_param(
-        "block=" + ctx.transfer_block_sdk[0])
+        "block=" + ctx.transfer_block_sdk.block_hash.decode())
 
 
 @step("the returned block contains the transfer hash returned from the test node block")
