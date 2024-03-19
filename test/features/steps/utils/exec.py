@@ -13,7 +13,7 @@ class NodeExec:
         self.config = config
 
     def _get_pre_script(self):
-        return "docker exec -t " + self.config.get_docker_name() + " /inc/bash -c -i '"
+        return "docker exec -t " + self.config.get_docker_name() + " /bin/bash -c -i '"
 
     def get_latest_block(self):
         return json.loads(self._clean_input.sub('', os.popen(self._get_pre_script() + "cctl-chain-view-block'").read()))

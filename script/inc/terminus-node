@@ -19,20 +19,24 @@ function _docker() {
     exit 1
   fi
 
-  echo "Stopping and removing any running image..."
-  docker ps -q --filter "name=$DOCKER_NAME" | grep -q . && docker stop $DOCKER_NAME && docker rm -fv $DOCKER_NAME > /dev/null 2>&1
+  echo "Stopping and removing any running image"
+  docker stop $DOCKER_NAME > /dev/null 2>&1 && docker rm -fv $DOCKER_NAME > /dev/null 2>&1
 
-  echo "Starting image..."
-  docker run --rm -it --name $DOCKER_NAME -d -p 25101:25101 -p 11101:11101 -p 14101:14101 -p 18101:18101 $NODE
+  echo "Starting image"
+  docker run --rm -it --name $DOCKER_NAME -d -p 25101:25101 -p 11101:11101 -p 14101:14101 -p 18101:18101 $NODE > /dev/null 2>&1
 
-  echo "Waiting for node to start...."
-  sleep 10
-
-  echo "Copying node assets locally...."
+  res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
+  while [[ $res == *"Error"* ]]
+  do
+    echo -ne "Waiting for node to start....\r"
+    res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
+  done
 
 }
 
 function _assets() {
+
+  echo "Copying test node assets locally"
 
   # clear the assets folder
   rm -rf  ${BASEDIR}/assets
@@ -41,11 +45,10 @@ function _assets() {
   mkdir ${BASEDIR}/assets/chainspec
   mkdir ${BASEDIR}/assets/faucet
   # copy net-1 users
-  docker cp cspr-cctl:$CCTL_ASSETS/users/. ${BASEDIR}/assets/net-1
+  docker cp cspr-cctl:$CCTL_ASSETS/users/. ${BASEDIR}/assets/net-1 > /dev/null 2>&1
   # copy net-1 chainspec
-  docker cp cspr-cctl:$CCTL_ASSETS/genesis ${BASEDIR}/assets/net-1/chainspec
+  docker cp cspr-cctl:$CCTL_ASSETS/genesis ${BASEDIR}/assets/net-1/chainspec > /dev/null 2>&1
   # copy faucet keys
-  docker cp cspr-cctl:$CCTL_ASSETS/faucet/ ${BASEDIR}/assets/net-1/faucet
+  docker cp cspr-cctl:$CCTL_ASSETS/faucet/ ${BASEDIR}/assets/net-1/faucet > /dev/null 2>&1
 
-  exit 0
 }

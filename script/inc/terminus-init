@@ -37,6 +37,8 @@ function _init() {
   python3 -m pip install -r requirements.txt
   python3 -m pip install behave
 
+  PATH=$PATH:`pwd`
+
   exit 0
 
 }

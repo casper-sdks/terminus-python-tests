@@ -24,19 +24,19 @@ Points to note are:
 - The default SDK branch and node docker location can be overriden in the terminus init command 
 
 - ```bash
-  ./terminus -b dev -n cctl:latest
+  ./terminus init -b dev -n cctl:latest
   ```
 
 - To view the defaults and other terminus commands, run
 
 - ```bash
-  ./terminus help
+  terminus help
   ```
 
 - To run the tests:
 
   ```bash
-  ./terminus test
+  terminus test
   ```
 
 - JUnit test results will be output to /reports
