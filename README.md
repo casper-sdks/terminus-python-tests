@@ -21,7 +21,7 @@ Points to note are:
   ./terminus init
   ```
 
-- The default SDK branch and node docker location can be overriden in the terminus init command 
+- The default SDK branch and node docker location can be overridden in the terminus init command 
 
 - ```bash
   ./terminus init -b dev -n cctl:latest
