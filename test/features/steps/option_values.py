@@ -79,7 +79,7 @@ def is_successful(ctx):
 def is_read(ctx):
     print(f'the Option is read from the deploy')
 
-    ctx.deploy = ctx.sdk_client.get_deploy(ctx.deploy_result.hash)
+    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash)
 
     assert ctx.deploy
 
@@ -121,7 +121,7 @@ def deploy_option(ctx):
 
     ctx.deploy = create_deploy(ctx)
 
-    ctx.sdk_client.send_deploy(ctx.deploy)
+    ctx.sdk_client_rpc.send_deploy(ctx.deploy)
     ctx.deploy_result = ctx.deploy
 
     assert ctx.deploy_result.hash.hex()

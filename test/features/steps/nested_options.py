@@ -216,7 +216,7 @@ def deploy_nested_option(ctx):
 
     ctx.deploy = create_deploy(ctx)
 
-    ctx.sdk_client.send_deploy(ctx.deploy)
+    ctx.sdk_client_rpc.send_deploy(ctx.deploy)
     ctx.deploy_result = ctx.deploy
 
     assert ctx.deploy_result.hash.hex()

@@ -61,7 +61,7 @@ def query_global_state_rcp_invoked(ctx):
     # }
     # state_identifier and key are returned as dicts in get_query_global_state_params
 
-    ctx.global_state_data = ctx.sdk_client.query_global_state(cl_key, '[]', state_id)
+    ctx.global_state_data = ctx.sdk_client_rpc.query_global_state(cl_key, '[]', state_id)
 
     assert ctx.global_state_data
 

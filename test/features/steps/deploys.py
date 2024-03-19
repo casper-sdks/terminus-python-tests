@@ -97,7 +97,7 @@ def a_deploy_is_requested(ctx):
     ctx.last_block_added = call_async_function(ctx, block_event)
     ctx.param_map['last_block_added'] = ctx.last_block_added
 
-    ctx.deploy = ctx.sdk_client.get_deploy(ctx.deploy_result.hash.hex())
+    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash.hex())
     assert ctx.deploy
 
 

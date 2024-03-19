@@ -23,13 +23,14 @@ def deploy_to_chain(ctx) -> Deploy:
         params=deploy_params,
         amount=int(ctx.transfer_amount),
         target=ctx.receiver_key.account_key,
-        correlation_id=random.randint(1, 1e6),
+        # correlation_id=random.randint(1, 1e6),
+        correlation_id=random.randint(1, 100) ,
         payment=int(ctx.payment_amount)
     )
 
     deploy.approve(ctx.sender_key)
 
-    ctx.sdk_client.send_deploy(deploy)
+    ctx.sdk_client_rpc.send_deploy(deploy)
 
     return deploy
 

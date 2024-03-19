@@ -11,32 +11,33 @@ Points to note are:
 
 - Install python
 
-- Clone repo and start NCTL (please note the NCTL Casper node version in the script 'docker-run')
+- Clone the repo and initialise the test project
 
   ```bash
   git clone git@github.com:casper-sdks/terminus-python-tests.git
-  cd terminus-python-tests/script
-  chmod +x docker-run && ./docker-run
-  chmod +x docker-copy-assets && /docker-copy-assets 
-  cd ..
+  
+  cd terminus-python-tests/script && chmod +x terminus
+  
+  ./terminus init
   ```
 
-- Edit and install the requirements file to use the desired SDK repo
+- The default SDK branch and node docker location can be overridden in the terminus init command 
+
+- ```bash
+  ./terminus init -b dev -n cctl:latest
+  ```
+
+- To view the defaults and other terminus commands, run
+
+- ```bash
+  terminus help
+  ```
+
+- To run the tests:
 
   ```bash
-  awk '{sub(/@dev/,"@$[required-branch]1' requirements.txt > temp.txt && mv temp.txt requirements.txt 
-            
-  pip install -r requirements.txt
-  pip install behave
+  terminus test
   ```
-
-- Run the tests
-
-  ```bash
-  behave test/features --junit
-  ```
-
-- TODO script the above
 
 - JUnit test results will be output to /reports
 

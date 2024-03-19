@@ -59,7 +59,7 @@ def the_contract_is_loaded(ctx):
     deploy: Deploy = pycspr.create_deploy(params, payment, session)
 
     deploy.approve(ctx.sender_key)
-    ctx.deploy_hash = ctx.sdk_client.send_deploy(deploy)
+    ctx.deploy_hash = ctx.sdk_client_rpc.send_deploy(deploy)
 
     assert ctx.deploy_hash
     print(ctx.deploy_hash)
@@ -84,7 +84,7 @@ def the_account_named_keys_contain_the(ctx, contract_name):
     account_hash = faucet_private_key.account_hash
 
     key = "account-hash-{}".format(account_hash.hex())
-    account = ctx.sdk_client.get_state_item(key)
+    account = ctx.sdk_client_rpc.get_state_item(key)
 
     assert account['Account']['named_keys'][0]['name'] == contract_name.upper()
     assert account['Account']['named_keys'][0]['key']
@@ -95,7 +95,7 @@ def the_account_named_keys_contain_the(ctx, contract_name):
 def the_contract_data_is_a_with_a_value_of(ctx, path, type_name, value, hex_bytes):
     print(f'the contract data "{path}" is a "{type_name}" with a value of "{value}" and bytes of "{hex_bytes}"')
 
-    state_item = ctx.sdk_client.get_state_item(
+    state_item = ctx.sdk_client_rpc.get_state_item(
         ctx.contract_hash,
         [path]
     )
@@ -143,7 +143,7 @@ def the_contract_entry_point_is_invoked_with_a_transfer_amount_of(ctx, amount):
 
     deploy.approve(ctx.sender_key)
 
-    ctx.deploy_hash = ctx.sdk_client.send_deploy(deploy)
+    ctx.deploy_hash = ctx.sdk_client_rpc.send_deploy(deploy)
 
     assert ctx.deploy_hash
 
@@ -193,7 +193,7 @@ def the_contract_is_invoked_by_name(ctx, name, amount):
 
     deploy.approve(ctx.sender_key)
 
-    ctx.deploy_hash = ctx.sdk_client.send_deploy(deploy)
+    ctx.deploy_hash = ctx.sdk_client_rpc.send_deploy(deploy)
 
     assert ctx.deploy_hash
 
@@ -236,7 +236,7 @@ def the_contract_is_invoked_by_hash(ctx, amount):
 
     deploy.approve(ctx.sender_key)
 
-    ctx.deploy_hash = ctx.sdk_client.send_deploy(deploy)
+    ctx.deploy_hash = ctx.sdk_client_rpc.send_deploy(deploy)
 
     assert ctx.deploy_hash
 
@@ -279,7 +279,7 @@ def the_contract_is_invoked_by_name_and_version(ctx, name, amount):
 
     deploy.approve(ctx.sender_key)
 
-    ctx.deploy_hash = ctx.sdk_client.send_deploy(deploy)
+    ctx.deploy_hash = ctx.sdk_client_rpc.send_deploy(deploy)
 
     assert ctx.deploy_hash
 
@@ -299,7 +299,7 @@ def wait_for_deploy(ctx) -> dict:
     deployed = False
 
     for t in timeout:
-        deploy = ctx.sdk_client.get_deploy(ctx.deploy_hash)
+        deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_hash)
         if deploy is not None and len(deploy["execution_results"]) > 0:
             deployed = True
             break

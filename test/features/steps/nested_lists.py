@@ -85,7 +85,7 @@ def it_is_successful(ctx):
 def it_is_read_from_the_deploy(ctx):
     print(f'the list is read from the deploy')
 
-    ctx.deploy = ctx.sdk_client.get_deploy(ctx.deploy_result.hash)
+    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash)
     assert ctx.deploy
 
     args = ctx.deploy['deploy']['session']['Transfer']['args']
@@ -179,7 +179,7 @@ def deploy_list(ctx):
 
     ctx.deploy = create_deploy(ctx)
 
-    ctx.sdk_client.send_deploy(ctx.deploy)
+    ctx.sdk_client_rpc.send_deploy(ctx.deploy)
     ctx.deploy_result = ctx.deploy
 
     assert ctx.deploy_result.hash.hex()

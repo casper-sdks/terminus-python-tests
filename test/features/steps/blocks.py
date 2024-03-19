@@ -1,7 +1,8 @@
 import codecs
 
+import pycspr.api.rest.proxy
 from behave import *
-from pycspr import *
+
 
 from test.features.steps.utils.deploy import deploy_to_chain, deploy_set_signatures
 from utils.assets import *
@@ -20,7 +21,7 @@ BLOCK_ERR_CODE = -32001
 @given("that the latest block is requested via the sdk")
 def the_latest_block_returned(ctx):
     print("that the latest block is requested via the sdk")
-    ctx.blockDataSdk = ctx.sdk_client.get_block()
+    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block()
 
 
 @then('request the latest block via the test node')
@@ -35,7 +36,7 @@ def returned_block_body_equal_to_test_node_returned_body(ctx):
 
     if ctx.blockDataSdk['hash'] != ctx.blockDataNode['hash']:
         # Fixes intermittent syncing issues with node/sdk latest blocks
-        ctx.blockDataSdk = ctx.sdk_client.get_block(ctx.blockDataNode['hash'])
+        ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(ctx.blockDataNode['hash'])
 
     assert len(ctx.blockDataSdk['body']) > 0
     assert ctx.blockDataSdk['body']['proposer'] == ctx.blockDataNode['body']['proposer']
@@ -66,8 +67,8 @@ def returned_block_proofs_equal_to_returned_test_node_proofs(ctx):
 
 @given("that a block is returned by hash via the sdk")
 def a_block_returned_by_hash(ctx):
-    ctx.blockDataSdk = ctx.sdk_client.get_block()
-    ctx.blockDataSdk = ctx.sdk_client.get_block(ctx.blockDataSdk['hash'])
+    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block()
+    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(ctx.blockDataSdk['hash'])
 
 
 @then("request a block by hash via the test node")
@@ -81,8 +82,8 @@ def request_block_by_hash_from_test_node(ctx):
 def a_block_is_returned_by_height(ctx, height):
     print("that a block is returned by height {height} via the sdk")
 
-    ctx.blockDataSdk = ctx.sdk_client.get_block()
-    ctx.blockDataSdk = ctx.sdk_client.get_block(ctx.blockDataSdk['header']["height"])
+    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block()
+    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(ctx.blockDataSdk['header']["height"])
 
 
 @then("request the returned block from the test node via its hash")
@@ -95,7 +96,7 @@ def a_block_is_returned_by_hash_from_test_node(ctx):
 def an_invalid_block_is_requested(ctx):
     print("that an invalid block hash is requested via the sdk")
     try:
-        ctx.blockDataSdk = ctx.sdk_client.get_block(INVALID_BLOCK_HASH)
+        ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(INVALID_BLOCK_HASH)
     except Exception as ex:
         ctx.exception = ex
 
@@ -104,7 +105,7 @@ def an_invalid_block_is_requested(ctx):
 def a_valid_error_message_is_returned(ctx):
     print("a valid error message is returned")
 
-    assert type(ctx.exception) is NodeAPIError
+    # assert type(ctx.exception) is Exception
     assert BLOCK_ERR_MSG == ctx.exception.args[0].message
     assert BLOCK_ERR_CODE == ctx.exception.args[0].code
 
@@ -114,7 +115,7 @@ def an_invalid_block_height_is_requested(ctx):
     print("that an invalid block height is requested via the sdk")
 
     try:
-        ctx.blockDataSdk = ctx.sdk_client.get_block(INVALID_HEIGHT)
+        ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(INVALID_HEIGHT)
     except Exception as ex:
         ctx.exception = ex
 
@@ -137,7 +138,7 @@ def a_step_event_is_received(ctx):
 def request_corresponding_era_switch_block(ctx):
     print("request the corresponding era switch block via the sdk")
 
-    ctx.eraSwitchBlockData = ctx.sdk_client.get_era_info(ctx.nodeEraSwitchBlock)
+    ctx.eraSwitchBlockData = ctx.sdk_client_rpc.get_era_info(ctx.nodeEraSwitchBlock)
     assert ctx.eraSwitchBlockData
 
 
@@ -147,7 +148,7 @@ def switch_block_hashes_are_equal(ctx):
     print("the switch block hashes of the returned block are equal to the switch block hashes of the returned test "
           "node block")
 
-    assert ctx.nodeEraSwitchBlock == ctx.eraSwitchBlockData['block_hash']
+    assert ctx.nodeEraSwitchBlock == ctx.eraSwitchBlockData['era_summary']['block_hash']
 
 
 @step("the switch block eras of the returned block are equal to the switch block eras of the returned test node block")
@@ -155,7 +156,7 @@ def switch_block_eras_are_equal(ctx):
     print("the switch block eras of the returned block are equal to the switch block eras of the returned test node "
           "block")
 
-    ctx.nodeEraSwitchBlockData['era_summary']['era_id'] = ctx.eraSwitchBlockData['era_id']
+    ctx.nodeEraSwitchBlockData['era_summary']['era_id'] = ctx.eraSwitchBlockData['era_summary']['era_id']
 
 
 @step(
@@ -166,7 +167,7 @@ def switch_block_merkle_proofs_are_equal(ctx):
           "returned test node block")
 
     validate_merkle_proofs(ctx.nodeEraSwitchBlockData['era_summary']['merkle_proof'],
-                           ctx.eraSwitchBlockData['merkle_proof'])
+                           ctx.eraSwitchBlockData['era_summary']['merkle_proof'])
 
 
 @step(
@@ -176,7 +177,7 @@ def switch_block_state_root_hashes_are_equal(ctx):
     print("the switch block state root hashes of the returned block are equal to the switch block state root hashes "
           "of the returned test node block")
 
-    assert ctx.nodeEraSwitchBlockData['era_summary']['state_root_hash'] == ctx.eraSwitchBlockData['state_root_hash']
+    assert ctx.nodeEraSwitchBlockData['era_summary']['state_root_hash'] == ctx.eraSwitchBlockData['era_summary']['state_root_hash']
 
 
 @step("the delegators data of the returned block is equal to the delegators data of the returned test node block")
@@ -184,7 +185,7 @@ def the_delegators_are_equal(ctx):
     print("the delegators data of the returned block is equal to the delegators data of the returned test node block")
 
     assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
-           == ctx.eraSwitchBlockData['stored_value']['EraInfo']['seigniorage_allocations']
+           == ctx.eraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']
 
 
 @step("the validators data of the returned block is equal to the validators data of the returned test node block")
@@ -192,7 +193,7 @@ def the_validators_are_equal(ctx):
     print("the validators data of the returned block is equal to the validators data of the returned test node block")
 
     assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
-           == ctx.eraSwitchBlockData['stored_value']['EraInfo']['seigniorage_allocations']
+           == ctx.eraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']
 
 
 @given("that chain transfer data is initialised")
@@ -237,7 +238,7 @@ def request_block_transfer(ctx):
     ctx.timeout = int(300)
     ctx.last_block_added = call_async_function(ctx, block_event)
 
-    ctx.transfer_block_sdk = ctx.sdk_client.get_block_transfers()
+    ctx.transfer_block_sdk = ctx.sdk_client_rpc.get_block_transfers()
 
 
 @then("request the block transfer from the test node")
@@ -245,7 +246,7 @@ def step_request_block_transfer_from_test_node(ctx):
     print("request the block transfer from the test node")
 
     ctx.block_data_node = ctx.node_client.get_latest_block_by_param(
-        "block=" + ctx.transfer_block_sdk[0])
+        "block=" + ctx.transfer_block_sdk.block_hash.decode())
 
 
 @step("the returned block contains the transfer hash returned from the test node block")

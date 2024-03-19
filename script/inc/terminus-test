@@ -1,0 +1,7 @@
+
+function _test() {
+    cd $BASEDIR
+    behave test/features --junit
+
+    exit 0
+}

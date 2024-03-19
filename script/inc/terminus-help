@@ -1,0 +1,39 @@
+function _help() {
+    echo "
+    COMMAND
+    ----------------------------------------------------------------
+    terminus
+
+    DESCRIPTION
+    ----------------------------------------------------------------
+    Executes various commands within the terminus domain
+
+    ARGS
+    ----------------------------------------------------------------
+    init        Will stop and start a test node and copy it's assets
+                Then build the terminus project from the required SDK branch
+                Options are:
+                  -b branch of the SDK
+                  -n location of the node's Docker image
+    node        Will stop and start a test node and copy it's assets
+                Options are:
+                  -n location of the node's Docker image
+    assets      Will copy the assets from inside the node docker image
+    test        Runs the terminus project cucumber tests against the SDK
+
+    EXAMPLE USAGE
+    ----------------------------------------------------------------
+
+    terminus init -b dev
+    terminus test
+
+    DEFAULT VALUES
+    ----------------------------------------------------------------
+    Current default values for node and SDK branch are:
+
+    -n $NODE
+
+    -b $BRANCH
+
+    "
+}

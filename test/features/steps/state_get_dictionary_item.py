@@ -18,7 +18,7 @@ def state_get_dictionary_item_invoked(ctx):
         key='account-hash-' + ctx.sender_key.account_hash.hex()
     )
 
-    ctx.dictionary_item = ctx.sdk_client.get_dictionary_item(dictionary_id)
+    ctx.dictionary_item = ctx.sdk_client_rpc.get_dictionary_item(dictionary_id)
 
     print('BUG:The get_dictionary_item fails. Code needs implementing in the DictionaryId')
 

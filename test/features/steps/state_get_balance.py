@@ -15,7 +15,7 @@ def state_get_balance_invoked(ctx):
     ctx.state_root_hash = ctx.node_client.get_state_root_hash(1)
     ctx.account_main_purse = ctx.node_client.get_account_main_purse('user=1')
 
-    ctx.state_get_balance_result = ctx.sdk_client.get_account_balance(
+    ctx.state_get_balance_result = ctx.sdk_client_rpc.get_account_balance(
         types.CL_URef(types.CL_URefAccessRights.READ_ADD_WRITE,
                       bytes.fromhex(ctx.account_main_purse[5:-4])),
         ctx.state_root_hash)
