@@ -24,7 +24,7 @@ function _init() {
   fi
 
   echo "Installing rust for toml files ..."
-  curl -f -L https://static.rust-lang.org/rustup.sh -O && sh rustup.sh -y
+  curl -f -L https://static.rust-lang.org/rustup.sh -O && sh rustup.sh -y > /dev/null 2>&1
   rm rustup.sh
   PATH="$PATH:/root/.cargo/env"
 
@@ -34,8 +34,8 @@ function _init() {
 
   echo "pycspr @ git+https://github.com/casper-network/casper-python-sdk@$BRANCH" >> requirements.txt
 
-  python3 -m pip install -r requirements.txt
-  python3 -m pip install behave
+  python3 -m pip install -r requirements.txt > /dev/null 2>&1
+  python3 -m pip install behave > /dev/null 2>&1
 
   PATH=$PATH:`pwd`
 
