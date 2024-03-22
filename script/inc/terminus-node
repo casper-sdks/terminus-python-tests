@@ -3,8 +3,7 @@ CCTL_ASSETS=/home/cctl/cctl/assets
 
 function _docker() {
 
-  echo "Running node"
-  echo "Node starts the test node docker image"
+  echo -e "Running node\n"
 
   shift
   while getopts "n:" option; do
@@ -22,25 +21,28 @@ function _docker() {
     exit 1
   fi
 
-  echo "Stopping and removing any running image"
+  echo "[  Stopping and removing any running image  ]"
   docker stop $DOCKER_NAME > /dev/null 2>&1 && docker rm -fv $DOCKER_NAME > /dev/null 2>&1
 
-  echo "Starting image"
+  echo "[  Starting image  ]"
   docker run --rm -it --name $DOCKER_NAME -d -p 25101:25101 -p 11101:11101 -p 14101:14101 -p 18101:18101 "$NODE" > /dev/null 2>&1
 
   res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
   while [[ $res == *"Error"* ]]
   do
-    echo -ne "Waiting for node to start....\r"
+    echo -ne "[  Waiting for test node to start....  ]\r\n"
     res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
   done
+
+  echo ""
+  echo -e "Finished node\n"
 
 }
 
 function _assets() {
 
-  echo "Starting assets"
-  echo "Assets copies the test node assets to a local directory"
+  echo -e "Starting assets\n"
+  echo -e "[  Copying the test node assets to a local directory  ]\n"
 
   # clear the assets folder
   rm -rf  "${BASEDIR}"/assets
@@ -54,5 +56,7 @@ function _assets() {
   docker cp cspr-cctl:$CCTL_ASSETS/genesis "${BASEDIR}"/assets/net-1/chainspec > /dev/null 2>&1
   # copy faucet keys
   docker cp cspr-cctl:$CCTL_ASSETS/faucet/ "${BASEDIR}"/assets/net-1/faucet > /dev/null 2>&1
+
+  echo -e "Finished assets\n"
 
 }

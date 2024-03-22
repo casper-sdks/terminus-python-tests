@@ -1,7 +1,6 @@
 function _init() {
 
-  echo "Running init"
-  echo "Init installs project runtime dependencies"
+  echo -e "Running init\n"
 
   shift
   while getopts "b:n:" option; do
@@ -25,22 +24,22 @@ function _init() {
     exit 1
   fi
 
-  echo "Installing rust for toml files"
-  curl -f -L https://static.rust-lang.org/rustup.sh -O && sh rustup.sh -y > /dev/null 2>&1
+  echo "[  Installing rust for toml files  ]"
+  curl -f -L https://static.rust-lang.org/rustup.sh -O > /dev/null 2>&1 && sh rustup.sh -y > /dev/null 2>&1
   rm rustup.sh
   PATH="$PATH:/root/.cargo/env"
 
-  echo "Adding pycspr requirement"
+  echo "[  Adding Python SDK requirement to terminus project  ]"
   cd "$BASEDIR" || exit
 
   awk '!/pycspr/' requirements.txt > temp && mv temp requirements.txt
   echo "pycspr @ git+https://github.com/casper-network/casper-python-sdk@$BRANCH" >> requirements.txt
 
-  echo "Installing requirements"
+  echo -e "[  Installing terminus project requirements  ]\n"
   python3 -m pip install -r requirements.txt > /dev/null 2>&1
   python3 -m pip install behave > /dev/null 2>&1
 
-  PATH=$PATH:`pwd`
+  echo -e "Finished init\n"
 
   exit 0
 
