@@ -19,9 +19,9 @@ function _bootstrap() {
   if [ -d "$BASEDIR/test/features" ]
   then
     echo "Removing any existing resources"
-    rm "$BASEDIR"/test/features/*.feature
-    rm -rf "$BASEDIR"/test/features/steps/contracts
-    rm -rf "$BASEDIR"/test/features/steps/json
+    rm "$BASEDIR"/test/features/*.feature 2> /dev/null
+    rm -rf "$BASEDIR"/test/features/steps/contracts 2> /dev/null
+    rm -rf "$BASEDIR"/test/features/steps/json 2> /dev/null
   else
     echo "Creating directory structure for resources"
     mkdir "$BASEDIR"/test/features
