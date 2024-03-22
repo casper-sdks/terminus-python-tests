@@ -28,6 +28,7 @@ do
     CMD=$(echo "$ARGUMENT" | cut -f1 -d=)
     case "$CMD" in
         init)
+           _bootstrap
            _docker
            _assets
            _init "$@"

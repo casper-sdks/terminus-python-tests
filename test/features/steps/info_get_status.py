@@ -29,7 +29,7 @@ def api_version_is(ctx, api):
 @step('the info_get_status_result chainspec_name is "(.*)"')
 def chaninspec_name_is(ctx, chain):
     print('the info_get_status_result chainspec_name is {}'.format(chain))
-    assert ctx.status_data['chainspec_name'] == chain
+    assert ctx.status_data['chainspec_name'] == ctx.chain_name
 
 
 @step("the info_get_status_result has a valid last_added_block_info")

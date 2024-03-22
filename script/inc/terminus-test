@@ -1,6 +1,10 @@
 
 function _test() {
-    cd $BASEDIR
+
+    echo "Running tests"
+
+    cd "$BASEDIR" || exit
+
     behave test/features --junit
 
     exit 0

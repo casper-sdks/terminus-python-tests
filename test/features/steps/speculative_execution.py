@@ -55,21 +55,21 @@ def has_api_version(ctx, api):
 def has_correct_amount_transforms(ctx, transforms):
     print(f'a valid speculative_exec_result will be returned with {transforms} transforms')
 
-    assert len(ctx.deploy_result['execution_result']['Success']['effect']['transforms']) == int(transforms)
+    assert len(ctx.deploy_result['Success']['effect']['transforms']) == int(transforms)
 
 
 @step("the speculative_exec has a valid block_hash")
 def has_valid_block_hash(ctx):
     print(f'the speculative_exec has a valid block_hash')
 
-    assert len(ctx.deploy_result['block_hash']) == 64
+    assert len(ctx.deploy.hash.hex()) == 64
 
 
 @step("the execution_results contains a cost of (.*)")
 def has_result_of_cost(ctx, cost):
     print(f'the execution_results contains a cost of {cost}')
 
-    assert ctx.deploy_result['execution_result']['Success']['cost'] == cost
+    assert ctx.deploy_result['Success']['cost'] == cost
 
 
 @step("the speculative_exec has a valid execution_result")
@@ -183,7 +183,7 @@ def has_identity_transform(ctx, index):
     print(
         f'the speculative_exec execution_result {index}st balance transform is an Identity transform')
 
-    assert ctx.deploy_result['execution_result']['Success']['effect']['transforms'][ctx.balance_transform[int(index) - 1]][
+    assert ctx.deploy_result['Success']['effect']['transforms'][ctx.balance_transform[int(index) - 1]][
         'transform'] == 'Identity'
 
 
@@ -193,7 +193,7 @@ def has_identity_of_type(ctx, type):
     print(
         f'the speculative_exec execution_result last balance transform is an Identity transform is as WriteCLValue of type "{type}"')
 
-    transform = ctx.deploy_result['execution_result']['Success']['effect']['transforms'][ctx.balance_transform[-1]][
+    transform = ctx.deploy_result['Success']['effect']['transforms'][ctx.balance_transform[-1]][
         'transform']
 
     assert transform['WriteCLValue']
@@ -206,7 +206,7 @@ def contains_valid_type(ctx, _type, value):
     print(
         f'the speculative_exec execution_result contains a valid {_type} transform with a value of {value}')
 
-    transform = ctx.deploy_result['execution_result']['Success']['effect']['transforms'][-1]['transform']
+    transform = ctx.deploy_result['Success']['effect']['transforms'][-1]['transform']
 
     assert transform[_type]
     assert transform[_type] == value
@@ -217,7 +217,7 @@ def contains_a_valid_transform(ctx):
     print(
         f'the speculative_exec execution_result contains a valid balance transform')
 
-    transform = ctx.deploy_result['execution_result']['Success']['effect']['transforms'][ctx.balance_transform[0]]
+    transform = ctx.deploy_result['Success']['effect']['transforms'][ctx.balance_transform[0]]
 
     assert transform
     assert 'balance-' in transform['key']
@@ -232,7 +232,7 @@ def deploy_set_receiver_key(ctx):
 def get_deploy_transform(ctx):
     key = f'deploy-{ctx.deploy.hash.hex()}'
     ctx.deploy_transforms = next(
-        (x for x in ctx.deploy_result['execution_result']['Success']['effect']['transforms'] if x['key'] == key), None)
+        (x for x in ctx.deploy_result['Success']['effect']['transforms'] if x['key'] == key), None)
 
     assert ctx.deploy_transforms is not None
 
@@ -240,13 +240,13 @@ def get_deploy_transform(ctx):
 def get_balance_transforms(ctx):
     main_purse = ctx.sdk_client_rpc.get_account_info(ctx.sender_key.account_key)['main_purse'][5:-4]
     ctx.balance_transform = [i for i, x in
-                             enumerate(ctx.deploy_result['execution_result']['Success']['effect']['transforms']) if
+                             enumerate(ctx.deploy_result['Success']['effect']['transforms']) if
                              x['key'] == f'balance-{main_purse}']
 
     assert len(ctx.balance_transform) > 0
 
 
 def get_write_transform(ctx):
-    key = ctx.deploy_result['execution_result']['Success']['transfers'][0]
+    key = ctx.deploy_result['Success']['transfers'][0]
     ctx.write_transform = next(
-        (x for x in ctx.deploy_result['execution_result']['Success']['effect']['transforms'] if x['key'] == key), None)
+        (x for x in ctx.deploy_result['Success']['effect']['transforms'] if x['key'] == key), None)

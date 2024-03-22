@@ -1,11 +1,11 @@
 function _bootstrap() {
 
-  cd "$(dirname "$0")" || exit
-  echo "Bootstrap installs all dependencies."
+  echo "Running bootstrap"
 
+  echo "Bootstrap installs all test resources"
   echo "Installing features from git@github.com:casper-sdks/terminus-test-resources.git"
 
-  if [ -d "../terminus-test-resources/features" ]
+  if [ -d "$BASEDIR/terminus-test-resources/features" ]
   then
       echo "terminus-test-resources exists fetching submodules."
       git submodule update --init --recursive
@@ -15,17 +15,23 @@ function _bootstrap() {
       git submodule add -f git@github.com:casper-sdks/terminus-test-resources.git ../terminus-test-resources
   fi
 
-  if [ -d "../src/test/resources/features" ]
+
+  if [ -d "$BASEDIR/test/features" ]
   then
-    rm ../src/test/resources/features
-    rm ../src/test/resources/contracts
-    rm ../src/test/resources/json
+    echo "Removing any existing resources"
+    rm "$BASEDIR"/test/features/*.feature
+    rm -rf "$BASEDIR"/test/features/steps/contracts
+    rm -rf "$BASEDIR"/test/features/steps/json
+  else
+    echo "Creating directory structure for resources"
+    mkdir "$BASEDIR"/test/features
+    mkdir "$BASEDIR"/test/features/steps
   fi
 
-  echo "Creating features symbolic link required for IntelliJ debugging of features"
-  ln -s "$(realpath "../terminus-test-resources/features")" ../src/test/resources/features
-  ln -s "$(realpath "../terminus-test-resources/contracts")" ../src/test/resources/contracts
-  ln -s "$(realpath "../terminus-test-resources/json")" ../src/test/resources/json
+  echo "Copying resources"
+  cp "$BASEDIR"/terminus-test-resources/features/*.feature $BASEDIR/test/features/
+  cp -r "$BASEDIR"/terminus-test-resources/contracts $BASEDIR/test/features/steps/
+  cp -r "$BASEDIR"/terminus-test-resources/json $BASEDIR/test/features/steps/
 
 
 }

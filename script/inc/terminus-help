@@ -20,6 +20,7 @@ function _help() {
                   -n location of the node's Docker image
     assets      Will copy the assets from inside the node docker image
     test        Runs the terminus project cucumber tests against the SDK
+    bootstrap   Downloads and copies to project structure the terminus test resources
 
     EXAMPLE USAGE
     ----------------------------------------------------------------

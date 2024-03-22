@@ -1,16 +1,16 @@
 import json
 import os
 import re
-import subprocess
 
 
 # Queries the CCTL node
 
 class NodeExec:
-    _clean_input = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 
     def __init__(self, config):
         self.config = config
+
+    _clean_input = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 
     def _get_pre_script(self):
         return "docker exec -t " + self.config.get_docker_name() + " /bin/bash -c -i '"

@@ -3,7 +3,7 @@ from behave import *
 from test.features.steps.utils.asyncs import deploy_event, call_async_function
 from test.features.steps.utils.cl_types_factory import CLTypesFactory
 from test.features.steps.utils.cl_utils import CLTypesUtils
-from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy
+from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy, deploy_to_chain
 
 use_step_matcher("re")
 
@@ -66,6 +66,7 @@ def the_deploy_has_successfully_executed(ctx):
     print(f'the deploy has successfully executed')
 
     ctx.timeout = 300
+    ctx.deploy.hash = ctx.deploy_result.hash
     ctx.execution_result = call_async_function(ctx, deploy_event)
 
     assert ctx.execution_result[0]['result']['Success']

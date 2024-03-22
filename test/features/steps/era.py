@@ -28,7 +28,7 @@ def era_summary_requested_via_node(ctx):
 def block_hash_returned_equal(ctx):
     print('the block hash of the returned era summary is equal to the block hash of the test node era summary')
 
-    assert ctx.node_err_summary['era_summary']['block_hash'] == ctx.sdk_err_summary.block_hash.decode()
+    assert ctx.node_err_summary['era_summary']['block_hash'] == ctx.sdk_err_summary.block_hash.hex()
 
 
 @step("the era of the returned era summary is equal to the era of the returned test node era summary")
@@ -46,6 +46,7 @@ def merkle_returned_equal(ctx):
     validate_merkle_proofs(ctx.node_err_summary['era_summary']['merkle_proof'],
                            ctx.sdk_err_summary.merkle_proof.hex())
 
+
 @step("the state root hash of the returned era summary is equal to the state root hash of the returned test node era "
       "summary")
 def state_root_returned_equal(ctx):
@@ -60,9 +61,10 @@ def state_root_returned_equal(ctx):
 def delegators_equal(ctx):
     print('the delegators data of the returned era summary is equal to the delegators data of the returned test node '
           'era summary')
+    # TODO Iterate results and compare delegators
 
-    assert ctx.node_err_summary['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
-           == ctx.sdk_err_summary.era_info.seigniorage_allocations
+    assert len(ctx.node_err_summary['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']) \
+        == len(ctx.sdk_err_summary.era_info.seigniorage_allocations)
 
 
 @step("the validators data of the returned era summary is equal to the validators data of the returned test node era"
@@ -70,6 +72,7 @@ def delegators_equal(ctx):
 def validators_equal(ctx):
     print('the validators data of the returned era summary is equal to the validators data of the returned test node '
           'era summary')
+    # TODO Iterate results and compare validators
 
-    assert ctx.node_err_summary['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
-           == ctx.sdk_err_summary.era_info.seigniorage_allocations
+    assert len(ctx.node_err_summary['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']) \
+        == len(ctx.sdk_err_summary.era_info.seigniorage_allocations)

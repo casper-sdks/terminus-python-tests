@@ -1,7 +1,7 @@
 from behave import *
 from pycspr.types import *
 
-from test.features.steps.utils.assets import *
+from test.features.steps.utils.assets import get_faucet_private_key
 
 use_step_matcher("re")
 
@@ -12,6 +12,8 @@ use_step_matcher("re")
 def state_get_dictionary_item_invoked(ctx):
     print('that the state_get_dictionary_item RCP method is invoked')
 
+    print('BUG:The get_dictionary_item fails. Code needs implementing in the DictionaryId')
+
     get_faucet_private_key(ctx)
 
     dictionary_id = DictionaryID_UniqueKey(
@@ -19,8 +21,6 @@ def state_get_dictionary_item_invoked(ctx):
     )
 
     ctx.dictionary_item = ctx.sdk_client_rpc.get_dictionary_item(dictionary_id)
-
-    print('BUG:The get_dictionary_item fails. Code needs implementing in the DictionaryId')
 
 
 @then("a valid state_get_dictionary_item_result is returned")

@@ -1,6 +1,9 @@
 from behave import *
 
-from pycspr import types
+from pycspr import types, parse_public_key
+from pycspr.types import CL_URef, GlobalStateID, PurseID, GlobalStateIDType, PurseIDType
+
+from test.features.steps.utils.assets import get_user_asset_path
 
 use_step_matcher("re")
 
@@ -13,12 +16,17 @@ def state_get_balance_invoked(ctx):
     print('that the state_get_balance RPC method is invoked against nclt user-1 purse')
 
     ctx.state_root_hash = ctx.node_client.get_state_root_hash(1)
-    ctx.account_main_purse = ctx.node_client.get_account_main_purse('user=1')
+    account_key = parse_public_key(get_user_asset_path(ctx.ASSETS_ROOT, "1", "user-1", "public_key_hex")).account_key
 
-    ctx.state_get_balance_result = ctx.sdk_client_rpc.get_account_balance(
-        types.CL_URef(types.CL_URefAccessRights.READ_ADD_WRITE,
-                      bytes.fromhex(ctx.account_main_purse[5:-4])),
-        ctx.state_root_hash)
+    ctx.account_main_purse = \
+        ctx.sdk_client_rpc.get_account_main_purse_uref(account_key)
+
+    global_state_id = GlobalStateID(ctx.state_root_hash, GlobalStateIDType.STATE_ROOT_HASH)
+    purse_id = PurseID(ctx.account_main_purse, PurseIDType.UREF)
+
+    ctx.state_get_balance_result = ctx.sdk_client_rpc.get_account_balance(purse_id, global_state_id)
+
+    assert ctx.state_get_balance_result
 
 
 @then("a valid state_get_balance_result is returned")
@@ -32,8 +40,11 @@ def valid_result_returned(ctx):
 def contains_purse_amount(ctx):
     print('the state_get_balance_result contains the purse amount')
 
-    json = ctx.node_requests.get_state_get_balance(ctx.state_root_hash, ctx.account_main_purse)
+    json = ctx.node_requests.get_state_get_balance(ctx.state_root_hash, ctx.node_client.get_account_main_purse('user=1'))
+    assert json
+
     balance = json["result"]["balance_value"]
+    assert balance
 
     assert ctx.state_get_balance_result == int(balance)
 

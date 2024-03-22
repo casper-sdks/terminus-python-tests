@@ -3,6 +3,9 @@ CCTL_ASSETS=/home/cctl/cctl/assets
 
 function _docker() {
 
+  echo "Running node"
+  echo "Node starts the test node docker image"
+
   shift
   while getopts "n:" option; do
      case $option in
@@ -23,7 +26,7 @@ function _docker() {
   docker stop $DOCKER_NAME > /dev/null 2>&1 && docker rm -fv $DOCKER_NAME > /dev/null 2>&1
 
   echo "Starting image"
-  docker run --rm -it --name $DOCKER_NAME -d -p 25101:25101 -p 11101:11101 -p 14101:14101 -p 18101:18101 $NODE > /dev/null 2>&1
+  docker run --rm -it --name $DOCKER_NAME -d -p 25101:25101 -p 11101:11101 -p 14101:14101 -p 18101:18101 "$NODE" > /dev/null 2>&1
 
   res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
   while [[ $res == *"Error"* ]]
@@ -36,19 +39,20 @@ function _docker() {
 
 function _assets() {
 
-  echo "Copying test node assets locally"
+  echo "Starting assets"
+  echo "Assets copies the test node assets to a local directory"
 
   # clear the assets folder
-  rm -rf  ${BASEDIR}/assets
-  mkdir ${BASEDIR}/assets
-  mkdir ${BASEDIR}/assets/net-1
-  mkdir ${BASEDIR}/assets/chainspec
-  mkdir ${BASEDIR}/assets/faucet
+  rm -rf  "${BASEDIR}"/assets
+  mkdir "${BASEDIR}"/assets
+  mkdir "${BASEDIR}"/assets/net-1
+  mkdir "${BASEDIR}"/assets/chainspec
+  mkdir "${BASEDIR}"/assets/faucet
   # copy net-1 users
-  docker cp cspr-cctl:$CCTL_ASSETS/users/. ${BASEDIR}/assets/net-1 > /dev/null 2>&1
+  docker cp cspr-cctl:$CCTL_ASSETS/users/. "${BASEDIR}"/assets/net-1 > /dev/null 2>&1
   # copy net-1 chainspec
-  docker cp cspr-cctl:$CCTL_ASSETS/genesis ${BASEDIR}/assets/net-1/chainspec > /dev/null 2>&1
+  docker cp cspr-cctl:$CCTL_ASSETS/genesis "${BASEDIR}"/assets/net-1/chainspec > /dev/null 2>&1
   # copy faucet keys
-  docker cp cspr-cctl:$CCTL_ASSETS/faucet/ ${BASEDIR}/assets/net-1/faucet > /dev/null 2>&1
+  docker cp cspr-cctl:$CCTL_ASSETS/faucet/ "${BASEDIR}"/assets/net-1/faucet > /dev/null 2>&1
 
 }
