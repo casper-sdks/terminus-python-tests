@@ -149,3 +149,7 @@ fabric.properties
 reports/
 /assets/
 assets/
+test/features/*.feature
+/test/features/steps/json/
+/test/features/steps/contracts/
+/terminus-test-resources/
