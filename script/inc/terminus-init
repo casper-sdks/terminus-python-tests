@@ -1,5 +1,7 @@
 function _init() {
 
+  echo -e "Running init\n"
+
   shift
   while getopts "b:n:" option; do
      case $option in
@@ -13,31 +15,31 @@ function _init() {
      esac
   done
 
+  if ! [ -x "$(command -v python3)" ]; then
+    echo 'Error: python3 is not installed.' >&2
+    exit 1
+  fi
   if ! [ -x "$(command -v pip)" ]; then
     echo 'Error: pip is not installed.' >&2
     exit 1
   fi
 
-  if ! [ -x "$(command -v python3)" ]; then
-    echo 'Error: python3 is not installed.' >&2
-    exit 1
-  fi
-
-  echo "Installing rust for toml files ..."
-  curl -f -L https://static.rust-lang.org/rustup.sh -O && sh rustup.sh -y
+  echo "[  Installing rust for toml files  ]"
+  curl -f -L https://static.rust-lang.org/rustup.sh -O > /dev/null 2>&1 && sh rustup.sh -y > /dev/null 2>&1
   rm rustup.sh
   PATH="$PATH:/root/.cargo/env"
 
-  cd $BASEDIR
-  echo "Removing pycspr requirement ..."
-  awk '!/pycspr/' requirements.txt > temp && mv temp requirements.txt
+  echo "[  Adding Python SDK requirement to terminus project  ]"
+  cd "$BASEDIR" || exit
 
+  awk '!/pycspr/' requirements.txt > temp && mv temp requirements.txt
   echo "pycspr @ git+https://github.com/casper-network/casper-python-sdk@$BRANCH" >> requirements.txt
 
-  python3 -m pip install -r requirements.txt
-  python3 -m pip install behave
+  echo -e "[  Installing terminus project requirements  ]\n"
+  python3 -m pip install -r requirements.txt > /dev/null 2>&1
+  python3 -m pip install behave > /dev/null 2>&1
 
-  PATH=$PATH:`pwd`
+  echo -e "Finished init\n"
 
   exit 0
 

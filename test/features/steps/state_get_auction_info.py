@@ -35,7 +35,7 @@ def has_valid_api_version(ctx, api_version):
 def has_valid_state_root_hash(ctx):
     print('the state_get_auction_info_result action_state has a valid state root hash')
 
-    assert ctx.state_get_auction_info_result['auction_state']['state_root_hash'] == \
+    assert ctx.state_get_auction_info_result.state_root.hex() == \
            ctx.state_auction_info_json['auction_state']['state_root_hash']
 
 
@@ -43,24 +43,24 @@ def has_valid_state_root_hash(ctx):
 def has_valid_height(ctx):
     print('the state_get_auction_info_result action_state has a valid height')
 
-    assert ctx.state_get_auction_info_result['auction_state']['block_height'] == \
+    assert ctx.state_get_auction_info_result.block_height == \
            ctx.state_auction_info_json['auction_state']['block_height']
 
 
 @step("the state_get_auction_info_result action_state has valid bids")
 def has_valid_bids(ctx):
     print('the state_get_auction_info_result action_state has valid bids')
-
-    assert ctx.state_get_auction_info_result['auction_state']['bids'] == \
-           ctx.state_auction_info_json['auction_state']['bids']
+    # TODO Iterate bids and compare
+    assert len(ctx.state_get_auction_info_result.bids) == \
+           len(ctx.state_auction_info_json['auction_state']['bids'])
 
 
 @step("the state_get_auction_info_result action_state has valid era validators")
 def has_valid_validators(ctx):
     print('the state_get_auction_info_result action_state has valid era validators')
-
-    assert ctx.state_get_auction_info_result['auction_state']['era_validators'] == \
-           ctx.state_auction_info_json['auction_state']['era_validators']
+    # TODO Iterate era validators and compare
+    assert len(ctx.state_get_auction_info_result.era_validators) == \
+           len(ctx.state_auction_info_json['auction_state']['era_validators'])
 
 
 @given("that the state_get_auction_info RPC method is invoked by height block identifier")

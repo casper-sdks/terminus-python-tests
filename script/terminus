@@ -13,6 +13,7 @@ BRANCH='main'
 # INCLUDES
 # ----------------------------------------------------------------
 
+source inc/terminus-bootstrap
 source inc/terminus-help
 source inc/terminus-node
 source inc/terminus-init
@@ -27,6 +28,7 @@ do
     CMD=$(echo "$ARGUMENT" | cut -f1 -d=)
     case "$CMD" in
         init)
+           _bootstrap
            _docker
            _assets
            _init "$@"
@@ -43,6 +45,9 @@ do
            ;;
         assets)
            _assets
+           ;;
+        bootstrap)
+           _bootstrap
            ;;
         *)
           echo 'Unrecognised command. Options are help, node, assets, init and test';;

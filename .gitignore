@@ -149,3 +149,4 @@ fabric.properties
 reports/
 /assets/
 assets/
+test/features/*.feature

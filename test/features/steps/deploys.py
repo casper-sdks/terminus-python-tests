@@ -104,29 +104,30 @@ def a_deploy_is_requested(ctx):
 @then('the deploy data has an API version of "(.*)"')
 def the_deploy_has_api_version(ctx, api):
     print('the deploy data has an API version of '.format(api))
-    assert ctx.deploy['api_version'] == api
+    print('No api_version returned in the latest SDK')
+    # assert ctx.deploy['api_version'] == api
 
 
 @step('the deploy execution result has "(.*)" block hash')
 def the_deploy_has_a_specific_block_hash(ctx, block):
     print('the deploy execution result has {} block hash'.format(block))
 
-    assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy['execution_results'][0]['block_hash']
+    assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy.execution_info[0]['block_hash']
 
 
 @step('the deploy execution has a cost of (.*) motes')
 def the_deploy_has_execution_cost_of(ctx, motes):
     print('the deploy execution has a cost of {} motes'.format(motes))
 
-    assert ctx.deploy['execution_results'][0]['result']['Success']['cost'] == motes
+    assert ctx.deploy.execution_info[0]['result']['Success']['cost'] == motes
 
 
 @step('the deploy has a payment amount of (.*)')
 def the_deploy_has_payment_amount_of(ctx, amount):
     print('the deploy has a payment amount of {}'.format(amount))
 
-    assert ctx.deploy['deploy']['payment']['ModuleBytes']['args'][0][1]['cl_type'] == 'U512'
-    assert ctx.deploy['deploy']['payment']['ModuleBytes']['args'][0][1]['parsed'] == amount
+    assert ctx.deploy.payment.args[0].value['cl_type'] == 'U512'
+    assert ctx.deploy.payment.args[0].value['parsed'] == amount
 
 
 @step("the deploy has a valid hash")
@@ -134,21 +135,23 @@ def the_deploy_has_a_valid_hash(ctx):
     print('the deploy has a valid hash')
 
     assert len(ctx.deploy_result.hash.hex()) == 64
-    assert ctx.deploy_result.hash.hex() == ctx.deploy['deploy']['hash']
+    assert ctx.deploy_result.hash.hex() == ctx.deploy.hash.hex()
 
 
 @step("the deploy has a valid timestamp")
 def the_deploy_has_a_valid_timestamp(ctx):
     print('the deploy has a valid timestamp')
 
-    assert compare_timestamps(ctx.deploy_result.header.timestamp.value, ctx.deploy['deploy']['header']['timestamp'])
+    assert ctx.deploy_result.header.timestamp.value == ctx.deploy.header.timestamp.value
+
+    # assert compare_timestamps(ctx.deploy_result.header.timestamp.value, ctx.deploy.header.timestamp.value)
 
 
 @step("the deploy has a valid body hash")
 def the_deploy_has_a_valid_body_hash(ctx):
     print('the deploy has a valid body hash')
 
-    assert ctx.deploy_result.header.body_hash.hex() == ctx.deploy['deploy']['header']['body_hash']
+    assert ctx.deploy_result.header.body_hash.hex() == ctx.deploy.header.body_hash.hex()
 
 
 @step('the deploy has a session type of "(.*)"')
@@ -208,3 +211,10 @@ def teh_deploy_session_argument_has_a_type_of(ctx, arg, _type):
     print('the deploy session has a {} argument value of type {}'.format(arg, _type))
 
     assert type(ctx.deploy_result.session.args[arg]) == ctx.values_map[_type]
+
+
+@step('the deploy session has a "(.*)" argument with a numeric value of (.*)')
+def step_impl(ctx, arg, val):
+    print('the deploy session has a {} argument with a numeric value of {}'.format(arg, val))
+
+    assert ctx.deploy_result.session.args[arg].value == int(val)

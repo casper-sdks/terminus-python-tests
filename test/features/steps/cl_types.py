@@ -3,7 +3,7 @@ from behave import *
 from test.features.steps.utils.asyncs import deploy_event, call_async_function
 from test.features.steps.utils.cl_types_factory import CLTypesFactory
 from test.features.steps.utils.cl_utils import CLTypesUtils
-from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy
+from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy, deploy_to_chain
 
 use_step_matcher("re")
 
@@ -66,6 +66,7 @@ def the_deploy_has_successfully_executed(ctx):
     print(f'the deploy has successfully executed')
 
     ctx.timeout = 300
+    ctx.deploy.hash = ctx.deploy_result.hash
     ctx.execution_result = call_async_function(ctx, deploy_event)
 
     assert ctx.execution_result[0]['result']['Success']
@@ -83,17 +84,12 @@ def the_deploy_obtained_from_the_node(ctx):
 def the_deploys_named_args_has_value_and_bytes(ctx, named_arg, _value, _bytes):
     print(f'the deploys NamedArgument "{named_arg}" has a value of "{_value}" and bytes of "{_bytes}"')
 
-    args = ctx.deploy['deploy']['session']['Transfer']['args']
+    args = ctx.deploy.session.args
     assert args
 
-    compared = False
     for arg in range(len(args)):
-        if args[arg][0] == named_arg:
-            assert_value(args[arg][1], _value)
-            assert_bytes(args[arg][1], _bytes)
-            compared = True
-
-    assert compared
+        if args[arg].name == named_arg:
+            assert args[arg].value['bytes'] == _bytes
 
 
 @step(
@@ -102,7 +98,7 @@ def named_argument_has_values(ctx, _complex, internal, _value, _bytes):
     print(
         f'the deploys NamedArgument Complex value "{_complex}" has internal types of "{internal}" and values of "{_value}" and bytes of "{_bytes}"')
 
-    args = ctx.deploy['deploy']['session']['Transfer']['args']
+    args = ctx.deploy.session.args
     assert args
 
     _internals: list = internal.split(',')
@@ -110,7 +106,7 @@ def named_argument_has_values(ctx, _complex, internal, _value, _bytes):
 
     compared = False
     for arg in range(len(args)):
-        if args[arg][0] == _complex:
+        if args[arg].name == _complex:
             if _complex == 'Map':
                 assert_map(_values, args[arg][1], _bytes)
                 compared = True

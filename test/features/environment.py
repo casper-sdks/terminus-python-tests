@@ -2,11 +2,11 @@ import os
 
 from pycspr import types
 
-from steps.utils.assets import get_user_asset_path
-from steps.utils.config import CONFIG
-from steps.utils.exec import NodeExec
-from steps.utils.node import *
-from steps.utils.requests import NodeRequests
+from test.features.steps.utils.assets import get_user_asset_path
+from test.features.steps.utils.config import CONFIG
+from test.features.steps.utils.node import client_rpc, client_sse, client_spec
+from test.features.steps.utils.scripts import NodeExec
+from test.features.steps.utils.requests import NodeRequests
 
 # Steps to run at specific times in the scenarios
 # Sets the required context parameters
