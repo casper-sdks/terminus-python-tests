@@ -24,7 +24,7 @@ def deploy_to_chain(ctx) -> Deploy:
         amount=int(ctx.transfer_amount),
         target=ctx.receiver_key.account_key,
         # correlation_id=random.randint(1, 1e6),
-        correlation_id=random.randint(1, 100) ,
+        correlation_id=random.randint(1, 100),
         payment=int(ctx.payment_amount)
     )
 

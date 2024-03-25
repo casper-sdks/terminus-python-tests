@@ -42,13 +42,13 @@ async def deploy_event(ctx) -> Deploy:
 
     for t in timeout:
         deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy.hash)
-        # print('Seconds remaining: ' + str(int(timeout.time_left())))
-        if len(deploy['execution_results']) > 0:
+        print('Seconds remaining: ' + str(int(timeout.time_left())))
+        if len(deploy.execution_info) > 0:
             deployed = True
             break
     if not deployed:
         raise TimeoutError("Deploy timed out")
 
-    return deploy['execution_results']
+    return deploy.execution_info
 
 
