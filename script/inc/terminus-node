@@ -34,6 +34,15 @@ function _docker() {
     res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
   done
 
+  echo "[  Image started  ]"
+
+  res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-chain-view-block'  |  awk '{print $1}')
+  while [[ $res == *"parse"* ]]
+  do
+    echo -ne "[  Waiting for a block to be added....  ]\r\n"
+    res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-chain-view-block'  |  awk '{print $1}')
+  done
+
   echo ""
   echo -e "Finished node\n"
 
