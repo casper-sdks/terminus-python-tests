@@ -1,6 +1,6 @@
-function _init() {
+function _build() {
 
-  echo -e "Running init\n"
+  echo -e "Running build\n"
 
   shift
   while getopts "b:n:" option; do
