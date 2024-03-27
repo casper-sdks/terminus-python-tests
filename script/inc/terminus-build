@@ -1,6 +1,6 @@
-function _init() {
+function _build() {
 
-  echo -e "Running init\n"
+  echo -e "Running build\n"
 
   shift
   while getopts "b:n:" option; do
@@ -39,7 +39,7 @@ function _init() {
   python3 -m pip install -r requirements.txt > /dev/null 2>&1
   python3 -m pip install behave > /dev/null 2>&1
 
-  echo -e "Finished init\n"
+  echo -e "Finished build\n"
 
   exit 0
 

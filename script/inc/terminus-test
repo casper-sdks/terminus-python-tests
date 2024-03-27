@@ -1,12 +1,50 @@
 
 function _test() {
 
-    echo -e "Running tests\n"
+  FEATURES_PATH=/test/features/
 
-    cd "$BASEDIR" || exit
-    behave test/features --junit
+  shift
+  while getopts "f:" option; do
+     case $option in
+        f)
+          FEATURE=$OPTARG;;
+       \?)
+         echo "Error: Invalid option"
+         exit;;
+     esac
+  done
 
-    echo  -e "Tests finished\n"
+  cd "$BASEDIR" || exit
 
-    exit 0
+  if ! [ -z "$FEATURE" ]; then
+    if ! [ -f "$BASEDIR""$FEATURES_PATH""$FEATURE" ]; then
+      echo -e "[  Feature $FEATURE does not exist  ]\n"
+      _list
+      exit 1
+    fi
+  fi
+
+  if [ -z "${FEATURE}" ]
+  then
+        echo -e "[  Running tests against all features  ]\n"
+        behave "$BASEDIR""$FEATURES_PATH" --junit
+  else
+        echo -e "[  Running tests against $FEATURE feature  ]\n"
+        behave "$BASEDIR""$FEATURES_PATH""$FEATURE" --junit
+  fi
+
+  echo -e "[  Tests finished  ]\n"
+
+  exit 0
+
+}
+
+function _list() {
+
+    echo -e "[  Available features  ]\n"
+    FILES=$(find "$BASEDIR""$FEATURES_PATH" -name "*.feature")
+    for FILE in $FILES; do
+      echo "["  "${FILE##*/}"  "]"
+    done;
+
 }
