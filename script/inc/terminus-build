@@ -39,7 +39,7 @@ function _build() {
   python3 -m pip install -r requirements.txt > /dev/null 2>&1
   python3 -m pip install behave > /dev/null 2>&1
 
-  echo -e "Finished init\n"
+  echo -e "Finished build\n"
 
   exit 0
 
