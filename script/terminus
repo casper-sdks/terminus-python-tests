@@ -41,13 +41,16 @@ do
           _assets
           ;;
         test)
-           _test
+           _test "$@"
            ;;
         assets)
            _assets
            ;;
         bootstrap)
            _bootstrap
+           ;;
+        list)
+           _list
            ;;
         *)
           echo 'Unrecognised command. Options are help, node, assets, init and test';;
