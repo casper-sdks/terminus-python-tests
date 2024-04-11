@@ -37,6 +37,10 @@ def step_impl(ctx):
 
     deploy_set_signatures(ctx)
 
+    # Will fail here
+    # Decode of ANY value not implemented in the SDK yet in
+    # serialisation/binary/cl_value/decoder.py:32
+
     ctx.deploy = create_deploy(ctx)
 
     ctx.deploy_result = deploy_to_chain(ctx)
@@ -78,23 +82,29 @@ def step_impl(ctx):
 @given('that the map of public keys to any types is read from resource "(.*)"')
 def step_impl(ctx, _resource):
     print(f'that the map of public keys to any types is read from resource "{_resource}"')
+    raise NotImplementedError('step not implemented')
 
 
 @then("the loaded CLMap will contain 0 elements as nested any values are not supported")
 def step_impl(ctx):
     print(f'the loaded CLMap will contain 0 elements as nested any values are not supported')
+    raise NotImplementedError('step not implemented')
 
 
 @step('the nested map key type will be "(.*)"')
 def step_impl(ctx, _type):
     print(f'the nested map key type will be "{_type}"')
+    raise NotImplementedError('step not implemented')
 
 
 @step('the nested map value type will be "(.*)"')
 def step_impl(ctx, _type):
     print(f'the nested map value type will be "{_type}"')
+    raise NotImplementedError('step not implemented')
 
 
 @step('the maps bytes will be "(.*)"')
 def step_impl(ctx, _bytes):
     print(f'the maps bytes will be "{_bytes}"')
+    raise NotImplementedError('step not implemented')
+
