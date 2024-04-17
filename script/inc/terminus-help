@@ -24,6 +24,7 @@ function _help() {
                   -f [feature_name]
     list        Lists all available features
     bootstrap   Downloads and copies to the project structure the terminus test resources
+    action      Used by github actions. Similar to build but without any node commands
 
 
     EXAMPLE USAGE

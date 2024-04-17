@@ -52,6 +52,11 @@ do
         list)
            _list
            ;;
+        action)
+           _bootstrap "action"
+           _assets
+           _build "$@"
+           ;;
         *)
           echo 'Unrecognised command. Options are help, node, assets, init and test';;
     esac

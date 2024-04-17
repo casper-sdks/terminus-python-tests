@@ -9,7 +9,7 @@ function _test() {
         f)
           FEATURE=$OPTARG;;
        \?)
-         echo "Error: Invalid option"
+         _list
          exit;;
      esac
   done
