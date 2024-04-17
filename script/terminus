@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+cd "$(dirname "$0")" || exit
 BASEDIR=$(builtin cd ..; pwd)
 
 # ----------------------------------------------------------------
@@ -51,6 +52,11 @@ do
            ;;
         list)
            _list
+           ;;
+        action)
+           _bootstrap "action"
+           _assets
+           _build "$@"
            ;;
         *)
           echo 'Unrecognised command. Options are help, node, assets, init and test';;
