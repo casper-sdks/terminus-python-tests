@@ -1,5 +1,7 @@
 from behave import *
 
+from test.features.steps.utils.asyncs import async_rpc_call
+
 use_step_matcher("re")
 
 # Step definitions for info_get_peers cucumber tests
@@ -8,7 +10,7 @@ use_step_matcher("re")
 @given("that the info_get_peers RPC method is invoked against a node")
 def info_get_peers_invoked(ctx):
     print('that the info_get_peers RPC method is invoked against a node')
-    ctx.peer_data = ctx.sdk_client_rpc.get_node_peers()
+    ctx.peer_data = async_rpc_call(ctx.sdk_client_rpc.get_node_peers())
 
 
 @then("the node returns an info_get_peers_result")
@@ -35,5 +37,5 @@ def the_result_contains_n_peers(ctx, peers):
 def step_impl(ctx, port):
     print('the info_get_peers_result contains a valid peer with a port number of {}'.format(port))
 
-    assert next((peers for peers in ctx.peer_data if port in peers['address']), None)
+    assert next((peers for peers in ctx.peer_data if port in peers.address), None)
 
