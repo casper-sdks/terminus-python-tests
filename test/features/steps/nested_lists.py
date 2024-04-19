@@ -1,5 +1,6 @@
 from behave import *
-from pycspr import types, serialisation
+from pycspr.types.cl import *
+from pycspr.serializer import to_bytes
 
 from test.features.steps.utils.asyncs import call_async_function, deploy_event
 from test.features.steps.utils.cl_types_factory import CLTypesFactory
@@ -22,7 +23,7 @@ def list_is_created(ctx, cl_type, val1, val2, val3):
              _factory.create_value(cl_type, val2),
              _factory.create_value(cl_type, val3)]
 
-    ctx.cl_list = types.CL_List(_list)
+    ctx.cl_list = CLV_List(_list)
 
     assert ctx.cl_list
 
@@ -36,7 +37,7 @@ def its_bytes_are(ctx, hex_bytes):
     The CL_Type needs to be serialised into a CL_Type object
     """
 
-    assert serialisation.to_bytes(ctx.cl_list).hex() == hex_bytes
+    assert to_bytes(ctx.cl_list).hex() == hex_bytes
 
 
 @step("the list's length is (.*)")
@@ -106,7 +107,7 @@ def another_list_is_created(ctx, cl_type, val1, val2, val3):
              _factory.create_value(cl_type, int(val2)),
              _factory.create_value(cl_type, int(val3))]
 
-    ctx.cl_list = types.CL_List(_list)
+    ctx.cl_list = CLV_List(_list)
 
     assert ctx.cl_list
 
@@ -144,7 +145,7 @@ def a_complex_nested_list_is_created(ctx, cl_type, val1, val2, val3, val4, val5,
               _factory.create_value(cl_type, int(val6))]
              ]
 
-    ctx.cl_list = types.CL_List(_list)
+    ctx.cl_list = CLV_List(_list)
 
     assert ctx.cl_list
 

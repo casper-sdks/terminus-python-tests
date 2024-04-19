@@ -3,12 +3,12 @@ import os
 import pathlib
 import typing
 
-import pycspr.api.connection
+import pycspr
 from behave import *
-from pycspr import parse_public_key_bytes, KeyAlgorithm
+from pycspr import parse_public_key_bytes, KeyAlgorithm, PrivateKey, PublicKey
 from pycspr.crypto import get_key_pair
-from pycspr.types import *
-from pycspr.types import PublicKey, PrivateKey
+from pycspr.types.cl import *
+from pycspr.types.node.rpc import *
 from totaltimeout import Timeout
 
 from test.features.steps.utils.assets import get_faucet_private_key
@@ -43,16 +43,16 @@ def step_impl(ctx):
             chain_name=ctx.chain_name
         )
 
-    payment: ModuleBytes = \
+    payment: DeployOfModuleBytes = \
         pycspr.create_standard_payment(200000000000)
 
-    session: ModuleBytes = ModuleBytes(
+    session: DeployOfModuleBytes = DeployOfModuleBytes(
         module_bytes=pycspr.read_wasm(ctx.wasm_path),
         args={
-            "token_decimals": CL_U8(11),
-            "token_name": CL_String('Acme Token'),
-            "token_symbol": CL_String('ACME'),
-            "token_total_supply": CL_U256(500000000000),
+            "token_decimals": CLV_U8(11),
+            "token_name": CLV_String('Acme Token'),
+            "token_symbol": CLV_String('ACME'),
+            "token_total_supply": CLV_U256(500000000000),
         }
     )
 
@@ -72,7 +72,7 @@ def the_wasm_has_been_successfully_deployed(ctx):
 
     deploy = wait_for_deploy(ctx)
 
-    assert len(deploy.execution_info) > 0
+    assert len(deploy) > 0
 
 
 @then('the account named keys contain the "(.*)" name')
@@ -134,15 +134,15 @@ def the_contract_is_invoked_by_name(ctx, name, amount):
         )
 
     # Set payment logic.
-    payment: ModuleBytes = pycspr.create_standard_payment(2500000000)
+    payment: DeployOfModuleBytes = pycspr.create_standard_payment(2500000000)
 
     # Set session logic.
-    session: StoredContractByName = StoredContractByName(
+    session: DeployOfStoredContractByName = DeployOfStoredContractByName(
         entry_point="transfer",
         name=str(name).upper(),
         args={
-            "amount": CL_U256(int(amount)),
-            "recipient": CL_ByteArray(recipient_pk.account_hash)
+            "amount": CLV_U256(int(amount)),
+            "recipient": CLV_ByteArray(recipient_pk.account_hash)
         }
     )
 
@@ -176,16 +176,16 @@ def the_contract_is_invoked_by_hash(ctx, amount):
         )
 
     # Set payment logic.
-    payment: ModuleBytes = pycspr.create_standard_payment(2500000000)
+    payment: DeployOfModuleBytes = pycspr.create_standard_payment(2500000000)
 
     # Set session logic.
-    session: StoredContractByHashVersioned = StoredContractByHashVersioned(
+    session: DeployOfStoredContractByHashVersioned = DeployOfStoredContractByHashVersioned(
         entry_point="transfer",
         version=1,
         hash=bytes.fromhex(ctx.contract_hash[5:]),
         args={
-            "amount": CL_U256(int(amount)),
-            "recipient": CL_ByteArray(recipient_pk.account_hash)
+            "amount": CLV_U256(int(amount)),
+            "recipient": CLV_ByteArray(recipient_pk.account_hash)
         }
     )
 
@@ -219,16 +219,16 @@ def the_contract_is_invoked_by_name_and_version(ctx, name, amount):
         )
 
     # Set payment logic.
-    payment: ModuleBytes = pycspr.create_standard_payment(2500000000)
+    payment: DeployOfModuleBytes = pycspr.create_standard_payment(2500000000)
 
     # Set session logic.
-    session: StoredContractByNameVersioned = StoredContractByNameVersioned(
+    session: DeployOfStoredContractByHashVersioned = DeployOfStoredContractByHashVersioned(
         entry_point="transfer",
         version=1,
         name=str(name).upper(),
         args={
-            "amount": CL_U256(int(amount)),
-            "recipient": CL_ByteArray(recipient_pk.account_hash)
+            "amount": CLV_U256(int(amount)),
+            "recipient": CLV_ByteArray(recipient_pk.account_hash)
         }
     )
 
@@ -287,15 +287,15 @@ def step_impl(ctx, amount):
         )
 
     # Set payment logic.
-    payment: ModuleBytes = pycspr.create_standard_payment(2500000000)
+    payment: DeployOfModuleBytes = pycspr.create_standard_payment(2500000000)
 
     # Set session logic.
-    session: StoredContractByHash = StoredContractByHash(
+    session: DeployOfStoredContractByHash = DeployOfStoredContractByHash(
         entry_point="transfer",
         hash=bytes.fromhex(ctx.contract_hash[5:]),
         args={
-            "amount": CL_U256(int(amount)),
-            "recipient": CL_ByteArray(recipient_pk.account_hash)
+            "amount": CLV_U256(int(amount)),
+            "recipient": CLV_ByteArray(recipient_pk.account_hash)
         }
     )
 

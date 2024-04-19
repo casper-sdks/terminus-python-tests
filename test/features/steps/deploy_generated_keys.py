@@ -3,7 +3,7 @@ import typing
 from behave import *
 from pycspr import KeyAlgorithm, parse_public_key_bytes, parse_private_key_bytes
 from pycspr.crypto import get_key_pair
-from pycspr.types import PublicKey, PrivateKey
+from pycspr.types.crypto import PublicKey, PrivateKey
 
 from test.features.steps.utils.deploy import deploy_to_chain, deploy_set_faucet_key
 

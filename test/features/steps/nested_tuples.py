@@ -1,5 +1,7 @@
 from behave import *
-from pycspr import types, serialisation
+
+from pycspr.types.cl import *
+from pycspr.serializer import to_bytes
 
 from test.features.steps.utils.asyncs import call_async_function, deploy_event
 from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy
@@ -14,20 +16,20 @@ use_step_matcher("re")
 def nested_tuple1(ctx, value):
     print(f'that a nested Tuple1 is defined as \(\({value}\) using U32 numeric values')
 
-    ctx.tuple_root_1 = types.CL_Tuple1(types.CL_Tuple1(types.CL_U32(int(value.replace("(", "").replace(")", "")))))
+    ctx.tuple_root_1 = CLV_Tuple1(CLV_Tuple1(CLV_U32(int(value.replace("(", "").replace(")", "")))))
 
 
 @given("that a nested Tuple2 is defined as \((.*), \((.*), \((.*), (.*)\)\)\) using U32 numeric values")
 def nested_tuple2(ctx, arg0, arg1, arg2, arg3):
     print(f'that a nested Tuple2 is defined as \({arg0}, \({arg1}, \({arg2}, {arg3}\)\)\) using U32 numeric values"')
 
-    ctx.tuple_root_2 = types.CL_Tuple2(
-        types.CL_U32(int(arg0)),
-        types.CL_Tuple2(
-            types.CL_U32(int(arg1)),
-            types.CL_Tuple2(
-                types.CL_U32(int(arg2)),
-                types.CL_U32(int(arg3))
+    ctx.tuple_root_2 = CLV_Tuple2(
+        CLV_U32(int(arg0)),
+        CLV_Tuple2(
+            CLV_U32(int(arg1)),
+            CLV_Tuple2(
+                CLV_U32(int(arg2)),
+                CLV_U32(int(arg3))
             )
         )
     )
@@ -47,8 +49,8 @@ def element_is_equal(ctx, index, _tuple, expected):
     _values = get_tuple_values(ctx.tuple, index)
 
     """
-    The test will fail here when checking the CL_Type from the Deploy
-    The CL_Type needs to be serialised into a CL_Type object
+    The test will fail here when checking the CLV_Type from the Deploy
+    The CLV_Type needs to be serialised into a CLV_Type object
     """
 
     assert _values == _expected
@@ -68,11 +70,11 @@ def tuple_bytes(ctx, _tuple, _bytes):
         _bytes_tuple = ctx.tuple_root_3
 
     """
-    The test will fail here when checking the CL_Type from the Deploy
-    The CL_Type needs to be serialised into a CL_Type object
+    The test will fail here when checking the CLV_Type from the Deploy
+    The CLV_Type needs to be serialised into a CLV_Type object
     """
 
-    assert serialisation.to_bytes(_bytes_tuple).hex() == _bytes
+    assert to_bytes(_bytes_tuple).hex() == _bytes
 
 
 @given(
@@ -81,16 +83,16 @@ def nested_tuple3(ctx, arg0, arg1, arg2, arg3, arg4, arg5, arg6):
     print(
         f'that a nested Tuple3 is defined as \({arg0}, {arg1}, \({arg2}, {arg3}, \({arg4}, {arg5}, {arg6}\)\)\) using U32 numeric values')
 
-    ctx.tuple_root_3 = types.CL_Tuple3(
-        types.CL_U32(int(arg0)),
-        types.CL_U32(int(arg1)),
-        types.CL_Tuple3(
-            types.CL_U32(int(arg2)),
-            types.CL_U32(int(arg3)),
-            types.CL_Tuple3(
-                types.CL_U32(int(arg4)),
-                types.CL_U32(int(arg5)),
-                types.CL_U32(int(arg6))
+    ctx.tuple_root_3 = CLV_Tuple3(
+        CLV_U32(int(arg0)),
+        CLV_U32(int(arg1)),
+        CLV_Tuple3(
+            CLV_U32(int(arg2)),
+            CLV_U32(int(arg3)),
+            CLV_Tuple3(
+                CLV_U32(int(arg4)),
+                CLV_U32(int(arg5)),
+                CLV_U32(int(arg6))
             )
         )
     )

@@ -1,6 +1,5 @@
 from behave import *
 
-from pycspr.types.deploys import Deploy
 
 use_step_matcher("re")
 from utils.deploy import *
