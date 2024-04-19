@@ -24,7 +24,7 @@ def a_map_is_created(ctx, key, value):
     _list = []
     _tuple: typing.Tuple = (CLV_String(key), CLV_U32(int(value)))
     _list.append(_tuple)
-    ctx.CLV_map = CLV_Map(_list)
+    ctx.clv_map = CLV_Map(_list)
 
 
 @then('the map\'s key type is "(.*)" and the maps value type is "(.*)"')
@@ -36,8 +36,8 @@ def map_has_value(ctx, key1, key2):
     The CLV_Type needs to be serialised into a CLV_Type object
     """
 
-    assert isinstance(ctx.CLV_map.value[0][0], _utils.cl_values_map[key1])
-    assert isinstance(ctx.CLV_map.value[0][1], _utils.cl_values_map[key2])
+    assert isinstance(ctx.clv_map.value[0][0], _utils.cl_values_map[key1])
+    assert isinstance(ctx.clv_map.value[0][1], _utils.cl_values_map[key2])
 
 
 @then('the map\'s bytes are "(.*)"')
@@ -48,7 +48,7 @@ def map_has_bytes(ctx, hex_bytes):
     The test will fail here when checking the CLV_Type from the Deploy
     The CLV_Type needs to be serialised into a CLV_Type object
     """
-    assert to_bytes(ctx.CLV_map).hex() == hex_bytes
+    assert to_bytes(ctx.clv_map).hex() == hex_bytes
 
 
 @given("that the nested map is deployed in a transfer")
@@ -79,9 +79,9 @@ def map_is_read_from_the_deploy(ctx):
 
     for arg in range(len(args)):
         if args[arg][0] == 'MAP':
-            ctx.CLV_map = args[arg][1]
+            ctx.clv_map = args[arg][1]
 
-    assert ctx.CLV_map
+    assert ctx.clv_map
 
 
 @step('the map\'s key is "(.*)" and value is "(.*)"')
@@ -116,9 +116,9 @@ def nested_map_is_created(ctx, key0, key1, value1, key2, key3, value2):
     _rootMap.append(_tuple1)
     _rootMap.append(_tuple2)
 
-    ctx.CLV_map = CLV_Map(_rootMap)
+    ctx.clv_map = CLV_Map(_rootMap)
 
-    assert ctx.CLV_map
+    assert ctx.clv_map
 
 
 @step('the 1st nested map\'s key is "(.*)" and value is "(.*)"')
@@ -138,7 +138,7 @@ def the_nth_key_and_value_are(ctx, key, value):
 def the_maps_bytes_are(ctx, hex_bytes):
     print(f'the map\'s bytes are "{hex_bytes}"')
 
-    assert ctx.CLV_map['bytes'] == hex_bytes
+    assert ctx.clv_map['bytes'] == hex_bytes
 
 
 @given(
@@ -185,9 +185,9 @@ def a_nested_map_is_created(ctx, key1, key11, key111, value111, key12, key121, v
     _rootMap.append(_tuple1)
     _rootMap.append(_tuple2)
 
-    ctx.CLV_map = CLV_Map(_rootMap)
+    ctx.clv_map = CLV_Map(_rootMap)
 
-    assert ctx.CLV_map
+    assert ctx.clv_map
 
 
 @step('the map\'s key type is "(.*)" and the maps value type is "(.*)"')
@@ -205,9 +205,9 @@ def deploy_map(ctx):
     ctx.payment_amount = 100000000
 
     ctx.CLV_values = []
-    ctx.CLV_values.append({'MAP': ctx.CLV_map})
+    ctx.CLV_values.append({'MAP': ctx.clv_map})
 
-    ctx.CLV_map = ""
+    ctx.clv_map = ""
 
     deploy_set_signatures(ctx)
 
