@@ -1,5 +1,7 @@
 from behave import *
-from pycspr import types, serialisation
+
+from pycspr.serializer import to_bytes
+from pycspr.types.cl import *
 
 from test.features.steps.utils.asyncs import call_async_function, deploy_event
 from test.features.steps.utils.cl_types_factory import CLTypesFactory
@@ -18,7 +20,7 @@ _utils = CLTypesUtils()
 def has_empty_value(ctx):
     print(f'that an Option value has an empty value')
 
-    ctx.cl_option = types.CL_Option(None, None)
+    ctx.cl_option = CLV_Option(None, None)
 
 
 @then("the Option value is not present")
@@ -46,14 +48,14 @@ def bytes_are(ctx, hex_bytes):
     if hex_bytes == '""':
         hex_bytes = '00'
 
-    assert serialisation.to_bytes(ctx.cl_option).hex() == hex_bytes.replace('"', '')
+    assert to_bytes(ctx.cl_option).hex() == hex_bytes.replace('"', '')
 
 
 @given('an Option value contains a "(.*)" value of "(.*)"')
 def contains_type_value(ctx, _type, _value):
     print(f'an Option value contains a "{_type}" value of "{_value}"')
 
-    ctx.cl_option = types.CL_Option(_factory.create_value(_type, _value),
+    ctx.cl_option = CLV_Option(_factory.create_value(_type, _value),
                                     _utils.cl_types_map['CL_' + _type])
 
     assert ctx.cl_option

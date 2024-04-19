@@ -1,7 +1,7 @@
 import asyncio
 
 from pycspr import NodeEventChannel, NodeEventType
-from pycspr.types import Deploy
+from pycspr.types.node.rpc import Deploy
 from totaltimeout import Timeout
 
 
@@ -9,6 +9,10 @@ from totaltimeout import Timeout
 
 def call_async_function(ctx, function):
     return asyncio.run(function(ctx))
+
+
+async def info_get_status(ctx):
+    return await ctx.sdk_client_rpc.get_node_status()
 
 
 async def step_event(ctx):

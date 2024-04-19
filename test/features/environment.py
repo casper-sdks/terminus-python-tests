@@ -1,6 +1,8 @@
 import os
 
-from pycspr import types
+
+from pycspr.types.cl import CLT_Type_U512, CLT_Type_Option, CLT_Type_PublicKey
+
 
 from test.features.steps.utils.assets import get_user_asset_path
 from test.features.steps.utils.config import CONFIG
@@ -13,10 +15,10 @@ from test.features.steps.utils.requests import NodeRequests
 
 # CASPER types used for equals comparisons
 _cl_values: dict = {
-    'Transfer': types.Transfer,
-    'U512': types.cl_values.CL_U512,
-    'Option': types.cl_values.CL_Option,
-    'PublicKey': types.cl_values.CL_PublicKey
+    # 'Transfer': types.Transfer,
+    'U512':  CLT_Type_U512,
+    'Option': CLT_Type_Option,
+    'PublicKey': CLT_Type_PublicKey
 }
 
 # Lookups

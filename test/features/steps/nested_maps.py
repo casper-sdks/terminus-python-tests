@@ -1,7 +1,8 @@
 import typing
 
 from behave import *
-from pycspr import types, serialisation
+from pycspr.types.cl import *
+from pycspr.serializer import to_bytes
 
 from test.features.steps.utils.asyncs import call_async_function, deploy_event
 from test.features.steps.utils.cl_types_factory import CLTypesFactory
@@ -21,9 +22,9 @@ def a_map_is_created(ctx, key, value):
     print(f'a map is created {key}:{value}')
 
     _list = []
-    _tuple: typing.Tuple = (types.CL_String(key), types.CL_U32(int(value)))
+    _tuple: typing.Tuple = (CLV_String(key), CLV_U32(int(value)))
     _list.append(_tuple)
-    ctx.cl_map = types.CL_Map(_list)
+    ctx.clv_map = CLV_Map(_list)
 
 
 @then('the map\'s key type is "(.*)" and the maps value type is "(.*)"')
@@ -31,12 +32,12 @@ def map_has_value(ctx, key1, key2):
     print(f'the map\'s key type is "{key1}" and the maps value type is "{key2}"')
 
     """
-    The test will fail here when checking the CL_Type from the Deploy
-    The CL_Type needs to be serialised into a CL_Type object
+    The test will fail here when checking the CLV_Type from the Deploy
+    The CLV_Type needs to be serialised into a CLV_Type object
     """
 
-    assert isinstance(ctx.cl_map.value[0][0], _utils.cl_values_map[key1])
-    assert isinstance(ctx.cl_map.value[0][1], _utils.cl_values_map[key2])
+    assert isinstance(ctx.clv_map.value[0][0], _utils.cl_values_map[key1])
+    assert isinstance(ctx.clv_map.value[0][1], _utils.cl_values_map[key2])
 
 
 @then('the map\'s bytes are "(.*)"')
@@ -44,10 +45,10 @@ def map_has_bytes(ctx, hex_bytes):
     print(f'the map\'s bytes are "{hex_bytes}"')
 
     """
-    The test will fail here when checking the CL_Type from the Deploy
-    The CL_Type needs to be serialised into a CL_Type object
+    The test will fail here when checking the CLV_Type from the Deploy
+    The CLV_Type needs to be serialised into a CLV_Type object
     """
-    assert serialisation.to_bytes(ctx.cl_map).hex() == hex_bytes
+    assert to_bytes(ctx.clv_map).hex() == hex_bytes
 
 
 @given("that the nested map is deployed in a transfer")
@@ -78,9 +79,9 @@ def map_is_read_from_the_deploy(ctx):
 
     for arg in range(len(args)):
         if args[arg][0] == 'MAP':
-            ctx.cl_map = args[arg][1]
+            ctx.clv_map = args[arg][1]
 
-    assert ctx.cl_map
+    assert ctx.clv_map
 
 
 @step('the map\'s key is "(.*)" and value is "(.*)"')
@@ -88,9 +89,9 @@ def map_has_kay_and_value(ctx, key, value):
     print(f'the map\'s key is "{key}" and value is "{value}"')
 
     """
-    The SDK doesn't decode the deploys CL_Type
+    The SDK doesn't decode the deploys CLV_Type
     We can not retrieve it's values here
-    (The node will return 'parsed' values for simple CL_Types only)
+    (The node will return 'parsed' values for simple CLV_Types only)
     """
 
     assert False
@@ -101,23 +102,23 @@ def nested_map_is_created(ctx, key0, key1, value1, key2, key3, value2):
     print(f'a nested map is created "{key0}": "{key1}": {value1}, "{key2}": "{key3}", {value2}')
 
     _list1 = []
-    _tuple: typing.Tuple = (types.CL_String(key1), types.CL_U32(int(value1)))
+    _tuple: typing.Tuple = (CLV_String(key1), CLV_U32(int(value1)))
     _list1.append(_tuple)
 
     _list2 = []
-    _tuple: typing.Tuple = (types.CL_String(key3), types.CL_U32(int(value2)))
+    _tuple: typing.Tuple = (CLV_String(key3), CLV_U32(int(value2)))
     _list2.append(_tuple)
 
     _rootMap = []
-    _tuple1: typing.Tuple = (types.CL_String(key0), types.CL_Map(_list1))
-    _tuple2: typing.Tuple = (types.CL_String(key2), types.CL_Map(_list2))
+    _tuple1: typing.Tuple = (CLV_String(key0), CLV_Map(_list1))
+    _tuple2: typing.Tuple = (CLV_String(key2), CLV_Map(_list2))
 
     _rootMap.append(_tuple1)
     _rootMap.append(_tuple2)
 
-    ctx.cl_map = types.CL_Map(_rootMap)
+    ctx.clv_map = CLV_Map(_rootMap)
 
-    assert ctx.cl_map
+    assert ctx.clv_map
 
 
 @step('the 1st nested map\'s key is "(.*)" and value is "(.*)"')
@@ -125,9 +126,9 @@ def the_nth_key_and_value_are(ctx, key, value):
     print(f'the 1st nested map\'s key is "{key}" and value is "{value}"')
 
     """
-    The SDK doesn't decode the deploys CL_Type
+    The SDK doesn't decode the deploys CLV_Type
     We can not retrieve it's values here
-    (The node will return 'parsed' values for simple CL_Types only)
+    (The node will return 'parsed' values for simple CLV_Types only)
     """
 
     assert False
@@ -137,7 +138,7 @@ def the_nth_key_and_value_are(ctx, key, value):
 def the_maps_bytes_are(ctx, hex_bytes):
     print(f'the map\'s bytes are "{hex_bytes}"')
 
-    assert ctx.cl_map['bytes'] == hex_bytes
+    assert ctx.clv_map['bytes'] == hex_bytes
 
 
 @given(
@@ -150,43 +151,43 @@ def a_nested_map_is_created(ctx, key1, key11, key111, value111, key12, key121, v
     # Need to ascertain that the bytes expected are actually correct
 
     _list111 = []
-    _tuple: typing.Tuple = (types.CL_U256(int(key111)), types.CL_String(value111))
+    _tuple: typing.Tuple = (CLV_U256(int(key111)), CLV_String(value111))
     _list111.append(_tuple)
 
     _list121 = []
-    _tuple: typing.Tuple = (types.CL_U32(int(key121)), types.CL_String(value121))
+    _tuple: typing.Tuple = (CLV_U32(int(key121)), CLV_String(value121))
     _list121.append(_tuple)
 
     _list11 = []
-    _tuple1: typing.Tuple = (types.CL_U256(int(key11)), types.CL_Map(_list111))
-    _tuple2: typing.Tuple = (types.CL_U256(int(key12)), types.CL_Map(_list121))
+    _tuple1: typing.Tuple = (CLV_U256(int(key11)), CLV_Map(_list111))
+    _tuple2: typing.Tuple = (CLV_U256(int(key12)), CLV_Map(_list121))
     _list11.append(_tuple1)
     _list11.append(_tuple2)
 
     _list211 = []
-    _tuple: typing.Tuple = (types.CL_U256(int(key211)), types.CL_String(value211))
+    _tuple: typing.Tuple = (CLV_U256(int(key211)), CLV_String(value211))
     _list211.append(_tuple)
 
     _list221 = []
-    _tuple: typing.Tuple = (types.CL_U32(int(key221)), types.CL_String(value221))
+    _tuple: typing.Tuple = (CLV_U32(int(key221)), CLV_String(value221))
     _list221.append(_tuple)
 
     _list21 = []
-    _tuple1: typing.Tuple = (types.CL_U256(int(key11)), types.CL_Map(_list211))
-    _tuple2: typing.Tuple = (types.CL_U256(int(key12)), types.CL_Map(_list221))
+    _tuple1: typing.Tuple = (CLV_U256(int(key11)), CLV_Map(_list211))
+    _tuple2: typing.Tuple = (CLV_U256(int(key12)), CLV_Map(_list221))
     _list21.append(_tuple1)
     _list21.append(_tuple2)
 
     _rootMap = []
-    _tuple1: typing.Tuple = (types.CL_U256(int(key1)), types.CL_Map(_list11))
-    _tuple2: typing.Tuple = (types.CL_U256(int(key2)), types.CL_Map(_list21))
+    _tuple1: typing.Tuple = (CLV_U256(int(key1)), CLV_Map(_list11))
+    _tuple2: typing.Tuple = (CLV_U256(int(key2)), CLV_Map(_list21))
 
     _rootMap.append(_tuple1)
     _rootMap.append(_tuple2)
 
-    ctx.cl_map = types.CL_Map(_rootMap)
+    ctx.clv_map = CLV_Map(_rootMap)
 
-    assert ctx.cl_map
+    assert ctx.clv_map
 
 
 @step('the map\'s key type is "(.*)" and the maps value type is "(.*)"')
@@ -203,10 +204,10 @@ def deploy_map(ctx):
     ctx.ttl = '30m'
     ctx.payment_amount = 100000000
 
-    ctx.cl_values = []
-    ctx.cl_values.append({'MAP': ctx.cl_map})
+    ctx.CLV_values = []
+    ctx.CLV_values.append({'MAP': ctx.clv_map})
 
-    ctx.cl_map = ""
+    ctx.clv_map = ""
 
     deploy_set_signatures(ctx)
 

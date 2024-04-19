@@ -1,7 +1,7 @@
 from behave import *
 
-from pycspr import types, parse_public_key
-from pycspr.types import CL_URef, GlobalStateID, PurseID, GlobalStateIDType, PurseIDType
+from pycspr import parse_public_key
+from pycspr.types.node.rpc import GlobalStateID, GlobalStateIDType, PurseIDType, PurseID
 
 from test.features.steps.utils.assets import get_user_asset_path
 

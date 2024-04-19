@@ -1,56 +1,56 @@
-from pycspr import types, serialisation
-
+from pycspr.types.cl import *
+from pycspr.serializer import to_bytes
 
 # Helper file to hold CL Type short name and class name lookups
 
 class CLTypesUtils:
     cl_types_map: dict = {
-        'CL_U512': types.CL_Type_U512,
-        'CL_Option': types.CL_Type_Option,
-        'CL_PublicKey': types.CL_Type_PublicKey,
-        'CL_String': types.CL_Type_String,
-        'CL_U8': types.CL_Type_U8,
-        'CL_U32': types.CL_Type_U32,
-        'CL_U64': types.CL_Type_U64,
-        'CL_U128': types.CL_Type_U128,
-        'CL_U256': types.CL_Type_U256,
-        'CL_I32': types.CL_Type_I32,
-        'CL_I64': types.CL_Type_I64,
-        'CL_Bool': types.CL_Type_Bool,
-        'CL_ByteArray': types.CL_Type_ByteArray,
-        'CL_Key': types.CL_Type_Key,
-        'CL_URef': types.CL_Type_URef,
-        'CL_Tuple1': types.CL_Type_Tuple1,
-        'CL_Tuple2': types.CL_Type_Tuple2,
-        'CL_Tuple3': types.CL_Type_Tuple3,
-        'CL_List': types.CL_Type_List,
-        'CL_Map': types.CL_Type_Map,
-        'CL_Any': types.CL_Type_Any
+        'CLV_U512': CLT_Type_U512,
+        'CLV_Option': CLT_Type_Option,
+        'CLV_PublicKey': CLT_Type_PublicKey,
+        'CLV_String': CLT_Type_String,
+        'CLV_U8': CLT_Type_U8,
+        'CLV_U32': CLT_Type_U32,
+        'CLV_U64': CLT_Type_U64,
+        'CLV_U128': CLT_Type_U128,
+        'CLV_U256': CLT_Type_U256,
+        'CLV_I32': CLT_Type_I32,
+        'CLV_I64': CLT_Type_I64,
+        'CLV_Bool': CLT_Type_Bool,
+        'CLV_ByteArray': CLT_Type_ByteArray,
+        'CLV_Key': CLT_Type_Key,
+        'CLV_URef': CLT_Type_URef,
+        'CLV_Tuple1': CLT_Type_Tuple1,
+        'CLV_Tuple2': CLT_Type_Tuple2,
+        'CLV_Tuple3': CLT_Type_Tuple3,
+        'CLV_List': CLT_Type_List,
+        'CLV_Map': CLT_Type_Map,
+        'CLV_Any': CLT_Type_Any
     }
 
     cl_values_map: dict = {
-        'Transfer': types.Transfer,
-        'U512': types.CL_U512,
-        'U128': types.CL_U128,
-        'Option': types.CL_Option,
-        'PublicKey': types.CL_PublicKey,
-        'String': types.CL_String,
-        'U8': types.CL_U8,
-        'U32': types.CL_U32,
-        'U64': types.CL_U64,
-        'U256': types.CL_U256,
-        'I32': types.CL_I32,
-        'I64': types.CL_I64,
-        'Bool': types.CL_Bool,
-        'ByteArray': types.CL_ByteArray,
-        'Key': types.CL_Key,
-        'URef': types.CL_URef,
-        'Tuple1': types.CL_Tuple1,
-        'Tuple2': types.CL_Tuple2,
-        'Tuple3': types.CL_Tuple3,
-        'List': types.CL_List,
-        'Map': types.CL_Map,
-        'Any': types.CL_Any
+        # 'Transfer': Transfer,
+        'U512': CLV_U512,
+        'U128': CLV_U128,
+        'Option': CLV_Option,
+        'PublicKey': CLV_PublicKey,
+        'String': CLV_String,
+        'U8': CLV_U8,
+        'U32': CLV_U32,
+        'U64': CLV_U64,
+        'U256': CLV_U256,
+        'I32': CLV_I32,
+        'I64': CLV_I64,
+        'Bool': CLV_Bool,
+        'ByteArray': CLV_ByteArray,
+        'Key': CLV_Key,
+        'URef': CLV_URef,
+        'Tuple1': CLV_Tuple1,
+        'Tuple2': CLV_Tuple2,
+        'Tuple3': CLV_Tuple3,
+        'List': CLV_List,
+        'Map': CLV_Map,
+        'Any': CLV_Any
     }
 
     @staticmethod
@@ -63,16 +63,16 @@ class CLTypesUtils:
             return _value
 
     @staticmethod
-    def to_hex_bytes(cl_type: dict):
+    def to_hex_bytes(CLV_type: dict):
 
-        _type = list(cl_type.items())[0][0]
-        _cl_type = list(cl_type.items())[0][1]
+        _type = list(CLV_type.items())[0][0]
+        _CLV_type = list(CLV_type.items())[0][1]
 
         if _type in ['Key']:
-            return _cl_type.identifier.hex()
+            return _CLV_type.identifier.hex()
         elif _type in ['PublicKey']:
-            return _cl_type.account_key.hex()
+            return _CLV_type.account_key.hex()
         elif _type in ['URef']:
-            return serialisation.to_bytes(_cl_type).hex()
+            return to_bytes(_CLV_type).hex()
         else:
-            return serialisation.to_bytes(_cl_type).hex()
+            return to_bytes(_CLV_type).hex()
