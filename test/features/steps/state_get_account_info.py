@@ -31,7 +31,7 @@ def a_valid_account(ctx):
     ctx.user_account = ctx.node_client.get_user_account('user=1')
 
     # assert ctx.user_account['stored_value']['Account']['account_hash'] == ctx.state_account_info['account_hash']
-    assert ctx.user_account['account_hash'] == "account-hash-" + ctx.state_account_info.associated_keys[0].address.hex()
+    assert ctx.user_account['account_hash'] == "account-hash-" + ctx.state_account_info.address.hex()
 
 
 @step("the state_get_account_info_result contain a valid main purse uref")
