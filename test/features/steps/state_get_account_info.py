@@ -31,14 +31,14 @@ def a_valid_account(ctx):
     ctx.user_account = ctx.node_client.get_user_account('user=1')
 
     # assert ctx.user_account['stored_value']['Account']['account_hash'] == ctx.state_account_info['account_hash']
-    assert ctx.user_account['account_hash'] == "account-hash-" + ctx.state_account_info.address.hex()
+    assert ctx.user_account['account_hash'] == f"account-hash-{ctx.state_account_info.address.hex()}"
 
 
 @step("the state_get_account_info_result contain a valid main purse uref")
 def a_valid_purse_uref(ctx):
     print('the state_get_account_info_result contain a valid main purse uref')
 
-    assert (ctx.user_account['main_purse'] == "uref-" + ctx.state_account_info.main_purse.address.hex() + "-00" +
+    assert (ctx.user_account['main_purse'] == f"uref-{ctx.state_account_info.main_purse.address.hex()}-00" +
             str(ctx.state_account_info.main_purse.access_rights.value))
 
 
@@ -54,7 +54,7 @@ def valid_associated_keys(ctx):
     print('the state_get_account_info_result contain a valid associated keys')
 
     assert ctx.user_account['associated_keys'][0]['account_hash'] == \
-           "account-hash-" + ctx.state_account_info.associated_keys[0].address.hex()
+           f"account-hash-{ctx.state_account_info.associated_keys[0].address.hex()}"
 
 
 @step("the state_get_account_info_result contain a valid named keys")

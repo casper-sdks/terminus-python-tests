@@ -19,7 +19,7 @@ def state_get_dictionary_item_invoked(ctx):
     get_faucet_private_key(ctx)
 
     dictionary_id = DictionaryID_UniqueKey(
-        key='account-hash-' + ctx.sender_key.account_key.hex()
+        key=f'account-hash-{ctx.sender_key.account_key.hex()}'
         # key = ctx.sender_key.account_key
     )
 
@@ -31,3 +31,6 @@ def state_get_dictionary_item_invoked(ctx):
 @then("a valid state_get_dictionary_item_result is returned")
 def valid_state_get_dictionary_item_returned(ctx):
     print('a valid state_get_dictionary_item_result is returned')
+
+    raise NotImplementedError(u'a valid state_get_dictionary_item_result is returned')
+
