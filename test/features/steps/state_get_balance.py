@@ -4,6 +4,7 @@ from pycspr import parse_public_key
 from pycspr.types.node.rpc import GlobalStateID, GlobalStateIDType, PurseIDType, PurseID
 
 from test.features.steps.utils.assets import get_user_asset_path
+from test.features.steps.utils.asyncs import async_rpc_call
 
 use_step_matcher("re")
 
@@ -19,12 +20,12 @@ def state_get_balance_invoked(ctx):
     account_key = parse_public_key(get_user_asset_path(ctx.ASSETS_ROOT, "1", "user-1", "public_key_hex")).account_key
 
     ctx.account_main_purse = \
-        ctx.sdk_client_rpc.get_account_main_purse_uref(account_key)
+        async_rpc_call(ctx.sdk_client_rpc.get_account_main_purse_uref(account_key))
 
     global_state_id = GlobalStateID(ctx.state_root_hash, GlobalStateIDType.STATE_ROOT_HASH)
     purse_id = PurseID(ctx.account_main_purse, PurseIDType.UREF)
 
-    ctx.state_get_balance_result = ctx.sdk_client_rpc.get_account_balance(purse_id, global_state_id)
+    ctx.state_get_balance_result = async_rpc_call(ctx.sdk_client_rpc.get_account_balance(purse_id, global_state_id))
 
     assert ctx.state_get_balance_result
 
