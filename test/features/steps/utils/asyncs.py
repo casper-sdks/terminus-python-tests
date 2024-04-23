@@ -11,8 +11,8 @@ def call_async_function(ctx, function):
     return asyncio.run(function(ctx))
 
 
-async def info_get_status(ctx):
-    return await ctx.sdk_client_rpc.get_node_status()
+def async_rpc_call(func):
+    return asyncio.run(func)
 
 
 async def step_event(ctx):

@@ -1,5 +1,7 @@
 from behave import *
 
+from test.features.steps.utils.asyncs import async_rpc_call
+
 use_step_matcher("re")
 
 # Step definitions for info_get_validator_changes cucumber tests
@@ -9,7 +11,7 @@ use_step_matcher("re")
 def info_get_validator_changes_is_invoked(ctx):
     print('that the info_get_validator_changes method is invoked against a node')
 
-    ctx.validators_changes = ctx.sdk_client_rpc.get_validator_changes()
+    ctx.validators_changes = async_rpc_call(ctx.sdk_client_rpc.get_validator_changes())
 
     ctx.expected_validator_changes = ctx.node_requests.get_info_get_validator_changes()
     assert ctx.expected_validator_changes

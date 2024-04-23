@@ -1,5 +1,7 @@
 from behave import *
 
+from test.features.steps.utils.asyncs import async_rpc_call
+
 use_step_matcher("re")
 
 # Step definitions for info_get_chainspec cucumber tests
@@ -17,7 +19,7 @@ def the_info_get_chainspec_is_invoked_rpc(ctx):
 def the_info_get_chainspec_is_invoked_sdk(ctx):
     print('that info_get_chainspec is invoked against the SDK')
 
-    ctx.chain_spec_sdk = ctx.sdk_client_rpc.get_chain_spec()
+    ctx.chain_spec_sdk = async_rpc_call(ctx.sdk_client_rpc.get_chainspec())
     assert ctx.chain_spec_sdk
 
 

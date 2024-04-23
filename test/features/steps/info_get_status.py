@@ -1,6 +1,6 @@
 from behave import *
 
-from test.features.steps.utils.asyncs import call_async_function, info_get_status
+from test.features.steps.utils.asyncs import async_rpc_call
 from test.features.steps.utils.validate import compare_dates
 
 use_step_matcher("re")
@@ -15,7 +15,7 @@ def info_get_status_invoked(ctx):
     ctx.expected_status_data = ctx.node_client.get_node_status(1)
     assert ctx.expected_status_data
 
-    ctx.status_data = call_async_function(ctx, info_get_status)
+    ctx.status_data = async_rpc_call(ctx.sdk_client_rpc.get_node_status())
 
 
 @then("an info_get_status_result is returned")

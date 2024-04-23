@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 DOCKER_NAME="cspr-cctl"
 CCTL_ASSETS=/home/cctl/cctl/assets
 
@@ -24,28 +26,33 @@ function _docker() {
   echo "[  Stopping and removing any running image  ]"
   docker stop $DOCKER_NAME > /dev/null 2>&1 && docker rm -fv $DOCKER_NAME > /dev/null 2>&1
 
-  echo "[  Starting image  ]"
+  printf "[  Starting image  ]\r\n"
   docker run --rm -it --name $DOCKER_NAME -d -p 25101:25101 -p 11101:11101 -p 14101:14101 -p 18101:18101 "$NODE" > /dev/null 2>&1
 
   res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
+  PROGRESS="...."
   while [[ $res == *"Error"* ]]
   do
-    echo -ne "[  Waiting for test node to start....  ]\r\n"
+    echo -ne "\033[1K[  Waiting for test node to start ${PROGRESS}  ]\r"
+    PROGRESS="${PROGRESS}."
     res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-infra-net-status'  |  awk '{print $1}')
   done
 
-  echo "[  Image started  ]"
+  printf "\r\n[  Image started  ]\r\n"
 
   res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-chain-view-block'  |  awk '{print $1}')
+
+  PROGRESS="...."
   while [[ $res == *"parse"* ]]
   do
-    echo -ne "[  Waiting for a block to be added....  ]\r\n"
+    echo -ne "\033[1K[  Waiting for a block to be added ${PROGRESS}  ]\r"
+    PROGRESS="${PROGRESS}."
     res=$( docker exec -t $DOCKER_NAME  /bin/bash -c -i 'cctl-chain-view-block'  |  awk '{print $1}')
   done
 
-  echo ""
-  echo -e "Finished node\n"
 
+  echo ""
+  echo -e "\r\nFinished node\n"
 }
 
 function _assets() {
@@ -56,9 +63,7 @@ function _assets() {
   # clear the assets folder
   rm -rf  "${BASEDIR}"/assets
   mkdir "${BASEDIR}"/assets
-  mkdir "${BASEDIR}"/assets/net-1
-  mkdir "${BASEDIR}"/assets/chainspec
-  mkdir "${BASEDIR}"/assets/faucet
+
   # copy net-1 users
   docker cp cspr-cctl:$CCTL_ASSETS/users/. "${BASEDIR}"/assets/net-1 > /dev/null 2>&1
   # copy net-1 chainspec
@@ -67,5 +72,4 @@ function _assets() {
   docker cp cspr-cctl:$CCTL_ASSETS/faucet/ "${BASEDIR}"/assets/net-1/faucet > /dev/null 2>&1
 
   echo -e "Finished assets\n"
-
 }
