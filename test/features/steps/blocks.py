@@ -21,82 +21,95 @@ BLOCK_ERR_CODE = -32001
 @given("that the latest block is requested via the sdk")
 def the_latest_block_returned(ctx):
     print("that the latest block is requested via the sdk")
-    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block()
+    ctx.block_data_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block())
 
 
 @then('request the latest block via the test node')
 def request_the_latest_block(ctx):
     print("request the latest block via the test node")
-    ctx.blockDataNode = ctx.node_client.get_latest_block()
+    ctx.block_data_node = ctx.node_client.get_latest_block()
 
 
 @then("the body of the returned block is equal to the body of the returned test node block")
 def returned_block_body_equal_to_test_node_returned_body(ctx):
     print("the body of the returned block is equal to the body of the returned test node block")
 
-    if ctx.blockDataSdk['hash'] != ctx.blockDataNode['hash']:
+    if ctx.block_data_sdk.hash.hex() != ctx.block_data_node['hash']:
         # Fixes intermittent syncing issues with node/sdk latest blocks
-        ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(ctx.blockDataNode['hash'])
+        ctx.block_data_sdk = ctx.sdk_client_rpc.get_block(ctx.block_data_node['hash'])
 
-    assert len(ctx.blockDataSdk['body']) > 0
-    assert ctx.blockDataSdk['body']['proposer'] == ctx.blockDataNode['body']['proposer']
-    assert ctx.blockDataSdk['body']['deploy_hashes'] == ctx.blockDataNode['body']['deploy_hashes']
-    assert ctx.blockDataSdk['body']['transfer_hashes'] == ctx.blockDataNode['body']['transfer_hashes']
+    assert ctx.block_data_sdk.body.proposer.account_key.hex() == ctx.block_data_node['body']['proposer']
+    assert ctx.block_data_sdk.body.deploy_hashes == ctx.block_data_node['body']['deploy_hashes']
+    assert ctx.block_data_sdk.body.transfer_hashes == ctx.block_data_node['body']['transfer_hashes']
 
 
 @step("the hash of the returned block is equal to the hash of the returned test node block")
 def returned_block_hash_equal_to_returned_test_node_hash(ctx):
     print("the hash of the returned block is equal to the hash of the returned test node block")
 
-    assert ctx.blockDataSdk['hash'] == ctx.blockDataNode['hash']
+    assert ctx.block_data_sdk.hash.hex() == ctx.block_data_node['hash']
 
 
 @step("the header of the returned block is equal to the header of the returned test node block")
 def returned_block_header_equal_to_returned_test_node_header(ctx):
     print("the header of the returned block is equal to the header of the returned test node block")
 
-    assert ctx.blockDataSdk['header'] == ctx.blockDataNode['header']
+    assert ctx.block_data_sdk.header.accumulated_seed.hex() == ctx.block_data_node['header']['accumulated_seed']
+    assert ctx.block_data_sdk.header.body_hash.hex() == ctx.block_data_node['header']['body_hash']
+    assert ctx.block_data_sdk.header.era_end == ctx.block_data_node['header']['era_end']
+    assert ctx.block_data_sdk.header.era_id == ctx.block_data_node['header']['era_id']
+    assert ctx.block_data_sdk.header.height == ctx.block_data_node['header']['height']
+    assert ctx.block_data_sdk.header.parent_hash.hex() == ctx.block_data_node['header']['parent_hash']
+
+    assert (f'{ctx.block_data_sdk.header.protocol_version.major}.{ctx.block_data_sdk.header.protocol_version.minor}.'
+            f'{ctx.block_data_sdk.header.protocol_version.revision}') == ctx.block_data_node['header']['protocol_version']
+
+    assert ctx.block_data_sdk.header.random_bit == ctx.block_data_node['header']['random_bit']
+    assert ctx.block_data_sdk.header.state_root.hex() == ctx.block_data_node['header']['state_root_hash']
+    assert compare_dates(ctx.block_data_node['header']['timestamp'], ctx.block_data_sdk.header.timestamp)
 
 
 @step("the proofs of the returned block are equal to the proofs of the returned test node block")
 def returned_block_proofs_equal_to_returned_test_node_proofs(ctx):
     print("the proofs of the returned block are equal to the proofs of the returned test node block")
 
-    assert ctx.blockDataSdk['proofs'] == ctx.blockDataNode['proofs']
+    for i in range(len(ctx.block_data_node['proofs'])):
+        assert ctx.block_data_sdk.proofs[i].public_key.account_key.hex() == ctx.block_data_node['proofs'][i]['public_key']
+        assert ctx.block_data_sdk.proofs[i].signature.as_bytes.hex() == ctx.block_data_node['proofs'][i]['signature']
 
 
 @given("that a block is returned by hash via the sdk")
 def a_block_returned_by_hash(ctx):
-    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block()
-    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(ctx.blockDataSdk['hash'])
+    ctx.block_data_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block())
+    ctx.block_data_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block(ctx.block_data_sdk.hash))
 
 
 @then("request a block by hash via the test node")
 def request_block_by_hash_from_test_node(ctx):
     print("request a block by hash via the test node")
 
-    ctx.blockDataNode = ctx.node_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
+    ctx.block_data_node = ctx.node_client.get_latest_block_by_param(f'block={ctx.block_data_sdk.hash.hex()}')
 
 
 @given("that a block is returned by height {height} via the sdk")
 def a_block_is_returned_by_height(ctx, height):
     print("that a block is returned by height {height} via the sdk")
 
-    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block()
-    ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(ctx.blockDataSdk['header']["height"])
+    ctx.block_data_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block())
+    ctx.block_data_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block(ctx.block_data_sdk.header.height))
 
 
 @then("request the returned block from the test node via its hash")
 def a_block_is_returned_by_hash_from_test_node(ctx):
     print("request the returned block from the test node via its hash")
-    ctx.blockDataNode = ctx.node_client.get_latest_block_by_param("block=" + ctx.blockDataSdk['hash'])
+    ctx.block_data_node = ctx.node_client.get_latest_block_by_param(f'block={ctx.block_data_sdk.hash.hex()}')
 
 
 @given("that an invalid block hash is requested via the sdk")
 def an_invalid_block_is_requested(ctx):
     print("that an invalid block hash is requested via the sdk")
     try:
-        ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(INVALID_BLOCK_HASH)
+        ctx.block_data_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block(INVALID_BLOCK_HASH))
     except Exception as ex:
         ctx.exception = ex
 
@@ -115,7 +128,7 @@ def an_invalid_block_height_is_requested(ctx):
     print("that an invalid block height is requested via the sdk")
 
     try:
-        ctx.blockDataSdk = ctx.sdk_client_rpc.get_block(INVALID_HEIGHT)
+        ctx.block_data_sdk = ctx.sdk_client_rpc.get_block(INVALID_HEIGHT)
     except Exception as ex:
         ctx.exception = ex
 
