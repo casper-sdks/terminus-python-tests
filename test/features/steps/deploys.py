@@ -42,7 +42,7 @@ def the_deply_is_given_a_ttl_of(ctx, ttl):
 def the_deploy_is_put_on_chain(ctx, chain):
     print("the deploy is put on chain {}".format(chain))
 
-    ctx.chain = chain
+    ctx.chain = ctx.chain_name
     ctx.payment_amount = 10000
 
     deploy_set_signatures(ctx)
@@ -97,7 +97,7 @@ def a_deploy_is_requested(ctx):
     ctx.last_block_added = call_async_function(ctx, block_event)
     ctx.param_map['last_block_added'] = ctx.last_block_added
 
-    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash.hex())
+    ctx.deploy = async_rpc_call(ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash.hex(), False))
     assert ctx.deploy
 
 
@@ -112,14 +112,14 @@ def the_deploy_has_api_version(ctx, api):
 def the_deploy_has_a_specific_block_hash(ctx, block):
     print('the deploy execution result has {} block hash'.format(block))
 
-    assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy.execution_info[0]['block_hash']
+    assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy['execution_info'][0]['block_hash']
 
 
 @step('the deploy execution has a cost of (.*) motes')
 def the_deploy_has_execution_cost_of(ctx, motes):
     print('the deploy execution has a cost of {} motes'.format(motes))
 
-    assert ctx.deploy.execution_info[0]['result']['Success']['cost'] == motes
+    assert ctx.deploy['execution_info'][0]['Success']['cost'] == motes
 
 
 @step('the deploy has a payment amount of (.*)')
