@@ -2,7 +2,7 @@ from behave import *
 
 from utils.asyncs import *
 from utils.deploy import *
-from utils.validate import *
+from pycspr.types.cl import *
 
 use_step_matcher("re")
 
@@ -42,7 +42,7 @@ def the_deply_is_given_a_ttl_of(ctx, ttl):
 def the_deploy_is_put_on_chain(ctx, chain):
     print("the deploy is put on chain {}".format(chain))
 
-    ctx.chain = chain
+    ctx.chain = ctx.chain_name
     ctx.payment_amount = 10000
 
     deploy_set_signatures(ctx)
@@ -97,7 +97,7 @@ def a_deploy_is_requested(ctx):
     ctx.last_block_added = call_async_function(ctx, block_event)
     ctx.param_map['last_block_added'] = ctx.last_block_added
 
-    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash.hex())
+    ctx.deploy = async_rpc_call(ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash.hex()))
     assert ctx.deploy
 
 
@@ -112,22 +112,22 @@ def the_deploy_has_api_version(ctx, api):
 def the_deploy_has_a_specific_block_hash(ctx, block):
     print('the deploy execution result has {} block hash'.format(block))
 
-    assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy.execution_info[0]['block_hash']
+    assert ctx.param_map[ctx.param_keys[block]]['BlockAdded']['block_hash'] == ctx.deploy.execution_info[0].block_hash
 
 
 @step('the deploy execution has a cost of (.*) motes')
 def the_deploy_has_execution_cost_of(ctx, motes):
     print('the deploy execution has a cost of {} motes'.format(motes))
 
-    assert ctx.deploy.execution_info[0]['result']['Success']['cost'] == motes
+    assert ctx.deploy.execution_info[0].Success.cost == motes
 
 
 @step('the deploy has a payment amount of (.*)')
 def the_deploy_has_payment_amount_of(ctx, amount):
     print('the deploy has a payment amount of {}'.format(amount))
 
-    assert ctx.deploy.payment.args[0].value['cl_type'] == 'U512'
-    assert ctx.deploy.payment.args[0].value['parsed'] == amount
+    assert isinstance(ctx.deploy.payment.args[0].value, CLV_U512)
+    assert ctx.deploy.payment.args[0].value.value == int(amount)
 
 
 @step("the deploy has a valid hash")
@@ -158,7 +158,7 @@ def the_deploy_has_a_valid_body_hash(ctx):
 def the_deploy_(ctx, _type):
     print('the deploy has a session type of {}'.format(_type))
 
-    assert type(ctx.deploy_result.session) == ctx.values_map[_type]
+    assert isinstance(ctx.deploy_result.session, ctx.values_map[_type])
 
 
 @step('the deploy is approved by user-(.*)')
@@ -210,7 +210,7 @@ def the_deploy_session_argument_has_public_key_of_a_use(ctx, arg, user):
 def teh_deploy_session_argument_has_a_type_of(ctx, arg, _type):
     print('the deploy session has a {} argument value of type {}'.format(arg, _type))
 
-    assert type(ctx.deploy_result.session.args[arg]) == ctx.values_map[_type]
+    assert isinstance(ctx.deploy_result.session.args[arg], ctx.values_map[_type])
 
 
 @step('the deploy session has a "(.*)" argument with a numeric value of (.*)')

@@ -1,7 +1,7 @@
 import os
 
 
-from pycspr.types.cl import CLT_Type_U512, CLT_Type_Option, CLT_Type_PublicKey
+from pycspr.types.cl import *
 
 
 from test.features.steps.utils.assets import get_user_asset_path
@@ -9,16 +9,17 @@ from test.features.steps.utils.config import CONFIG
 from test.features.steps.utils.node import client_rpc, client_sse, client_spec
 from test.features.steps.utils.scripts import NodeExec
 from test.features.steps.utils.requests import NodeRequests
+from pycspr.types.node.rpc import DeployOfTransfer
 
 # Steps to run at specific times in the scenarios
 # Sets the required context parameters
 
 # CASPER types used for equals comparisons
 _cl_values: dict = {
-    # 'Transfer': types.Transfer,
-    'U512':  CLT_Type_U512,
-    'Option': CLT_Type_Option,
-    'PublicKey': CLT_Type_PublicKey
+    'Transfer': DeployOfTransfer,
+    'U512':  CLV_U512,
+    'Option': CLV_Option,
+    'PublicKey': CLV_PublicKey
 }
 
 # Lookups
