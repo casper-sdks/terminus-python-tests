@@ -36,7 +36,7 @@ def returned_block_body_equal_to_test_node_returned_body(ctx):
 
     if ctx.block_data_sdk.hash.hex() != ctx.block_data_node['hash']:
         # Fixes intermittent syncing issues with node/sdk latest blocks
-        ctx.block_data_sdk = ctx.sdk_client_rpc.get_block(ctx.block_data_node['hash'])
+        ctx.block_data_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block(ctx.block_data_node['hash']))
 
     assert ctx.block_data_sdk.body.proposer.account_key.hex() == ctx.block_data_node['body']['proposer']
     assert ctx.block_data_sdk.body.deploy_hashes == ctx.block_data_node['body']['deploy_hashes']
@@ -138,13 +138,13 @@ def a_step_event_is_received(ctx):
     print("that a step event is received")
 
     call_async_function(ctx, step_event)
-    ctx.nodeEraSwitchBlockData = ctx.node_client.get_era_summary()
+    ctx.node_era_switch_block_data = ctx.node_client.get_era_summary()
 
-    assert ctx.nodeEraSwitchBlockData['era_summary']
-    assert ctx.nodeEraSwitchBlockData['era_summary']['block_hash']
-    assert codecs.decode(ctx.nodeEraSwitchBlockData['era_summary']['block_hash'], 'hex')
+    assert ctx.node_era_switch_block_data['era_summary']
+    assert ctx.node_era_switch_block_data['era_summary']['block_hash']
+    assert codecs.decode(ctx.node_era_switch_block_data['era_summary']['block_hash'], 'hex')
 
-    ctx.nodeEraSwitchBlock = ctx.nodeEraSwitchBlockData['era_summary']['block_hash']
+    ctx.nodeEraSwitchBlock = ctx.node_era_switch_block_data['era_summary']['block_hash']
 
 
 @then("request the corresponding era switch block via the sdk")
@@ -169,7 +169,7 @@ def switch_block_eras_are_equal(ctx):
     print("the switch block eras of the returned block are equal to the switch block eras of the returned test node "
           "block")
 
-    ctx.nodeEraSwitchBlockData['era_summary']['era_id'] = ctx.eraSwitchBlockData['era_summary']['era_id']
+    ctx.node_era_switch_block_data['era_summary']['era_id'] = ctx.eraSwitchBlockData['era_summary']['era_id']
 
 
 @step(
@@ -179,7 +179,7 @@ def switch_block_merkle_proofs_are_equal(ctx):
     print("the switch block merkle proofs of the returned block are equal to the switch block merkle proofs of the "
           "returned test node block")
 
-    validate_merkle_proofs(ctx.nodeEraSwitchBlockData['era_summary']['merkle_proof'],
+    validate_merkle_proofs(ctx.node_era_switch_block_data['era_summary']['merkle_proof'],
                            ctx.eraSwitchBlockData['era_summary']['merkle_proof'])
 
 
@@ -190,14 +190,14 @@ def switch_block_state_root_hashes_are_equal(ctx):
     print("the switch block state root hashes of the returned block are equal to the switch block state root hashes "
           "of the returned test node block")
 
-    assert ctx.nodeEraSwitchBlockData['era_summary']['state_root_hash'] == ctx.eraSwitchBlockData['era_summary']['state_root_hash']
+    assert ctx.node_era_switch_block_data['era_summary']['state_root_hash'] == ctx.eraSwitchBlockData['era_summary']['state_root_hash']
 
 
 @step("the delegators data of the returned block is equal to the delegators data of the returned test node block")
 def the_delegators_are_equal(ctx):
     print("the delegators data of the returned block is equal to the delegators data of the returned test node block")
 
-    assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
+    assert ctx.node_era_switch_block_data['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
            == ctx.eraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']
 
 
@@ -205,7 +205,7 @@ def the_delegators_are_equal(ctx):
 def the_validators_are_equal(ctx):
     print("the validators data of the returned block is equal to the validators data of the returned test node block")
 
-    assert ctx.nodeEraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
+    assert ctx.node_era_switch_block_data['era_summary']['stored_value']['EraInfo']['seigniorage_allocations'] \
            == ctx.eraSwitchBlockData['era_summary']['stored_value']['EraInfo']['seigniorage_allocations']
 
 
@@ -251,7 +251,7 @@ def request_block_transfer(ctx):
     ctx.timeout = int(300)
     ctx.last_block_added = call_async_function(ctx, block_event)
 
-    ctx.transfer_block_sdk = ctx.sdk_client_rpc.get_block_transfers()
+    ctx.transfer_block_sdk = async_rpc_call(ctx.sdk_client_rpc.get_block_transfers())
 
 
 @then("request the block transfer from the test node")
@@ -259,7 +259,7 @@ def step_request_block_transfer_from_test_node(ctx):
     print("request the block transfer from the test node")
 
     ctx.block_data_node = ctx.node_client.get_latest_block_by_param(
-        "block=" + ctx.transfer_block_sdk.block_hash.decode())
+        f'block={ctx.transfer_block_sdk.block_hash.hex()}')
 
 
 @step("the returned block contains the transfer hash returned from the test node block")

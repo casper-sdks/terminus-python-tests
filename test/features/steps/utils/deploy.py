@@ -6,6 +6,8 @@ from pycspr import KeyAlgorithm
 
 from pycspr.types.node.rpc import Deploy, DeployParameters, Transfer, DeployArgument, DeployOfModuleBytes, DeployOfTransfer
 
+from test.features.steps.utils.asyncs import async_rpc_call
+
 
 def deploy_to_chain(ctx) -> Deploy:
     deploy: Deploy
@@ -19,20 +21,18 @@ def deploy_to_chain(ctx) -> Deploy:
         gas_price=ctx.gas_price,
     )
 
-    # Set deploy.
+    # Set deploy
     deploy = pycspr.create_transfer(
         params=deploy_params,
         amount=int(ctx.transfer_amount),
-        # target=ctx.receiver_key.account_key,
         target=ctx.receiver_key,
-        # correlation_id=random.randint(1, 1e6),
         correlation_id=random.randint(1, 100),
         payment=int(ctx.payment_amount)
     )
 
     deploy.approve(ctx.sender_key)
 
-    ctx.sdk_client_rpc.send_deploy(deploy)
+    async_rpc_call(ctx.sdk_client_rpc.send_deploy(deploy))
 
     return deploy
 
