@@ -21,12 +21,11 @@ def deploy_to_chain(ctx) -> Deploy:
         gas_price=ctx.gas_price,
     )
 
-    # Set deploy.
+    # Set deploy
     deploy = pycspr.create_transfer(
         params=deploy_params,
         amount=int(ctx.transfer_amount),
         target=ctx.receiver_key,
-        # correlation_id=random.randint(1, 1e6),
         correlation_id=random.randint(1, 100),
         payment=int(ctx.payment_amount)
     )
