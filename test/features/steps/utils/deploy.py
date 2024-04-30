@@ -2,7 +2,8 @@ import random
 
 import pycspr
 import pycspr.types
-from pycspr import KeyAlgorithm
+from pycspr.types.cl import *
+from pycspr import KeyAlgorithm, create_deploy_arguments
 
 from pycspr.types.node.rpc import Deploy, DeployParameters, Transfer, DeployArgument, DeployOfModuleBytes, DeployOfTransfer
 
@@ -53,30 +54,17 @@ def create_deploy(ctx):
 
     transfer: DeployOfTransfer = pycspr.factory.create_transfer_session(
         amount=2500000000,
-        target=ctx.receiver_key.account_key,
+        target=ctx.receiver_key,
         correlation_id=200)
 
-    transfer.arguments.append(ctx.cl_values)
 
+    # _args = create_deploy_arguments(ctx.cl_values[0])
+    _args = []
+    for arg in range(len(ctx.cl_values)):
+        _args.append(create_deploy_arguments(ctx.cl_values[arg]))
+        # transfer.args.append(create_deploy_arguments(ctx.cl_values[arg]))
 
-    # params: DeployParameters = \
-    #     pycspr.create_deploy_parameters(
-    #         account=ctx.sender_key,
-    #         chain_name=ctx.chain_name,
-    #         ttl=ctx.ttl,
-    #         gas_price=ctx.gas_price,
-    #     )
-    #
-    # payment: DeployOfModuleBytes = \
-    #     pycspr.create_standard_payment(ctx.payment_amount)
-    #
-    #
-    # transfer: Transfer = pycspr.factory.create_transfer_session(
-    #     amount=2500000000,
-    #     target=ctx.receiver_key.account_key,
-    #     correlation_id=200)
-    #
-    # transfer.args.update({k:v for x in ctx.cl_values for k,v in x.items()})
+    transfer.args.update({k: v for x in ctx.cl_values for k, v in x.items()})
 
     deploy: Deploy = pycspr.create_deploy(params, payment, transfer)
 

@@ -1,5 +1,6 @@
 import typing
 
+from pycspr.factory import create_public_key_from_account_key
 from pycspr.types.cl import *
 
 from test.features.steps.utils.cl_utils import CLTypesUtils
@@ -21,10 +22,10 @@ class CLTypesFactory:
             return _type(bytes.fromhex(_value))
 
         elif key in ['Key']:
-            return CLV_Key.from_str('account-hash-' + _value)
+            return CLV_Key.from_str(f'account-hash-{_value}')
 
         elif key in ['PublicKey']:
-            return CLV_PublicKey.from_public_key(bytes.fromhex(_value))
+            return CLV_PublicKey.from_public_key(create_public_key_from_account_key(bytes.fromhex(_value)))
 
         elif key in ['URef']:
             return CLV_URef(CLV_URefAccessRights.READ_ADD_WRITE, bytes.fromhex(_value))
@@ -42,19 +43,19 @@ class CLTypesFactory:
 
         if key in ['Option']:
             return CLV_Option(_simple_types[0]['type'](_simple_types[0]['value']),
-                                      self._utils.cl_types_map[_simple_types[0]['type'].__name__])
+                              self._utils.cl_types_map[_simple_types[0]['type'].__name__])
 
         elif key in ['Tuple1']:
             return CLV_Tuple1(_simple_types[0]['type'](_simple_types[0]['value']))
 
         elif key in ['Tuple2']:
             return CLV_Tuple2(_simple_types[0]['type'](_simple_types[0]['value']),
-                                                         _simple_types[1]['type'](_simple_types[1]['value']))
+                              _simple_types[1]['type'](_simple_types[1]['value']))
 
         elif key in ['Tuple3']:
             return CLV_Tuple3(_simple_types[0]['type'](_simple_types[0]['value']),
-                                                         _simple_types[1]['type'](_simple_types[1]['value']),
-                                                         _simple_types[2]['type'](_simple_types[2]['value']))
+                              _simple_types[1]['type'](_simple_types[1]['value']),
+                              _simple_types[2]['type'](_simple_types[2]['value']))
 
         elif key in ['Map']:
             return CLV_Map(self.build_map(_simple_types))
@@ -66,7 +67,6 @@ class CLTypesFactory:
 
             return CLV_List(cl_list)
 
-
     @staticmethod
     def build_map(_simple_types) -> list:
 
@@ -77,4 +77,3 @@ class CLTypesFactory:
             map_list.append(_tuple)
 
         return map_list
-

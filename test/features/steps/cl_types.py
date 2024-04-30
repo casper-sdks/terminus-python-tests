@@ -4,6 +4,9 @@ from test.features.steps.utils.asyncs import deploy_event, call_async_function
 from test.features.steps.utils.cl_types_factory import CLTypesFactory
 from test.features.steps.utils.cl_utils import CLTypesUtils
 from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy, deploy_to_chain
+from test.features.steps.utils.asyncs import async_rpc_call
+
+from pycspr.types.cl import *
 
 use_step_matcher("re")
 
@@ -55,7 +58,7 @@ def the_values_are_added_as_arguments_to_a_deploy(ctx):
 def the_deploy_is_put_on_chain(ctx):
     print(f'the deploy is put on chain')
 
-    ctx.sdk_client_rpc.send_deploy(ctx.deploy)
+    async_rpc_call(ctx.sdk_client_rpc.send_deploy(ctx.deploy))
     ctx.deploy_result = ctx.deploy
 
     assert ctx.deploy_result.hash.hex()
@@ -76,7 +79,7 @@ def the_deploy_has_successfully_executed(ctx):
 def the_deploy_obtained_from_the_node(ctx):
     print(f'the deploy is obtained from the node')
 
-    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash)
+    ctx.deploy = async_rpc_call(ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash))
     assert ctx.deploy
 
 
@@ -139,6 +142,11 @@ def assert_option(_internals, args, _bytes):
     The test will fail here when checking the CL_Type from the Deploy
     The CL_Type needs to be serialised into a CL_Type object
     """
+
+    # final AbstractCLValue <?, ? > innerValue = this.cLValueFactory.createValue(CLTypeData.getTypeByName(types), values);
+    # assertThat(clValue.getValue().isPresent(), is (true));
+    # assertClValues(clValue.getValue().get(), innerValue);
+
 
     assert False
 
