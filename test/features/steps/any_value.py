@@ -1,7 +1,8 @@
 from behave import *
 from pycspr import types
+from pycspr.types.cl import *
 
-from test.features.steps.utils.asyncs import call_async_function, deploy_event
+from test.features.steps.utils.asyncs import call_async_function, deploy_event, async_rpc_call
 from test.features.steps.utils.deploy import deploy_set_signatures, create_deploy, deploy_to_chain
 
 use_step_matcher("re")
@@ -11,7 +12,7 @@ use_step_matcher("re")
 def step_impl(ctx, _bytes):
     print(f'an Any value contains a byte array value of "{_bytes}"')
 
-    ctx.any_type = types.CL_Any(str.encode(_bytes))
+    ctx.any_type = CLV_Any(str.encode(_bytes))
     assert ctx.any_type
 
 
@@ -19,7 +20,7 @@ def step_impl(ctx, _bytes):
 def step_impl(ctx, _bytes):
     print(f'he any value\'s bytes are "{_bytes}"')
 
-    any_type: types.CL_Any = ctx.any_type
+    any_type: CLV_Any = ctx.any_type
     assert any_type.value == str.encode(_bytes)
 
 
@@ -63,7 +64,7 @@ def step_impl(ctx):
 def step_impl(ctx):
     print(f'the any is read from the deploy')
 
-    ctx.deploy = ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash)
+    ctx.deploy = async_rpc_call(ctx.sdk_client_rpc.get_deploy(ctx.deploy_result.hash))
     assert ctx.deploy
 
     args = ctx.deploy.session.args
@@ -72,7 +73,7 @@ def step_impl(ctx):
     _read = False
     for arg in range(len(args)):
         if args[arg].name == "ANY":
-            ctx.any_type = types.CL_Any(args[arg].value['bytes'])
+            ctx.any_type = CLV_Any(args[arg].value['bytes'])
             assert ctx.any_type
             _read = True
 
